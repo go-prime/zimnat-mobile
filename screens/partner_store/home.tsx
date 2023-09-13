@@ -62,7 +62,7 @@ export default function HomeScreen({navigation}): JSX.Element {
      <Text style={styles.heading}>Category</Text>
      <ScrollView
       horizontal={true}>
-        { data && data.featured_categories.map(cat => <RoundButton title={cat.category} />) }
+        { data.categories && data.categories.map(cat => <RoundButton title={cat.name} url={cat.image} />) }
       </ScrollView>
       <Text style={styles.heading}>Featured Bundles</Text>
       <ScrollView
