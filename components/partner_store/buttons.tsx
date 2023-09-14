@@ -20,13 +20,13 @@ const RoundButton  = function (props) {
 
 const RoundedSquareButton  = function (props) {
     return (<Pressable onPress={props.handler}>
-        <View style={styles.round}>
+        <View style={styles.square}>
             {props.url 
                 ? <Image source={{uri: props.url, width: 40, height: 40}} />
                 : <FontAwesomeIcon icon={faImage} size={30} color={colors.primary} />
             }
-            {props.title && <Text style={styles.text}>{props.title}</Text>}
         </View>
+        {props.title && <Text style={styles.text}>{props.title}</Text>}
         
     </Pressable>)
 }
@@ -50,14 +50,17 @@ const styles = StyleSheet.create({
         borderRadius: 12.5,
         backgroundColor: "white",
         ...shadow,
-        elevation: 5
+        elevation: 5,
+        justifyContent: "center",
+        alignItems: "center",
+        margin: 12
+
     },
     text: {
         fontSize: 16, 
         fontWeight: "bold",
         color: "black",
         textAlign: "center",
-        
     }
 })
 
