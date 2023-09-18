@@ -7,3 +7,11 @@ export default function Centered(props) {
         {props.children}
     </View>
 }
+
+const Row = (props) =>  {
+    return <View style={{flexDirection: "row", ...props.styles}}>
+        {props.children}
+    </View>
+}
+
+export {Row}

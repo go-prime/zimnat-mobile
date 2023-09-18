@@ -1,67 +1,188 @@
 import React from 'react';
-import { Text, Pressable, View, StyleSheet, Image } from 'react-native';
+import {Text, Pressable, View, StyleSheet, Image, Alert} from 'react-native';
 import colors from '../../styles/colors';
-import { shadow } from '../../styles/inputs';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faImage } from '@fortawesome/free-solid-svg-icons';
+import {shadow} from '../../styles/inputs';
+import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
+import {
+  faImage,
+  faHeart,
+  faShoppingCart,
+} from '@fortawesome/free-solid-svg-icons';
+import axios from 'axios';
+import constants from '../../constants';
 
+const RoundButton = function (props) {
+  return (
+    <Pressable onPress={props.handler}>
+      <View style={styles.round}>
+        {props.url ? (
+          <Image source={{uri: props.url, width: 40, height: 40}} />
+        ) : (
+          <FontAwesomeIcon icon={faImage} size={30} color={colors.primary} />
+        )}
+      </View>
+      {props.title && <Text style={styles.text}>{props.title}</Text>}
+    </Pressable>
+  );
+};
 
-const RoundButton  = function (props) {
-    return (<Pressable onPress={props.handler}>
-        <View style={styles.round}>
-            {props.url 
-                ? <Image source={{uri: props.url, width: 40, height: 40}} />
-                : <FontAwesomeIcon icon={faImage} size={30} color={colors.primary} />
-            }
-        </View>
-        {props.title && <Text style={styles.text} >{props.title}</Text>}
-    </Pressable>)
+const RoundedSquareButton = function (props) {
+  return (
+    <Pressable onPress={props.handler}>
+      <View style={styles.square}>
+        {props.url ? (
+          <Image source={{uri: props.url, width: 40, height: 40}} />
+        ) : (
+          <FontAwesomeIcon icon={faImage} size={30} color={colors.primary} />
+        )}
+      </View>
+      {props.title && <Text style={styles.text}>{props.title}</Text>}
+    </Pressable>
+  );
+};
+
+type WishListButtonProps = {
+  product_id: string;
+  product_name: string;
+  label: boolean;
+  styles: object;
+};
+
+type CartButtonProps = {
+  product_id: string;
+  product_name: string;
+  qty: number;
+  label: boolean;
+  styles: object;
 }
 
-const RoundedSquareButton  = function (props) {
-    return (<Pressable onPress={props.handler}>
-        <View style={styles.square}>
-            {props.url 
-                ? <Image source={{uri: props.url, width: 40, height: 40}} />
-                : <FontAwesomeIcon icon={faImage} size={30} color={colors.primary} />
-            }
-        </View>
-        {props.title && <Text style={styles.text}>{props.title}</Text>}
-        
-    </Pressable>)
-}
+const WishListButton = function (props: WishListButtonProps) {
+  const defaultHandler = () => {
+    console.log('Add to wishlist button pressed');
+    axios
+      .post(
+        `${constants.server_url}/api/method/billing_engine.billing_engine.api.add_to_wishlist`,
+        {
+          product_id: props.product_id,
+        },
+      )
+      .then(res => {
+        Alert.alert('Success', `Added ${props.product_name} to wishlist`);
+      })
+      .catch(err => {
+        Alert.alert('Error', err.message);
+      });
+  };
 
+  return (
+    <Pressable onPress={props.handler ? props.handler : defaultHandler}>
+      <View style={[styles.wishlist, props.styles]}>
+        <FontAwesomeIcon
+          icon={faHeart}
+          size={props.size || 24}
+          color={'crimson'}
+        />
+        {props.label && (
+          <Text
+            style={{
+              color: 'crimson',
+              fontSize: 16,
+              marginLeft: 4,
+              fontWeight: 'bold',
+            }}>
+            Add to Wishlist
+          </Text>
+        )}
+      </View>
+    </Pressable>
+  );
+};
+
+const AddToCartButton = function (props: CartButtonProps) {
+  const defaultHandler = () => {
+    console.log('Add to cart button pressed');
+    axios
+      .post(
+        `${constants.server_url}/api/method/billing_engine.billing_engine.api.add_to_cart`,
+        {
+          product_id: props.product_id,
+          qty: props.qty
+        },
+      )
+      .then(res => {
+        Alert.alert('Success', `Added ${props.product_name} to shopping cart`);
+      })
+      .catch(err => {
+        Alert.alert('Error', err.message);
+      });
+  };
+  return (
+    <Pressable onPress={props.handler ? props.handler : defaultHandler}>
+      <View style={[styles.addToCart, props.styles]}>
+        <FontAwesomeIcon
+          icon={faShoppingCart}
+          size={props.size || 24}
+          color={'white'}
+        />
+        {props.label && (
+          <Text style={{color: 'white', fontSize: 16, marginLeft: 4}}>
+            Add To Cart
+          </Text>
+        )}
+      </View>
+    </Pressable>
+  );
+};
 
 const styles = StyleSheet.create({
-    round: {
-        width: 75,
-        height: 75,
-        borderRadius: 37.5,
-        backgroundColor: "white",
-        ...shadow,
-        elevation: 5,
-        justifyContent: "center",
-        alignItems: "center",
-        margin: 12
-    },
-    square: {
-        width: 75,
-        height: 75,
-        borderRadius: 12.5,
-        backgroundColor: "white",
-        ...shadow,
-        elevation: 5,
-        justifyContent: "center",
-        alignItems: "center",
-        margin: 12
+  round: {
+    width: 75,
+    height: 75,
+    borderRadius: 37.5,
+    backgroundColor: 'white',
+    ...shadow,
+    elevation: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 12,
+  },
+  square: {
+    width: 75,
+    height: 75,
+    borderRadius: 12.5,
+    backgroundColor: 'white',
+    ...shadow,
+    elevation: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 12,
+  },
+  wishlist: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderColor: 'crimson',
+    backgroundColor: 'white',
+    borderWidth: 2,
+    padding: 4,
+    borderRadius: 4,
+    flexDirection: 'row',
+  },
+  addToCart: {
+    justifyContent: 'center',
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
+    alignItems: 'center',
+    borderRadius: 4,
+    flexDirection: 'row',
+    padding: 4,
+    borderWidth: 2,
+  },
+  text: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: 'black',
+    textAlign: 'center',
+  },
+});
 
-    },
-    text: {
-        fontSize: 16, 
-        fontWeight: "bold",
-        color: "black",
-        textAlign: "center",
-    }
-})
-
-export {RoundButton, RoundedSquareButton}
+export {RoundButton, RoundedSquareButton, WishListButton, AddToCartButton};

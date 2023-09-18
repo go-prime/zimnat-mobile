@@ -9,48 +9,42 @@ import {
   faShoppingCart,
 } from '@fortawesome/free-solid-svg-icons';
 import {useNavigation} from '@react-navigation/native';
-import {WishListButton, AddToCartButton} from './buttons';
 
-const SquareProductButton = function (props) {
+const SquareBundleButton = function (props) {
   const navigator = useNavigation();
+
   return (
-    <View>
-      <Pressable
-        onPress={() => {
-          navigator.navigate('Product', {product: props.id});
-        }}>
-        <View style={styles.square}>
-          {props.url ? (
-            <Image
-              source={{uri: props.url, width: 40, height: 40, zIndex: 1}}
-            />
-          ) : (
-            <FontAwesomeIcon icon={faImage} size={30} color={colors.primary} />
-          )}
-          {props.price && (
-            <View style={styles.price}>
-              <Text>{props.price}</Text>
-            </View>
-          )}
-        </View>
-        {props.name && <Text style={styles.text}>{props.name}</Text>}
-      </Pressable>
-      {props.actions && (
-        <Actions product_name={props.name} product_id={props.product_id} />
-      )}
-    </View>
+    <Pressable
+      onPress={() => {
+        navigator.navigate('Bundle', {bundle: props.id});
+      }}>
+      <View style={styles.square}>
+        {props.url ? (
+          <Image source={{uri: props.url, width: 40, height: 40, zIndex: 1}} />
+        ) : (
+          <FontAwesomeIcon icon={faImage} size={30} color={colors.primary} />
+        )}
+        {props.price && (
+          <View style={styles.price}>
+            <Text>{props.price}</Text>
+          </View>
+        )}
+      </View>
+      {props.name && <Text style={styles.text}>{props.name}</Text>}
+      {props.actions && <Actions />}
+    </Pressable>
   );
 };
 
 const Actions = props => {
   return (
     <View style={styles.row}>
-      <WishListButton
-        size={20}
-        product_id={props.product_id}
-        product_name={props.product_name}
-      />
-      <AddToCartButton size={20} />
+      <View style={styles.wishlist}>
+        <FontAwesomeIcon icon={faHeart} size={20} color={'white'} />
+      </View>
+      <View style={styles.addToCart}>
+        <FontAwesomeIcon icon={faShoppingCart} size={20} color={'white'} />
+      </View>
     </View>
   );
 };
@@ -61,7 +55,6 @@ const styles = StyleSheet.create({
     width: 100,
     gap: 4,
     padding: 4,
-    justifyContent: 'space-between',
   },
   wishlist: {
     flex: 1,
@@ -107,4 +100,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export {SquareProductButton};
+export {SquareBundleButton};

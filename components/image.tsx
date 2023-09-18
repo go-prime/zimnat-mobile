@@ -7,7 +7,7 @@ import colors from '../styles/colors';
 
 export default function ImageIcon(props) {
   return (
-    <View>
+    <View style={props.styles}>
       {props.url ? (
         <Image source={{uri: props.url, width: props.width, height: props.height}} />
       ) : (

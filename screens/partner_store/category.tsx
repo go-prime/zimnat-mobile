@@ -7,9 +7,12 @@ import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import axios from 'axios';
 import constants from '../../constants';
 import {faImage} from '@fortawesome/free-solid-svg-icons';
-import Centered from '../../components/centered';
+import Centered, {Row} from '../../components/layout';
 import SearchBar from '../../components/search';
 import {SquareProductButton} from '../../components/partner_store/product';
+import ImageIcon from '../../components/image';
+import Loading from '../../components/loading';
+
 
 export default function CategoryScreen(props) {
   const [data, setData] = React.useState(null);
@@ -20,13 +23,17 @@ export default function CategoryScreen(props) {
         {params: {category_id: props.route.params.category}},
       )
       .then(res => {
-        console.log(res.data.message);
+
         setData(res.data.message);
       })
       .catch(err => {
         console.log(err.response.data);
       });
-  }, []);
+  }, [props.route.params.category]);
+
+  if(!data) {
+    return <Loading />
+  }
 
   return (
     <View>
@@ -35,18 +42,10 @@ export default function CategoryScreen(props) {
       </View>
       <View style={styles.card}>
         <Centered styles={{margin: 16}}>
-          {data && data.image ? (
-            <Image
-              source={{
-                uri: `${constants.server_url}/${data.image}`,
-                width: 75,
-                height: 75,
-              }}
-            />
-          ) : (
-            <FontAwesomeIcon icon={faImage} size={72} color={colors.primary} />
-          )}
+          <ImageIcon width={75} height={75} url={data && `${constants.server_url}/${data.image}`} />
+          
         </Centered>
+        
         <Text style={styles.title}>{props.route.params.category}</Text>
         <Text style={styles.description}>
           {(data && data.description) || 'Loading description...'}
@@ -59,8 +58,10 @@ export default function CategoryScreen(props) {
             data.products.map(pro => {
               return (
                 <SquareProductButton
-                  key={pro.product_name}
+                  key={pro.name}
                   name={pro.product_name}
+                  id={pro.name}
+                  product_id={pro.billable_id}
                   price={'$5,00'}
                   actions={true}
                   url={`${constants.server_url}/${pro.cover_image}`}

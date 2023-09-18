@@ -21,6 +21,9 @@ import {
   RoundedSquareButton,
 } from '../../components/partner_store/buttons';
 import SearchBar from '../../components/search';
+import ImageIcon from '../../components/image';
+import Loading from '../../components/loading';
+
 
 const variable = 0;
 
@@ -28,6 +31,8 @@ export default function HomeScreen({navigation}): JSX.Element {
   const width = Dimensions.get('window').width;
   const [search, setSearch] = React.useState('');
   const [data, setData] = React.useState({});
+
+
   React.useEffect(() => {
     axios
       .get(
@@ -41,6 +46,10 @@ export default function HomeScreen({navigation}): JSX.Element {
         Alert.alert('Error', 'Failed to get resources.');
       });
   }, []);
+
+  if(!data) {
+    return <Loading />
+  }
 
   return (
     <ScrollView>
@@ -57,18 +66,12 @@ export default function HomeScreen({navigation}): JSX.Element {
             const item = data.carousel[index];
             return (
               <View style={styles.carouselItemContainer}>
-                {item.image ? (
-                  <Image
-                    source={{
-                      uri: `${constants.server_url}/${item.image}`,
-                      width: 75,
-                      height: 75,
-                    }}
-                  />
-                ) : (
-                  <FontAwesomeIcon icon={faImage} size={72} />
-                )}
-                <Text style={{textAlign: 'center', fontSize: 24}}>
+                <ImageIcon 
+                  url={`${constants.server_url}/${item.image}`} 
+                  width={100}
+                  height={100}
+                />
+                <Text  style={{flex: 1, textAlign: 'center', fontSize: 20}}>
                   {item.title}
                 </Text>
               </View>
@@ -103,7 +106,11 @@ export default function HomeScreen({navigation}): JSX.Element {
       <ScrollView horizontal={true}>
         {data.partners &&
           data.partners.map(p => (
-            <RoundedSquareButton key={p.name} title={p.name} url={p.image} />
+            <RoundedSquareButton 
+              key={p.name} 
+              title={p.name} 
+              url={`${constants.server_url}${p.image}`} 
+              handler={() => navigation.navigate("Partner", {partner: p.name})} />
           ))}
       </ScrollView>
     </ScrollView>
@@ -115,9 +122,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     ...shadow,
     elevation: 5,
-    margin: 12,
+    padding: 12,
     borderRadius: 24,
-    height: 200,
+    height: 200
   },
   carouselItemContainer: {
     flex: 1,
