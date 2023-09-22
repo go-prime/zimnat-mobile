@@ -38,9 +38,9 @@ const BundleProduct = props => {
       </View>
       <View>
         <Text style={styles.heading}>{props.id}</Text>
-        <Text>{props.description}</Text>
+        <Text style={styles.description}>{props.description}</Text>
         <Text style={styles.heading}>
-          {props.price} x {props.qty}
+          {parseFloat(props.price).toFixed(2)} x {props.qty}
         </Text>
       </View>
     </View>
@@ -133,7 +133,8 @@ const styles = StyleSheet.create({
   },
   description: {
     color: 'black',
-    padding: 12,
+    paddingLeft: 12,
+    paddingBottom: 12,
   },
   card: {
     ...shadow,

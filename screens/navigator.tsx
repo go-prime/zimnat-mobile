@@ -6,7 +6,7 @@ import {
   DrawerContentScrollView
 } from '@react-navigation/drawer';
 
-import { faUser, faHouse, faHeart, faShoppingCart } from '@fortawesome/free-solid-svg-icons';
+import { faUser, faHouse, faHeart, faShoppingCart, faUserGraduate, faShop, faHandshake } from '@fortawesome/free-solid-svg-icons';
 import { shadow } from '../styles/inputs';
 import HomeScreen from './partner_store/home';
 import PartnerScreen from './partner_store/partner';
@@ -18,6 +18,12 @@ import colors from '../styles/colors';
 import WishlistScreen from './wishlist';
 import CartScreen from './cart';
 import ProfileScreen from './profile';
+import CoursesHomeScreen from './edutec/home';
+import LoginScreen from './login';
+import CourseCategoryScreen from './edutec/courses';
+import MarketplaceHome from './marketplace/home';
+import CourseScreen from './edutec/course';
+
 
 
 const Drawer = createDrawerNavigator();
@@ -37,9 +43,18 @@ function DrawerContent(props): JSX.Element {
   return (
     <DrawerContentScrollView {...props}>
       <DrawerItem 
-          icon={faHouse} 
-          label="Home"
+          icon={faHandshake} 
+          label="Partner Store"
           handler={() => props.navigation.navigate('Home')} />
+
+      <DrawerItem 
+          icon={faUserGraduate} 
+          label="Edutec"
+          handler={() => props.navigation.navigate('Courses Home')} />
+          <DrawerItem 
+          icon={faShop} 
+          label="Marketplace"
+          handler={() => props.navigation.navigate('Marketplace Home')} />
         <DrawerItem 
           icon={faUser} 
           label="My Profile"
@@ -68,11 +83,17 @@ const NavOptions = (props) => {
 }
 
 export default function HomeScreenNavigator({navigation}): JSX.Element {
+  console.log(navigation)
   return (
     <Drawer.Navigator
       screenOptions={{headerRight: () => <NavOptions navigation={navigation} />}}
       drawerContent={props => <DrawerContent {...props} />}>
+      <Drawer.Screen 
+        component={LoginScreen} 
+        name="Login"
+        options={{headerShown: false}} />
       <Drawer.Screen component={HomeScreen} name="Home"/>
+      <Drawer.Screen component={CoursesHomeScreen} name="Courses Home"/>
       <Drawer.Screen component={PartnerScreen} name="Partner" />
       <Drawer.Screen component={BundleScreen} name="Bundle" />
       <Drawer.Screen component={ProductScreen} name="Product" />
@@ -80,6 +101,9 @@ export default function HomeScreenNavigator({navigation}): JSX.Element {
       <Drawer.Screen component={WishlistScreen} name="Wishlist" />
       <Drawer.Screen component={CartScreen} name="Cart" />
       <Drawer.Screen component={ProfileScreen} name="Profile" />
+      <Drawer.Screen component={CourseCategoryScreen} name="Course Category" />
+      <Drawer.Screen component={MarketplaceHome} name="Marketplace Home" />
+      <Drawer.Screen component={CourseScreen} name="Course" />
     </Drawer.Navigator>
   );
 }

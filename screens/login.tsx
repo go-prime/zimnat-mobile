@@ -18,9 +18,9 @@ const LoginCard = (props) => {
 }
 
 
-const login = (navigation) => {
+const login = (navigation, route) => {
   axios.post(`${constants.server_url}/api/method/login`, {"usr": "Administrator", "pwd": "admin"})
-      .then(res => navigation.navigate('App'))
+      .then(res => navigation.navigate(route || "Home"))
 }
 
 export default function LoginScreen({navigation}) {
@@ -31,19 +31,18 @@ export default function LoginScreen({navigation}) {
         <LoginCard 
           title="Edutec"
           message="Get the skills needed for your next hustle."
-          handler={() => login(navigation)}
+          handler={() => login(navigation, "Courses Home")}
           backgroundColor={colors.primary} />
         <LoginCard 
           title="Marketplace" 
           message="Shop with our hustlers." 
-          handler={() => login(navigation)}
+          handler={() => login(navigation, "Marketplace Home")}
           backgroundColor={colors.secondary} />
         <LoginCard 
           title="Partners" 
           message="Equip your next hustle with our partners." 
           handler={() => login(navigation)}
           backgroundColor={colors.tertiary} />
-        
       </View>
     </ImageBackground>
   );

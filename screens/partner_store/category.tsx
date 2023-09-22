@@ -43,9 +43,7 @@ export default function CategoryScreen(props) {
       <View style={styles.card}>
         <Centered styles={{margin: 16}}>
           <ImageIcon width={75} height={75} url={data && `${constants.server_url}/${data.image}`} />
-          
         </Centered>
-        
         <Text style={styles.title}>{props.route.params.category}</Text>
         <Text style={styles.description}>
           {(data && data.description) || 'Loading description...'}

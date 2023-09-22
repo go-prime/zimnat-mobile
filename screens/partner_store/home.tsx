@@ -24,14 +24,12 @@ import SearchBar from '../../components/search';
 import ImageIcon from '../../components/image';
 import Loading from '../../components/loading';
 
-
 const variable = 0;
 
 export default function HomeScreen({navigation}): JSX.Element {
   const width = Dimensions.get('window').width;
   const [search, setSearch] = React.useState('');
-  const [data, setData] = React.useState({});
-
+  const [data, setData] = React.useState();
 
   React.useEffect(() => {
     axios
@@ -47,8 +45,8 @@ export default function HomeScreen({navigation}): JSX.Element {
       });
   }, []);
 
-  if(!data) {
-    return <Loading />
+  if (!data) {
+    return <Loading />;
   }
 
   return (
@@ -66,12 +64,12 @@ export default function HomeScreen({navigation}): JSX.Element {
             const item = data.carousel[index];
             return (
               <View style={styles.carouselItemContainer}>
-                <ImageIcon 
-                  url={`${constants.server_url}/${item.image}`} 
+                <ImageIcon
+                  url={`${constants.server_url}/${item.image}`}
                   width={100}
                   height={100}
                 />
-                <Text  style={{flex: 1, textAlign: 'center', fontSize: 20}}>
+                <Text style={{flex: 1, textAlign: 'center', fontSize: 20}}>
                   {item.title}
                 </Text>
               </View>
@@ -81,36 +79,37 @@ export default function HomeScreen({navigation}): JSX.Element {
       </View>
       <Text style={styles.heading}>Category</Text>
       <ScrollView horizontal={true}>
-        {data.categories &&
-          data.categories.map(cat => (
-            <RoundButton 
-              key={cat.name} 
-              title={cat.name} 
-              url={cat.image}
-              handler={() => navigation.navigate("Category", {category: cat.name})} />
-          ))}
+        {data.categories.map(cat => (
+          <RoundButton
+            key={cat.name}
+            title={cat.name}
+            url={`${constants.server_url}${cat.image}`}
+            handler={() =>
+              navigation.navigate('Category', {category: cat.name})
+            }
+          />
+        ))}
       </ScrollView>
       <Text style={styles.heading}>Featured Bundles</Text>
       <ScrollView horizontal={true}>
-        {data.bundles &&
-          data.bundles.map(b => (
+        {data.bundles.map(b => (
             <RoundedSquareButton
               key={b.name}
               title={b.name}
               url={`${constants.server_url}${b.image}`}
-              handler={() => navigation.navigate("Bundle", {bundle: b.name})}
+              handler={() => navigation.navigate('Bundle', {bundle: b.name})}
             />
           ))}
       </ScrollView>
       <Text style={styles.heading}>Featured Vendors</Text>
       <ScrollView horizontal={true}>
-        {data.partners &&
-          data.partners.map(p => (
-            <RoundedSquareButton 
-              key={p.name} 
-              title={p.name} 
-              url={`${constants.server_url}${p.image}`} 
-              handler={() => navigation.navigate("Partner", {partner: p.name})} />
+        {data.partners.map(p => (
+            <RoundedSquareButton
+              key={p.name}
+              title={p.name}
+              url={`${constants.server_url}${p.image}`}
+              handler={() => navigation.navigate('Partner', {partner: p.name})}
+            />
           ))}
       </ScrollView>
     </ScrollView>
@@ -124,7 +123,7 @@ const styles = StyleSheet.create({
     elevation: 5,
     padding: 12,
     borderRadius: 24,
-    height: 200
+    height: 200,
   },
   carouselItemContainer: {
     flex: 1,

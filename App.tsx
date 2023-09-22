@@ -12,26 +12,12 @@ import React from 'react';
 import {
   StyleSheet,
 } from 'react-native';
-import LoginScreen from './screens/login';
 import HomeScreenNavigator from './screens/navigator'; 
 
 
-const Stack = createNativeStackNavigator();
-
 function App(): JSX.Element {
     return (<NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen
-            name="Login"
-            component={LoginScreen}
-            options={{title: 'Login'}}
-          />
-        <Stack.Screen
-            name="App"
-            component={HomeScreenNavigator}
-            options={{title: 'Hustle Hub', headerShown: false}}
-          />
-      </Stack.Navigator>
+        <HomeScreenNavigator />
   </NavigationContainer>
   );
 }

@@ -29,28 +29,16 @@ const SquareProductButton = function (props) {
           )}
           {props.price && (
             <View style={styles.price}>
-              <Text>{props.price}</Text>
+              <Text style={styles.text}>{props.price}</Text>
             </View>
           )}
         </View>
-        {props.name && <Text style={styles.text}>{props.name}</Text>}
+        {props.name && (
+          <View style={styles.productName}>
+            <Text style={styles.text}>{props.name}</Text>
+          </View>
+        )}
       </Pressable>
-      {props.actions && (
-        <Actions product_name={props.name} product_id={props.product_id} />
-      )}
-    </View>
-  );
-};
-
-const Actions = props => {
-  return (
-    <View style={styles.row}>
-      <WishListButton
-        size={20}
-        product_id={props.product_id}
-        product_name={props.product_name}
-      />
-      <AddToCartButton size={20} />
     </View>
   );
 };
@@ -80,8 +68,8 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   square: {
-    width: 76,
-    height: 76,
+    width: 100,
+    height: 150,
     borderRadius: 12.5,
     backgroundColor: 'white',
     ...shadow,
@@ -95,7 +83,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'black',
     textAlign: 'center',
-    width: 100,
   },
   price: {
     zIndex: 100,
@@ -103,8 +90,12 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     padding: 4,
-    opacity: 0.75,
+    fontWeight: 'bold',
   },
+  productName: {
+    width: 100,
+    marginLeft: 12
+  }
 });
 
 export {SquareProductButton};

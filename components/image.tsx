@@ -6,6 +6,7 @@ import colors from '../styles/colors';
 
 
 export default function ImageIcon(props) {
+  console.log(props.url)
   return (
     <View style={props.styles}>
       {props.url ? (

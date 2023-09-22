@@ -21,7 +21,9 @@ const RoundButton = function (props) {
           <FontAwesomeIcon icon={faImage} size={30} color={colors.primary} />
         )}
       </View>
-      {props.title && <Text style={styles.text}>{props.title}</Text>}
+      {props.title && (
+        <Text style={[styles.text, styles.label]}>{props.title}</Text>
+      )}
     </Pressable>
   );
 };
@@ -36,7 +38,29 @@ const RoundedSquareButton = function (props) {
           <FontAwesomeIcon icon={faImage} size={30} color={colors.primary} />
         )}
       </View>
-      {props.title && <Text style={styles.text}>{props.title}</Text>}
+      {props.title && (
+        <Text style={[styles.text, styles.label]}>{props.title}</Text>
+      )}
+    </Pressable>
+  );
+};
+
+const RoundedRectButton = function (props) {
+  return (
+    <Pressable onPress={props.handler}>
+      <View style={styles.rectangle}>
+        {props.url ? (
+          <Image source={{uri: props.url, width: 100, height: 100}} />
+        ) : (
+          <FontAwesomeIcon icon={faImage} size={30} color={colors.primary} />
+        )}
+      </View>
+      {props.title && (
+        <Text style={[styles.text, styles.wide_label]}>{props.title}</Text>
+      )}
+      {props.subtitle && (
+        <Text style={[styles.subtitle, styles.wide_label]}>{props.subtitle}</Text>
+      )}
     </Pressable>
   );
 };
@@ -54,7 +78,7 @@ type CartButtonProps = {
   qty: number;
   label: boolean;
   styles: object;
-}
+};
 
 const WishListButton = function (props: WishListButtonProps) {
   const defaultHandler = () => {
@@ -106,7 +130,7 @@ const AddToCartButton = function (props: CartButtonProps) {
         `${constants.server_url}/api/method/billing_engine.billing_engine.api.add_to_cart`,
         {
           product_id: props.product_id,
-          qty: props.qty
+          qty: props.qty,
         },
       )
       .then(res => {
@@ -157,6 +181,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     margin: 12,
   },
+  rectangle: {
+    width: 100,
+    overflow: 'hidden',
+    height: 150,
+    borderRadius: 12.5,
+    backgroundColor: 'white',
+    ...shadow,
+    elevation: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 12,
+  },
   wishlist: {
     justifyContent: 'center',
     alignItems: 'center',
@@ -178,11 +214,33 @@ const styles = StyleSheet.create({
     borderWidth: 2,
   },
   text: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
     color: 'black',
     textAlign: 'center',
   },
+  subtitle: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#777',
+    textAlign: 'center',
+  },
+  label: {
+    width: 75,
+    textAlign: 'center',
+    marginLeft: 12,
+  },
+  wide_label: {
+    width: 100,
+    textAlign: 'center',
+    marginLeft: 12,
+  },
 });
 
-export {RoundButton, RoundedSquareButton, WishListButton, AddToCartButton};
+export {
+  RoundButton,
+  RoundedSquareButton,
+  RoundedRectButton,
+  WishListButton,
+  AddToCartButton,
+};
