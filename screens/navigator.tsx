@@ -80,7 +80,6 @@ export default function HomeScreenNavigator({navigation}): JSX.Element {
       <Drawer.Screen component={WishlistScreen} name="Wishlist" />
       <Drawer.Screen component={CartScreen} name="Cart" />
       <Drawer.Screen component={ProfileScreen} name="Profile" />
-      
     </Drawer.Navigator>
   );
 }

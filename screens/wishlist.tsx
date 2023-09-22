@@ -19,7 +19,7 @@ import { AddToCartButton, WishListButton } from '../components/partner_store/but
 import Centered from '../components/layout';
 import { parse } from 'react-native-svg';
 import { useNavigation } from '@react-navigation/native';
-
+import Loading from '../components/loading';
 
 const WishlistItem = props => {
   navigator = useNavigation();
@@ -65,6 +65,10 @@ export default function WishlistScreen(props) {
         console.log(err.response.data);
       });
   }, []);
+
+  if(!items) {
+    return <Loading />
+  }
 
   return (
     <ScrollView>
