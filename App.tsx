@@ -6,19 +6,32 @@
  */
 
 import 'react-native-gesture-handler';
-import {NavigationContainer} from '@react-navigation/native';
+import {
+  DefaultTheme,
+  DarkTheme,
+  NavigationContainer,
+} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
-import {
-  StyleSheet,
-} from 'react-native';
-import HomeScreenNavigator from './screens/navigator'; 
+import {StyleSheet} from 'react-native';
+import HomeScreenNavigator from './screens/navigator';
+import {Appearance} from 'react-native';
+
+
+const LightTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    background: "#DFF6FF",
+  }
+}
 
 
 function App(): JSX.Element {
-    return (<NavigationContainer>
-        <HomeScreenNavigator />
-  </NavigationContainer>
+  return (
+    <NavigationContainer theme={Appearance.getColorScheme() === 'dark' ? DarkTheme : LightTheme}>
+      <HomeScreenNavigator />
+    </NavigationContainer>
   );
 }
 

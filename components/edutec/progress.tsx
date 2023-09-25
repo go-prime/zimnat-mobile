@@ -16,8 +16,8 @@ const styles = StyleSheet.create({
     height: 5,
     width: '100%',
     borderRadius: 2.5,
-    marginLeft: 5,
-    marginRight: 5
+    marginLeft: 10,
+    marginRight: 10
   },
   bar: {
     backgroundColor: colors.primary,

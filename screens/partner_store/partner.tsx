@@ -31,7 +31,6 @@ export default function PartnerScreen(props) {
         {params: {partner_id: props.route.params.partner}},
       )
       .then(res => {
-        console.log(res.data.message);
         setData(res.data.message);
       })
       .catch(err => {
@@ -94,7 +93,7 @@ export default function PartnerScreen(props) {
               key={c.name}
               title={c.name}
               url={`${constants.server_url}${c.cover_image}`}
-              handler={() => navigation.navigate('Partner', {partner: c.name})}
+              handler={() => navigation.navigate('Course', {course_id: c.name})}
             />
           );
         })}

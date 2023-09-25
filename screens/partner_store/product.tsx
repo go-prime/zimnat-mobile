@@ -110,7 +110,13 @@ export default function ProductScreen(props) {
             label={true} 
             styles={{padding:12, width: width * 0.6}}/>
         </View>
-        
+        <View>
+          <Text style={styles.heading}>Related Products</Text>
+
+        </View>
+        <View>
+          <Text style={styles.heading}>Courses</Text>
+        </View>
         
       </View>
     </ScrollView>

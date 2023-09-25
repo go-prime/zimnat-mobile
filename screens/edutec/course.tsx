@@ -13,7 +13,7 @@ import {shadow} from '../../styles/inputs';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import axios from 'axios';
 import constants from '../../constants';
-import {faImage, faVideo, faFileAlt} from '@fortawesome/free-solid-svg-icons';
+import {faImage, faVideo, faFileAlt, faPlay} from '@fortawesome/free-solid-svg-icons';
 import Centered, {Row} from '../../components/layout';
 import SearchBar from '../../components/search';
 import {RoundedRectButton} from '../../components/partner_store/buttons';
@@ -21,30 +21,8 @@ import ImageIcon from '../../components/image';
 import Loading from '../../components/loading';
 import Rating from '../../components/rating';
 import ProgressBar from '../../components/edutec/progress';
+import CourseItem from '../../components/edutec/course';
 
-const CourseItem = props => {
-  return (
-    <Pressable onPress={props.handler}>
-      <Row styles={styles.courseItemContainer}>
-        <View>
-          <Text style={styles.number}>{props.index}</Text>
-        </View>
-        <View style={{flex: 1, paddingTop: 10}}>
-          <Text style={styles.cardSubTitle}>5:24</Text>
-          <Text style={styles.cardTitle}>{props.title}</Text>
-        </View>
-        <Centered styles={{paddingRight: 24}}>
-          <FontAwesomeIcon
-            color={colors.primary}
-            size={48}
-            icon={props.video ? faVideo : faFileAlt}
-          />
-        </Centered>
-      </Row>
-      <ProgressBar progress={Math.random() * 100} />
-    </Pressable>
-  );
-};
 
 export default function CourseScreen(props) {
   const [data, setData] = React.useState(null);
@@ -88,6 +66,12 @@ export default function CourseScreen(props) {
               {...item}
               index={index + 1}
               video={item.type == 'Video'}
+              handler={() => {
+                if(item.type == "Video") {
+                  return props.navigation.navigate('Video', {video_id: item.id})
+                }
+                return props.navigation.navigate('Article', {article_id: item.id})
+              }}
             />
           ))}
         </ScrollView>
@@ -135,28 +119,11 @@ const styles = StyleSheet.create({
   },
   number: {
     color: '#ccc',
-    fontSize: 48,
+    fontSize: 36,
     textAlign: 'center',
     paddingLeft: 18,
     paddingRight: 18,
     fontWeight: 'bold',
   },
-  courseItemContainer: {
-    paddingLeft: 12,
-    paddingRight: 12,
-    paddingBottom: 6,
-    borderBottomWidth: 1,
-    borderTopWidth: 1,
-    borderColor: '#f5f5f5',
-  },
-  cardTitle: {
-    fontSize: 20,
-    color: 'black',
-    fontWeight: 'bold',
-  },
-  cardSubTitle: {
-    fontSize: 16,
-    color: '#999',
-    fontWeight: 'bold',
-  },
+ 
 });

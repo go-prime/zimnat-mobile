@@ -23,6 +23,8 @@ import LoginScreen from './login';
 import CourseCategoryScreen from './edutec/courses';
 import MarketplaceHome from './marketplace/home';
 import CourseScreen from './edutec/course';
+import VideoPlayer from './edutec/video';
+import ArticleViewer from './edutec/article';
 
 
 
@@ -86,7 +88,13 @@ export default function HomeScreenNavigator({navigation}): JSX.Element {
   console.log(navigation)
   return (
     <Drawer.Navigator
-      screenOptions={{headerRight: () => <NavOptions navigation={navigation} />}}
+      screenOptions={{
+        headerRight: () => <NavOptions navigation={navigation} />,
+        headerStyle: {
+          backgroundColor: "transparent"
+        },
+        headerShadowVisible: false
+      }}
       drawerContent={props => <DrawerContent {...props} />}>
       <Drawer.Screen 
         component={LoginScreen} 
@@ -104,6 +112,8 @@ export default function HomeScreenNavigator({navigation}): JSX.Element {
       <Drawer.Screen component={CourseCategoryScreen} name="Course Category" />
       <Drawer.Screen component={MarketplaceHome} name="Marketplace Home" />
       <Drawer.Screen component={CourseScreen} name="Course" />
+      <Drawer.Screen component={VideoPlayer} name="Video" />
+      <Drawer.Screen component={ArticleViewer} name="Article" />
     </Drawer.Navigator>
   );
 }
