@@ -1,7 +1,7 @@
 import React from 'react';
 import {Text, Pressable, View, StyleSheet, Image, Alert} from 'react-native';
 import colors from '../../styles/colors';
-import {shadow} from '../../styles/inputs';
+import {card, shadow, text} from '../../styles/inputs';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {
   faImage,
@@ -149,7 +149,7 @@ const AddToCartButton = function (props: CartButtonProps) {
           color={'white'}
         />
         {props.label && (
-          <Text style={{color: 'white', fontSize: 16, marginLeft: 4}}>
+          <Text style={{...text, fontSize: 16, marginLeft: 4}}>
             Add To Cart
           </Text>
         )}
@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
     width: 75,
     height: 75,
     borderRadius: 37.5,
-    backgroundColor: 'white',
+    ...card,
     ...shadow,
     elevation: 5,
     justifyContent: 'center',
@@ -174,7 +174,6 @@ const styles = StyleSheet.create({
     width: 75,
     height: 75,
     borderRadius: 12.5,
-    backgroundColor: 'white',
     ...shadow,
     elevation: 5,
     justifyContent: 'center',
@@ -186,7 +185,6 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     height: 150,
     borderRadius: 12.5,
-    backgroundColor: 'white',
     ...shadow,
     elevation: 5,
     justifyContent: 'center',
@@ -197,7 +195,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderColor: 'crimson',
-    backgroundColor: 'white',
+    ...card,
     borderWidth: 2,
     padding: 4,
     borderRadius: 4,
@@ -216,7 +214,7 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: 'black',
+    ...text,
     textAlign: 'center',
   },
   subtitle: {

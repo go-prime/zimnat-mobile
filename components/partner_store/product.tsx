@@ -1,7 +1,7 @@
 import React from 'react';
 import {Text, Pressable, View, StyleSheet, Image} from 'react-native';
 import colors from '../../styles/colors';
-import {shadow} from '../../styles/inputs';
+import {card, shadow, text} from '../../styles/inputs';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {
   faImage,
@@ -71,7 +71,6 @@ const styles = StyleSheet.create({
     width: 100,
     height: 150,
     borderRadius: 12.5,
-    backgroundColor: 'white',
     ...shadow,
     elevation: 5,
     justifyContent: 'center',
@@ -81,12 +80,12 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: 'black',
+    ...text,
     textAlign: 'center',
   },
   price: {
     zIndex: 100,
-    backgroundColor: 'white',
+    ...card,
     position: 'absolute',
     bottom: 0,
     padding: 4,

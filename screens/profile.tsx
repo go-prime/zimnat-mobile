@@ -9,7 +9,7 @@ import {
   ScrollView,
   TextInput,
 } from 'react-native';
-import {shadow} from '../styles/inputs';
+import {card, shadow, text} from '../styles/inputs';
 import axios from 'axios';
 import constants from '../constants';
 import {Image} from 'react-native-svg';
@@ -86,22 +86,22 @@ const styles = StyleSheet.create({
     tierText: {
         fontSize: 16,
         fontWeight: "bold",
-        color: "white",
+        ...text,
     },
   inputContainer: {
     padding: 4,
-    backgroundColor: "white",
+    ...card,
     margin: 8,
     borderRadius: 8,
   },
   input: {
-    color: "black",
+    ...text,
     fontSize: 18,
     textAlignVertical: "top"
   },
   round: {
     margin: 24,
-    backgroundColor: 'white',
+    ...card,
     justifyContent: 'center',
     alignItems: 'center',
     height: 150,
@@ -114,24 +114,22 @@ const styles = StyleSheet.create({
     ...shadow,
     elevation: 5,
     margin: 12,
-    backgroundColor: 'white',
     padding: 12,
   },
   title: {
     fontSize: 24,
-    color: 'white',
     padding: 8,
-    color: 'black',
+    ...text,
     fontWeight: 'bold',
   },
   heading: {
     fontSize: 18,
     padding: 8,
-    color: 'black',
+    ...text,
     fontWeight: 'bold',
   },
   tagLine: {
     fontSize: 18,
-    color: 'white',
+    ...text
   },
 });

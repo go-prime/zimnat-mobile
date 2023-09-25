@@ -13,7 +13,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faVideo, faFileAlt, faPlay} from '@fortawesome/free-solid-svg-icons';
 import Centered, {Row} from '../../components/layout';
 import ProgressBar from '../../components/edutec/progress';
-import { shadow } from '../../styles/inputs';
+import { shadow, text } from '../../styles/inputs';
 
 export default function CourseItem(props) {
   return (
@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
   },
   cardTitle: {
     fontSize: 20,
-    color: 'black',
+    ...text,
     fontWeight: 'bold',
   },
   cardSubTitle: {

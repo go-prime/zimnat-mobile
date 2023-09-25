@@ -13,7 +13,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 
 import Carousel from 'react-native-reanimated-carousel';
 import {faSearch, faUser, faImage} from '@fortawesome/free-solid-svg-icons';
-import {shadow} from '../../styles/inputs';
+import {card, shadow, text} from '../../styles/inputs';
 import axios from 'axios';
 import constants from '../../constants';
 import {
@@ -118,7 +118,7 @@ export default function HomeScreen({navigation}): JSX.Element {
 
 const styles = StyleSheet.create({
   carouselContainer: {
-    backgroundColor: 'white',
+    ...card,
     ...shadow,
     elevation: 5,
     padding: 12,
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingLeft: 12,
-    backgroundColor: 'white',
+    ...card,
     ...shadow,
     elevation: 5,
   },
@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
   heading: {
     fontWeight: 'bold',
     fontSize: 20,
-    color: 'black',
+    ...text,
     margin: 12,
   },
 });

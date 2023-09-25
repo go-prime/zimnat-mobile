@@ -10,7 +10,7 @@ import {
   Dimensions,
 } from 'react-native';
 import colors from '../styles/colors';
-import {shadow} from '../styles/inputs';
+import {shadow, text} from '../styles/inputs';
 import axios from 'axios';
 
 import constants from '../constants';
@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    color: 'black',
+    ...text,
     fontWeight: 'bold',
     paddingBottom: 0,
   },
@@ -162,12 +162,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   description: {
-    color: 'black',
+    ...text,
     padding: 12,
   },
   card: {
     ...shadow,
-    backgroundColor: 'white',
     margin: 12,
     elevation: 5,
     borderRadius: 12,
@@ -183,7 +182,7 @@ const styles = StyleSheet.create({
   qty: {
     fontSize: 18,
     padding: 6,
-    color: 'black',
+    ...text,
     fontWeight: 'bold',
   },
   checkoutButton: {

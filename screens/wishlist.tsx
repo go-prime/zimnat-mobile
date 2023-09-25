@@ -108,7 +108,6 @@ const styles = StyleSheet.create({
   },
   card: {
     ...shadow,
-    backgroundColor: 'white',
     margin: 12,
     elevation: 5,
     borderRadius: 12,

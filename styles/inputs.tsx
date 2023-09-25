@@ -1,4 +1,10 @@
+import { Appearance } from "react-native";
+const card = {
+  backgroundColor: Appearance.getColorScheme() === 'dark' ? '#282C34' : 'white',
+}
+
 const shadow = {
+    ...card,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -10,7 +16,6 @@ const shadow = {
 
 const inputContainer = {
   ...shadow,
-  backgroundColor: 'white',
   padding: 6,
   paddingLeft: 12,
   paddingRight: 12,
@@ -31,11 +36,15 @@ const inputText = {
 const label = {
   fontSize: 18,
   fontWeight: 'bold',
-  color: 'black',
+  ...text,
   marginBottom: 8,
 };
 
+const text = {
+  color: Appearance.getColorScheme() === 'dark' ? 'white' : 'black',
+}
 
 
 
-export {label, inputContainer, inputText, shadow };
+
+export {label, inputContainer, inputText, shadow, card, text};

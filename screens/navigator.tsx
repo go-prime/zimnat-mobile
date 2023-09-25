@@ -6,8 +6,8 @@ import {
   DrawerContentScrollView
 } from '@react-navigation/drawer';
 
-import { faUser, faHouse, faHeart, faShoppingCart, faUserGraduate, faShop, faHandshake } from '@fortawesome/free-solid-svg-icons';
-import { shadow } from '../styles/inputs';
+import { faUser, faHouse, faHeart, faShoppingCart, faUserGraduate, faShop, faHandshake, faDoorOpen } from '@fortawesome/free-solid-svg-icons';
+import { shadow, text } from '../styles/inputs';
 import HomeScreen from './partner_store/home';
 import PartnerScreen from './partner_store/partner';
 import BundleScreen from './partner_store/bundle';
@@ -25,6 +25,7 @@ import MarketplaceHome from './marketplace/home';
 import CourseScreen from './edutec/course';
 import VideoPlayer from './edutec/video';
 import ArticleViewer from './edutec/article';
+import { useNavigation } from '@react-navigation/native';
 
 
 
@@ -74,25 +75,32 @@ function DrawerContent(props): JSX.Element {
 }
 
 const NavOptions = (props) => {
+  const navigation = useNavigation()
+
   return (
     <View style={{flexDirection: 'row', alignItems: 'flex-end'}}>
-      <Pressable onPress={() => props.navigation.navigate('Login')} >
+      <Pressable onPress={() => navigation.navigate('Profile')} >
         <FontAwesomeIcon icon={faUser} size={28} color={colors.primary} style={{marginRight: 16}} />
       </Pressable>
-      
+      <Pressable onPress={() => navigation.navigate('Login')} >
+        <FontAwesomeIcon icon={faDoorOpen} size={28} color={colors.primary} style={{marginRight: 16}} />
+      </Pressable>
     </View>
   )
 }
 
 export default function HomeScreenNavigator({navigation}): JSX.Element {
-  console.log(navigation)
   return (
     <Drawer.Navigator
       screenOptions={{
-        headerRight: () => <NavOptions navigation={navigation} />,
+        headerRight: () => <NavOptions />,
         headerStyle: {
           backgroundColor: "transparent"
         },
+        headerTitleStyle: {
+          ...text
+        },
+        headerTintColor: "white",
         headerShadowVisible: false
       }}
       drawerContent={props => <DrawerContent {...props} />}>
@@ -127,7 +135,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
   status: {
-    color: "black",
+    ...text,
     fontWeight: 'bold',
     paddingLeft: 18,
     fontSize: 18,

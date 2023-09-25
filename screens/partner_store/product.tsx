@@ -2,7 +2,7 @@ import React from 'react';
 
 import {View, Text, Pressable, StyleSheet, Image, ScrollView, Dimensions} from 'react-native';
 import colors from '../../styles/colors';
-import {shadow} from '../../styles/inputs';
+import {shadow, text} from '../../styles/inputs';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import axios from 'axios';
 import Rating from '../../components/rating';
@@ -135,13 +135,13 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     padding: 12,
-    color: 'black',
+    ...text,
     fontWeight: 'bold',
   },
   heading: {
     fontSize: 18,
     padding: 8,
-    color: 'black',
+    ...text,
     fontWeight: 'bold',
   },
   mutedHeading: {
@@ -151,12 +151,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   description: {
-    color: 'black',
+    ...text,
     padding: 12,
   },
   card: {
     ...shadow,
-    backgroundColor: 'white',
     margin: 12,
     elevation: 5,
     borderRadius: 12,

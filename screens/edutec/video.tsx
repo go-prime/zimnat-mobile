@@ -18,6 +18,7 @@ import CourseItem from '../../components/edutec/course';
 import {faEllipsis, faTimes} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {Picker} from '@react-native-picker/picker';
+import { card, text } from '../../styles/inputs';
 
 const OptionsModal = props => {
   return (
@@ -177,7 +178,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: 'black',
+    ...text,
   },
   subTitle: {
     fontSize: 18,
@@ -189,12 +190,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   card: {
-    backgroundColor: 'white',
+    ...card,
     flex: 2,
     padding: 8,
   },
   modal: {
-    backgroundColor: 'white',
+    ...card,
     flex: 2,
     padding: 12,
     margin: 24,

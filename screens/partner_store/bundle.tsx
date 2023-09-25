@@ -10,7 +10,7 @@ import {
   Dimensions,
 } from 'react-native';
 import colors from '../../styles/colors';
-import {shadow} from '../../styles/inputs';
+import {shadow, text} from '../../styles/inputs';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import axios from 'axios';
 import {
@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     padding: 12,
-    color: 'black',
+    ...text,
     fontWeight: 'bold',
     paddingBottom: 0,
   },
@@ -132,13 +132,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   description: {
-    color: 'black',
+    ...text,
     paddingLeft: 12,
     paddingBottom: 12,
   },
   card: {
     ...shadow,
-    backgroundColor: 'white',
     margin: 12,
     elevation: 5,
     borderRadius: 12,

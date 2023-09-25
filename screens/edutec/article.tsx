@@ -7,7 +7,7 @@ import { Row } from '../../components/layout';
 import ImageIcon from '../../components/image';
 import CourseItem from '../../components/edutec/course';
 import RenderHtml from 'react-native-render-html';
-import { shadow } from '../../styles/inputs';
+import { shadow, text } from '../../styles/inputs';
 
 
 export default function ArticleViewer(props) {
@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 24,
         fontWeight: 'bold',
-        color: "black"
+        ...text
     },
     subTitle: {
         fontSize: 18,
@@ -59,7 +59,6 @@ const styles = StyleSheet.create({
     }, 
     card: {
         ...shadow,
-    backgroundColor: 'white',
     margin: 12,
     elevation: 5,
     borderRadius: 12,

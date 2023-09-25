@@ -12,7 +12,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import Carousel from 'react-native-reanimated-carousel';
 import {faSearch, faUser, faImage} from '@fortawesome/free-solid-svg-icons';
-import {shadow} from '../../styles/inputs';
+import {shadow, text} from '../../styles/inputs';
 import axios from 'axios';
 import {Alert} from 'react-native';
 import constants from '../../constants';
@@ -117,7 +117,6 @@ export default function CoursesHomeScreen({navigation}): JSX.Element {
 
 const styles = StyleSheet.create({
   carouselContainer: {
-    backgroundColor: 'white',
     ...shadow,
     elevation: 5,
     borderRadius: 12,
@@ -139,7 +138,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingLeft: 12,
-    backgroundColor: 'white',
     ...shadow,
     elevation: 5,
   },
@@ -149,7 +147,7 @@ const styles = StyleSheet.create({
   heading: {
     fontWeight: 'bold',
     fontSize: 18,
-    color: 'black',
+    ...text,
     margin: 12,
   
   },

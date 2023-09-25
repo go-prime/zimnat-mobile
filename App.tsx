@@ -26,10 +26,13 @@ const LightTheme = {
   }
 }
 
+const NightTheme = {
+  ...DarkTheme
+}
 
 function App(): JSX.Element {
   return (
-    <NavigationContainer theme={Appearance.getColorScheme() === 'dark' ? DarkTheme : LightTheme}>
+    <NavigationContainer theme={Appearance.getColorScheme() === 'dark' ? NightTheme : LightTheme}>
       <HomeScreenNavigator />
     </NavigationContainer>
   );
