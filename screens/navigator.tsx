@@ -15,8 +15,8 @@ import ProductScreen from './partner_store/product';
 import CategoryScreen from './partner_store/category';
 import { StyleSheet, Pressable, Text, View } from 'react-native';
 import colors from '../styles/colors';
-import WishlistScreen from './wishlist';
-import CartScreen from './cart';
+import WishlistScreen from './billing/wishlist';
+import CartScreen from './billing/cart';
 import ProfileScreen from './profile';
 import CoursesHomeScreen from './edutec/home';
 import LoginScreen from './login';
@@ -26,6 +26,7 @@ import CourseScreen from './edutec/course';
 import VideoPlayer from './edutec/video';
 import ArticleViewer from './edutec/article';
 import { useNavigation } from '@react-navigation/native';
+import Subscriptions from './edutec/my_courses';
 
 
 
@@ -46,6 +47,10 @@ function DrawerContent(props): JSX.Element {
   return (
     <DrawerContentScrollView {...props}>
       <DrawerItem 
+          icon={faShop} 
+          label="Marketplace"
+          handler={() => props.navigation.navigate('Marketplace Home')} />
+      <DrawerItem 
           icon={faHandshake} 
           label="Partner Store"
           handler={() => props.navigation.navigate('Home')} />
@@ -54,10 +59,7 @@ function DrawerContent(props): JSX.Element {
           icon={faUserGraduate} 
           label="Edutec"
           handler={() => props.navigation.navigate('Courses Home')} />
-          <DrawerItem 
-          icon={faShop} 
-          label="Marketplace"
-          handler={() => props.navigation.navigate('Marketplace Home')} />
+      
         <DrawerItem 
           icon={faUser} 
           label="My Profile"
@@ -92,6 +94,7 @@ const NavOptions = (props) => {
 export default function HomeScreenNavigator({navigation}): JSX.Element {
   return (
     <Drawer.Navigator
+      backBehavior='history'
       screenOptions={{
         headerRight: () => <NavOptions />,
         headerStyle: {
@@ -100,7 +103,7 @@ export default function HomeScreenNavigator({navigation}): JSX.Element {
         headerTitleStyle: {
           ...text
         },
-        headerTintColor: "white",
+        headerTintColor: colors.primary,
         headerShadowVisible: false
       }}
       drawerContent={props => <DrawerContent {...props} />}>
@@ -122,6 +125,7 @@ export default function HomeScreenNavigator({navigation}): JSX.Element {
       <Drawer.Screen component={CourseScreen} name="Course" />
       <Drawer.Screen component={VideoPlayer} name="Video" />
       <Drawer.Screen component={ArticleViewer} name="Article" />
+      <Drawer.Screen component={Subscriptions} name="Subscriptions" />
     </Drawer.Navigator>
   );
 }

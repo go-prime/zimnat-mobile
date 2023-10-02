@@ -1,4 +1,5 @@
 import { Appearance } from "react-native";
+
 const card = {
   backgroundColor: Appearance.getColorScheme() === 'dark' ? '#282C34' : 'white',
 }

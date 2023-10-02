@@ -1,6 +1,14 @@
 import React from 'react';
 
-import {View, Text, Pressable, StyleSheet, Image, ScrollView, Dimensions} from 'react-native';
+import {
+  View,
+  Text,
+  Pressable,
+  StyleSheet,
+  Image,
+  ScrollView,
+  Dimensions,
+} from 'react-native';
 import colors from '../../styles/colors';
 import {shadow, text} from '../../styles/inputs';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
@@ -15,15 +23,20 @@ import {
   faPlus,
   faMinus,
 } from '@fortawesome/free-solid-svg-icons';
-import { WishListButton, AddToCartButton } from '../../components/partner_store/buttons';
+import {
+  WishListButton,
+  AddToCartButton,
+} from '../../components/partner_store/buttons';
 import Loading from '../../components/loading';
-
+import {RoundedRectButton} from '../../components/partner_store/buttons';
+import {SquareProductButton} from '../../components/partner_store/product';
+import {SquareBundleButton} from '../../components/partner_store/bundle';
 
 export default function ProductScreen(props) {
   const [data, setData] = React.useState(null);
   const [img, setImg] = React.useState(null);
   const [qty, setQty] = React.useState(1);
-  const width = Dimensions.get("screen").width;
+  const width = Dimensions.get('screen').width;
 
   React.useEffect(() => {
     axios
@@ -43,8 +56,8 @@ export default function ProductScreen(props) {
       });
   }, [props.route.params.product]);
 
-  if(!data) {
-    return (<Loading />)
+  if (!data) {
+    return <Loading />;
   }
   return (
     <ScrollView>
@@ -55,23 +68,28 @@ export default function ProductScreen(props) {
       </View>
       <Row styles={{justifyContent: 'center'}}>
         {data.images.map(img => (
-            <Pressable
-              key={img.name}
-              onPress={() => setImg(`${constants.server_url}/${img.url}`)}>
-              <ImageIcon
-                width={40}
-                height={40}
-                url={`${constants.server_url}/${img.url}`}
-                styles={styles.card}
-              />
-            </Pressable>
-          ))}
+          <Pressable
+            key={img.name}
+            onPress={() => setImg(`${constants.server_url}/${img.url}`)}>
+            <ImageIcon
+              width={40}
+              height={40}
+              url={`${constants.server_url}/${img.url}`}
+              styles={styles.card}
+            />
+          </Pressable>
+        ))}
       </Row>
 
       <View style={styles.card}>
         <Text style={styles.title}>{data.name}</Text>
         <Text style={styles.mutedHeading}>{data.partner}</Text>
-        <Rating value={3} size={24} />
+        <Rating
+          item_type="Product"
+          item_name={props.route.params.product}
+          value={data.average_rating}
+          size={20}
+        />
         <Text style={styles.description}>{data.description}</Text>
       </View>
 
@@ -80,44 +98,83 @@ export default function ProductScreen(props) {
           <Text style={styles.heading}>
             {`${data.currency} ${parseFloat(data.price).toFixed(2)}`}
           </Text>
-          <WishListButton 
+          <WishListButton
             label={true}
             product_id={data.billable_id}
             product_name={data.name}
-            styles={{padding:12, width: width * 0.6}}
-             />
+            styles={{padding: 12, width: width * 0.6}}
+          />
         </View>
         <View style={[styles.row, {gap: 4}]}>
           <View style={styles.row}>
-            <Pressable  onPress={() => setQty(qty > 1 ? qty - 1: 0)}>
-                <View style={styles.button}>
+            <Pressable onPress={() => setQty(qty > 1 ? qty - 1 : 0)}>
+              <View style={styles.button}>
                 <FontAwesomeIcon icon={faMinus} size={24} color={'white'} />
-                </View>
+              </View>
             </Pressable>
-            <View >
+            <View>
               <Text style={styles.heading}>{qty}</Text>
             </View>
             <Pressable onPress={() => setQty(qty + 1)}>
-                <View  style={styles.button}>
+              <View style={styles.button}>
                 <FontAwesomeIcon icon={faPlus} size={24} color={'white'} />
-                </View>
+              </View>
             </Pressable>
           </View>
-          <AddToCartButton 
+          <AddToCartButton
             qty={qty}
             product_id={data.billable_id}
             product_name={data.name}
-            label={true} 
-            styles={{padding:12, width: width * 0.6}}/>
+            label={true}
+            styles={{padding: 12, width: width * 0.6}}
+          />
         </View>
         <View>
           <Text style={styles.heading}>Related Products</Text>
-
+          {data.related_products.map(pro => {
+            return (
+              <SquareProductButton
+                key={pro.name}
+                name={pro.product_name}
+                id={pro.name}
+                product_id={pro.billable_id}
+                price={'$5,00'}
+                actions={true}
+                url={`${constants.server_url}/${pro.cover_image}`}
+              />
+            );
+          })}
         </View>
         <View>
           <Text style={styles.heading}>Courses</Text>
+          {data.courses &&
+            data.courses.map(c => {
+              return (
+                <RoundedRectButton
+                  key={c.name}
+                  title={c.title}
+                  subtitle={c.publisher}
+                  handler={() => {
+                    props.navigation.navigate('Course', {course_id: c.name});
+                  }}
+                  url={`${constants.server_url}/${c.cover_image}`}
+                />
+              );
+            })}
         </View>
-        
+        <View>
+          <Text style={styles.heading}>Bundles</Text>
+          {data.bundles.map(bun => {
+            return (
+              <SquareBundleButton
+                key={bun.billable_id}
+                name={bun.bundle_name}
+                id={bun.name}
+                url={`${constants.server_url}${bun.cover_image}`}
+              />
+            );
+          })}
+        </View>
       </View>
     </ScrollView>
   );

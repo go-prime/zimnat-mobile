@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
     tierText: {
         fontSize: 16,
         fontWeight: "bold",
-        ...text,
+        color: "white",
     },
   inputContainer: {
     padding: 4,

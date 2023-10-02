@@ -24,6 +24,8 @@ import SearchBar from '../../components/search';
 import ImageIcon from '../../components/image';
 import Loading from '../../components/loading';
 
+import {Title} from '../../components/text'
+
 const variable = 0;
 
 export default function HomeScreen({navigation}): JSX.Element {

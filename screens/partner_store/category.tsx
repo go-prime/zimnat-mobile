@@ -52,8 +52,7 @@ export default function CategoryScreen(props) {
       <View>
         <Text style={styles.heading}>Products</Text>
         <View>
-          {data &&
-            data.products.map(pro => {
+          {data.products.map(pro => {
               return (
                 <SquareProductButton
                   key={pro.name}

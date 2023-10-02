@@ -11,7 +11,7 @@ export default function Loading(props) {
       ]}>
       <ActivityIndicator color={colors.primary} size={48} />
       <Text style={{color: colors.primary, textAlign: 'center', fontSize: 24}}>
-        Loading Content...
+        {props.msg ? props.msg : "Loading Content..."}
       </Text>
     </View>
   );

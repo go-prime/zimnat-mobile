@@ -44,13 +44,7 @@ export default function LoginScreen({navigation}) {
       style={{width: '100%', height: '100%'}}>
       <View>
         <Text style={[styles.welcome]}>Welcome to Hustle Hub</Text>
-        <LoginCard
-          title="Edutec"
-          source={require('../assets/images/studying.png')}
-          message="Get the skills needed for your next hustle."
-          handler={() => login(navigation, 'Courses Home')}
-          backgroundColor={colors.primary}
-        />
+        
         <LoginCard
           title="Marketplace"
           message="Shop with our hustlers."
@@ -65,6 +59,14 @@ export default function LoginScreen({navigation}) {
           handler={() => login(navigation)}
           backgroundColor={colors.tertiary}
         />
+        <LoginCard
+          title="Edutec"
+          source={require('../assets/images/studying.png')}
+          message="Get the skills needed for your next hustle."
+          handler={() => login(navigation, 'Courses Home')}
+          backgroundColor={colors.primary}
+        />
+        
       </View>
     </ImageBackground>
   );

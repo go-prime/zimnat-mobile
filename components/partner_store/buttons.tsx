@@ -16,7 +16,7 @@ const RoundButton = function (props) {
     <Pressable onPress={props.handler}>
       <View style={styles.round}>
         {props.url ? (
-          <Image source={{uri: props.url, width: 40, height: 40}} />
+          <Image source={{uri: props.url, width: 75, height: 75}} />
         ) : (
           <FontAwesomeIcon icon={faImage} size={30} color={colors.primary} />
         )}
@@ -33,7 +33,7 @@ const RoundedSquareButton = function (props) {
     <Pressable onPress={props.handler}>
       <View style={styles.square}>
         {props.url ? (
-          <Image source={{uri: props.url, width: 40, height: 40}} />
+          <Image source={{uri: props.url, width: 75, height: 75}} />
         ) : (
           <FontAwesomeIcon icon={faImage} size={30} color={colors.primary} />
         )}
@@ -59,7 +59,9 @@ const RoundedRectButton = function (props) {
         <Text style={[styles.text, styles.wide_label]}>{props.title}</Text>
       )}
       {props.subtitle && (
-        <Text style={[styles.subtitle, styles.wide_label]}>{props.subtitle}</Text>
+        <Text style={[styles.subtitle, styles.wide_label]}>
+          {props.subtitle}
+        </Text>
       )}
     </Pressable>
   );
@@ -78,6 +80,7 @@ type CartButtonProps = {
   qty: number;
   label: boolean;
   styles: object;
+  onSuccess: Function;
 };
 
 const WishListButton = function (props: WishListButtonProps) {
@@ -124,7 +127,6 @@ const WishListButton = function (props: WishListButtonProps) {
 
 const AddToCartButton = function (props: CartButtonProps) {
   const defaultHandler = () => {
-    console.log('Add to cart button pressed');
     axios
       .post(
         `${constants.server_url}/api/method/billing_engine.billing_engine.api.add_to_cart`,
@@ -135,9 +137,13 @@ const AddToCartButton = function (props: CartButtonProps) {
       )
       .then(res => {
         Alert.alert('Success', `Added ${props.product_name} to shopping cart`);
+        if (props.onSuccess) {
+          onSuccess();
+        }
       })
       .catch(err => {
-        Alert.alert('Error', err.message);
+        console.log(err.response.data);
+        Alert.alert('Error', err.response.data);
       });
   };
   return (
@@ -149,7 +155,7 @@ const AddToCartButton = function (props: CartButtonProps) {
           color={'white'}
         />
         {props.label && (
-          <Text style={{...text, fontSize: 16, marginLeft: 4}}>
+          <Text style={{...text, fontSize: 16, marginLeft: 4, color: 'white'}}>
             Add To Cart
           </Text>
         )}
@@ -169,6 +175,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     margin: 12,
+    overflow: 'hidden',
   },
   square: {
     width: 75,
@@ -179,6 +186,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     margin: 12,
+    overflow: 'hidden',
   },
   rectangle: {
     width: 100,

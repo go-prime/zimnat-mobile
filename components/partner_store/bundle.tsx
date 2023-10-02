@@ -20,7 +20,7 @@ const SquareBundleButton = function (props) {
       }}>
       <View style={styles.square}>
         {props.url ? (
-          <Image source={{uri: props.url, width: 40, height: 40, zIndex: 1}} />
+          <Image source={{uri: props.url, width: 75, height: 75, zIndex: 1}} />
         ) : (
           <FontAwesomeIcon icon={faImage} size={30} color={colors.primary} />
         )}
@@ -81,6 +81,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     margin: 12,
+    overflow: "hidden"
   },
   text: {
     fontSize: 16,

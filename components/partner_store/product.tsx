@@ -22,7 +22,7 @@ const SquareProductButton = function (props) {
         <View style={styles.square}>
           {props.url ? (
             <Image
-              source={{uri: props.url, width: 40, height: 40, zIndex: 1}}
+              source={{uri: props.url, width: 100, height: 150, zIndex: 1}}
             />
           ) : (
             <FontAwesomeIcon icon={faImage} size={30} color={colors.primary} />
@@ -76,6 +76,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     margin: 12,
+    overflow: 'hidden'
   },
   text: {
     fontSize: 16,
