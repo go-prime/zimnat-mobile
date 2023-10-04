@@ -142,8 +142,11 @@ const AddToCartButton = function (props: CartButtonProps) {
         }
       })
       .catch(err => {
-        console.log(err.response.data);
-        Alert.alert('Error', err.response.data);
+        if(err.response) {
+          console.log(err.response.data);
+          Alert.alert('Error', err.response.data);
+        }
+        console.log(err);
       });
   };
   return (

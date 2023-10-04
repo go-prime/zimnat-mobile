@@ -138,7 +138,6 @@ export default function ProductScreen(props) {
                 name={pro.product_name}
                 id={pro.name}
                 product_id={pro.billable_id}
-                price={'$5,00'}
                 actions={true}
                 url={`${constants.server_url}/${pro.cover_image}`}
               />

@@ -19,7 +19,8 @@ const LoginCard = props => {
       <View style={[styles.container]}>
         <ImageBackground
           source={props.source}
-          style={{width: '70%', height: '100%'}}>
+          style={{flex: 1, position: 'realative'}}
+          imageStyle={{right: 0, left: "30%",width: '70%', height: '100%', position: 'absolute', resizeMode: 'cover',}}>
           <Text style={styles.title}>{props.title}</Text>
           <Text style={styles.subtitle}>{props.message}</Text>
         </ImageBackground>
@@ -86,17 +87,20 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: 'black',
     backgroundColor: 'white',
+    width: 180
   },
   subtitle: {
     fontSize: 14,
     color: 'black',
     backgroundColor: 'white',
+    width: 180
   },
   welcome: {
     fontSize: 36,
     color: 'black',
     fontWeight: 'bold',
     margin: 36,
+    textAlign: "center"
   },
   heading: {
     fontSize: 24,

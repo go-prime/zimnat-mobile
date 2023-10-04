@@ -4,7 +4,7 @@ import {
   Text,
   Pressable,
   StyleSheet,
-  Image,
+  Alert,
   Modal,
   ScrollView,
   Dimensions,
@@ -24,7 +24,8 @@ import axios from 'axios';
 import {card, shadow, text} from '../styles/inputs';
 import constants from '../constants';
 
-const submitRating = (rating, description, item_type, item_name) => {
+
+const submitRating = (rating, description, item_type, item_name, onRating) => {
   axios
     .get(
       `${constants.server_url}/api/method/billing_engine.billing_engine.api.make_rating`,
@@ -39,9 +40,12 @@ const submitRating = (rating, description, item_type, item_name) => {
     )
     .then(res => {
       console.log(res.data.message);
+      Alert.alert("Submitted Rating Successfully")
+      onRating()
     })
     .catch(err => {
       console.log(err);
+      console.log(err.response.data)
     });
 };
 
@@ -98,7 +102,7 @@ const RatingModal = props => {
         </View>
         <Pressable
           onPress={() =>
-            submitRating(rating, description, props.item_type, props.item_name)
+            submitRating(rating, description, props.item_type, props.item_name, props.onClose)
           }
           style={styles.button}>
           <Text style={styles.buttonText}>Submit</Text>
@@ -172,6 +176,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     margin: 12,
+    marginLeft: 0,
     borderRadius: 24,
     borderWidth: 1,
     padding: 12,

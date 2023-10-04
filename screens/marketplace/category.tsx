@@ -34,29 +34,16 @@ import {SquareProductButton} from '../../components/partner_store/product';
 import {Appearance} from 'react-native';
 import {Heading, SubTitle, Title} from '../../components/text';
 import {useIsFocused} from '@react-navigation/native';
+import ProduceCard from '../../components/marketplace/produce';
 
-const onSubscribe = course_id => {
-  axios
-    .get(
-      `${constants.server_url}/api/method/edutec_courses.edutec_courses.api.subscribe_to_course`,
-      {params: {course_id: course_id}},
-    )
-    .then(res => {
-      Alert.alert('Success', `Subscribed to ${course_id}`);
-    })
-    .catch(err => {
-      console.log(err.response.data);
-    });
-};
-
-export default function CourseScreen(props) {
+export default function MarketplaceCategoryScreen(props) {
   const [data, setData] = React.useState(null);
   const isFocused = useIsFocused();
   React.useEffect(() => {
     axios
       .get(
-        `${constants.server_url}/api/method/edutec_courses.edutec_courses.api.get_course`,
-        {params: {course_id: props.route.params.course_id}},
+        `${constants.server_url}/api/method/open_marketplace.open_marketplace.api.get_category`,
+        {params: {category_id: props.route.params.category}},
       )
       .then(res => {
         console.log(res.data.message);
@@ -75,96 +62,38 @@ export default function CourseScreen(props) {
 
   return (
     <View style={styles.container}>
-      <Centered>
+      <Centered styles={{position: 'relative'}}>
         <ImageIcon
-          width={width - 24}
-          height={150}
+          width={width}
+          height={200}
           url={`${constants.server_url}/${data.image}`}
         />
+        <Text style={styles.title}>{data.name}</Text>
       </Centered>
-      <Row styles={{padding: 12}}>
-        <View style={{flex: 1}}>
-          <Text style={styles.title}>{data.title}</Text>
-          <Text style={styles.subtitle}>{data.publisher}</Text>
-          <Rating
-            value={data.average_rating}
-            item_type={'Course'}
-            item_name={props.route.params.course_id}
-          />
-        </View>
-        <Centered styles={{padding: 12}}>
-          <Text style={styles.studentCount}>{data.students}</Text>
-          <Text style={styles.studentLabel}>Students</Text>
-        </Centered>
-      </Row>
+
       <View>
         <Text style={styles.description}>{data.description}</Text>
       </View>
       <View style={styles.half_card}>
-        <Pressable
-          style={[
-            data.is_subscribed ? styles.subscribedBtn : styles.subscribeBtn,
-            {left: width / 2 - 100},
-          ]}
-          onPress={() =>
-            data.is_subscribed
-              ? null
-              : onSubscribe(props.route.params.course_id)
-          }>
-          {data.is_subscribed ? (
-            <Text style={styles.subscribedBtnText}>SUBSCRIBED</Text>
-          ) : (
-            <Text style={styles.subscribeBtnText}>SUBSCRIBE</Text>
-          )}
-        </Pressable>
         <ScrollView>
-          {data.items.map((item, index) => (
-            <CourseItem
-              {...item}
-              key={item.id}
-              index={index + 1}
-              video={item.type == 'Video'}
-              handler={() => {
-                if (item.type == 'Video') {
-                  return props.navigation.navigate('Video', {
-                    video_id: item.id,
-                  });
-                }
-                return props.navigation.navigate('Article', {
-                  article_id: item.id,
-                });
-              }}
-            />
-          ))}
-          <View>
-            {data.related_products.length > 0 && <Heading heading="Related Products" />}
-            {data.related_products.map(pro => {
-              return (
-                <SquareProductButton
-                  key={pro.name}
-                  name={pro.product_name}
-                  id={pro.name}
-                  product_id={pro.billable_id}
-                  actions={true}
-                  url={`${constants.server_url}/${pro.cover_image}`}
-                />
-              );
-            })}
-          </View>
-
-          <View>
-          {data.bundles.length > 0 && <Heading heading="Bundles" />}
-            {data.bundles.map(bun => {
-              return (
-                <SquareBundleButton
-                  key={bun.billable_id}
-                  name={bun.bundle_name}
-                  id={bun.name}
-                  url={`${constants.server_url}${bun.cover_image}`}
-                />
-              );
-            })}
-          </View>
+          <Row styles={styles.row}>
+            <View style={styles.column}>
+              {data.produce
+                .map((p, index) => ({...p, index: index}))
+                .filter(p => p.index % 2 == 0)
+                .map(p => (
+                  <ProduceCard {...p} image={p.cover_image} key={p.index} />
+                ))}
+            </View>
+            <View style={[styles.column, {paddingTop: 36}]}>
+              {data.produce
+                .map((p, index) => ({...p, index: index}))
+                .filter(p => p.index % 2 == 1)
+                .map(p => (
+                  <ProduceCard {...p} image={p.cover_image} key={p.index} />
+                ))}
+            </View>
+          </Row>
         </ScrollView>
       </View>
     </View>
@@ -175,6 +104,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  column: {
+    flex: 1,
+    padding: 16,
+  },
+  row: {
+    paddingLeft: 4,
+    paddingRight: 4,
+  },
   half_card: {
     marginTop: 24,
     borderTopLeftRadius: 48,
@@ -184,16 +121,12 @@ const styles = StyleSheet.create({
       Appearance.getColorScheme() === 'dark' ? '#111' : '#f5f5f5',
     elevation: 5,
     flex: 1,
-    paddingTop: 48,
+    paddingTop: 24,
   },
   title: {
-    fontSize: 18,
+    fontSize: 24,
     paddingBottom: 4,
-    ...text,
-    fontWeight: 'bold',
-  },
-  subtitle: {
-    fontSize: 14,
+    margin: 12,
     ...text,
     fontWeight: 'bold',
   },

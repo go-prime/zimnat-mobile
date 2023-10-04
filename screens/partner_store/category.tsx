@@ -23,7 +23,7 @@ export default function CategoryScreen(props) {
         {params: {category_id: props.route.params.category}},
       )
       .then(res => {
-
+        console.log(res.data.message);
         setData(res.data.message);
       })
       .catch(err => {
@@ -59,7 +59,6 @@ export default function CategoryScreen(props) {
                   name={pro.product_name}
                   id={pro.name}
                   product_id={pro.billable_id}
-                  price={'$5,00'}
                   actions={true}
                   url={`${constants.server_url}/${pro.cover_image}`}
                 />
