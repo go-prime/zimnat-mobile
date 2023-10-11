@@ -24,7 +24,8 @@ import SearchBar from '../../components/search';
 import ImageIcon from '../../components/image';
 import Loading from '../../components/loading';
 
-import {Title} from '../../components/text'
+import {Heading, Title} from '../../components/text'
+import { BundleButton, CategoryButton } from '../../components/button';
 
 const variable = 0;
 
@@ -79,31 +80,31 @@ export default function HomeScreen({navigation}): JSX.Element {
           }}
         />
       </View>
-      <Text style={styles.heading}>Category</Text>
+      <Heading heading="Category" />
       <ScrollView horizontal={true}>
         {data.categories.map(cat => (
-          <RoundButton
+          <CategoryButton
             key={cat.name}
-            title={cat.name}
-            url={`${constants.server_url}${cat.image}`}
-            handler={() =>
+            name={cat.name}
+            image_url={cat.image}
+            onPress={() =>
               navigation.navigate('Category', {category: cat.name})
             }
           />
         ))}
       </ScrollView>
-      <Text style={styles.heading}>Featured Bundles</Text>
+      <Heading heading="Featured Bundles" />
       <ScrollView horizontal={true}>
         {data.bundles.map(b => (
-            <RoundedSquareButton
+            <BundleButton
               key={b.name}
-              title={b.name}
-              url={`${constants.server_url}${b.image}`}
-              handler={() => navigation.navigate('Bundle', {bundle: b.name})}
+              name={b.name}
+              image_url={b.image}
+              onPress={() => navigation.navigate('Bundle', {bundle: b.name})}
             />
           ))}
       </ScrollView>
-      <Text style={styles.heading}>Featured Vendors</Text>
+      {/* <Text style={styles.heading}>Featured Vendors</Text>
       <ScrollView horizontal={true}>
         {data.partners.map(p => (
             <RoundedSquareButton
@@ -113,7 +114,7 @@ export default function HomeScreen({navigation}): JSX.Element {
               handler={() => navigation.navigate('Partner', {partner: p.name})}
             />
           ))}
-      </ScrollView>
+      </ScrollView> */}
     </ScrollView>
   );
 }

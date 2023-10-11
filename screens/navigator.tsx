@@ -39,6 +39,7 @@ import StorefrontScreen from './marketplace/storefront';
 import MarketplaceCategoryScreen from './marketplace/category';
 import {useNavigation} from '@react-navigation/native';
 import Subscriptions from './edutec/my_courses';
+import InAppWebViewScreen from './web';
 
 const Drawer = createDrawerNavigator();
 
@@ -159,6 +160,7 @@ export default function HomeScreenNavigator({navigation}): JSX.Element {
       <Drawer.Screen component={Subscriptions} name="Subscriptions" />
       <Drawer.Screen component={ProduceScreen} name="Produce" />
       <Drawer.Screen component={StorefrontScreen} name="Storefront" />
+      <Drawer.Screen options={{headerShown: false}} component={InAppWebViewScreen} name="WebView" />
     </Drawer.Navigator>
   );
 }

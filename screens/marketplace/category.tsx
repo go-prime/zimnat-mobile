@@ -35,10 +35,13 @@ import {Appearance} from 'react-native';
 import {Heading, SubTitle, Title} from '../../components/text';
 import {useIsFocused} from '@react-navigation/native';
 import ProduceCard from '../../components/marketplace/produce';
+import { ItemButton } from '../../components/button';
 
 export default function MarketplaceCategoryScreen(props) {
   const [data, setData] = React.useState(null);
   const isFocused = useIsFocused();
+  const navigation = props.navigation;
+
   React.useEffect(() => {
     axios
       .get(
@@ -82,7 +85,13 @@ export default function MarketplaceCategoryScreen(props) {
                 .map((p, index) => ({...p, index: index}))
                 .filter(p => p.index % 2 == 0)
                 .map(p => (
-                  <ProduceCard {...p} image={p.cover_image} key={p.index} />
+                  <ItemButton 
+                    title={p.name}
+                    image_url={p.cover_image} 
+                    key={p.index}
+                    onPress={() => {
+                      navigation.navigate('Produce', {produce: p.name});
+                    }} />
                 ))}
             </View>
             <View style={[styles.column, {paddingTop: 36}]}>
@@ -90,7 +99,13 @@ export default function MarketplaceCategoryScreen(props) {
                 .map((p, index) => ({...p, index: index}))
                 .filter(p => p.index % 2 == 1)
                 .map(p => (
-                  <ProduceCard {...p} image={p.cover_image} key={p.index} />
+                  <ItemButton 
+                    title={p.name} 
+                    image_url={p.cover_image} 
+                    key={p.index}
+                    onPress={() => {
+                      navigation.navigate('Produce', {produce: p.name});
+                    }} />
                 ))}
             </View>
           </Row>

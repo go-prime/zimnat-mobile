@@ -31,12 +31,17 @@ import Loading from '../../components/loading';
 import {RoundedRectButton} from '../../components/partner_store/buttons';
 import {SquareProductButton} from '../../components/partner_store/product';
 import {SquareBundleButton} from '../../components/partner_store/bundle';
+import {Heading} from '../../components/text';
+import {BundleButton, CourseButton, ItemButton} from '../../components/button';
+import {useNavigation} from '@react-navigation/native';
 
 export default function ProductScreen(props) {
   const [data, setData] = React.useState(null);
   const [img, setImg] = React.useState(null);
   const [qty, setQty] = React.useState(1);
   const width = Dimensions.get('screen').width;
+  const height = Dimensions.get('screen').height;
+  const navigation = useNavigation();
 
   React.useEffect(() => {
     axios
@@ -60,13 +65,14 @@ export default function ProductScreen(props) {
     return <Loading />;
   }
   return (
-    <ScrollView>
-      <View style={styles.card}>
-        <Centered styles={{margin: 16}}>
-          <ImageIcon width={200} height={150} url={img} />
-        </Centered>
-      </View>
-      <Row styles={{justifyContent: 'center'}}>
+    <View style={styles.root}>
+      <Row
+        styles={{
+          position: 'absolute',
+          justifyContent: 'center',
+          zIndex: 100,
+          top: height / 3 - 90,
+        }}>
         {data.images.map(img => (
           <Pressable
             key={img.name}
@@ -80,106 +86,130 @@ export default function ProductScreen(props) {
           </Pressable>
         ))}
       </Row>
-
-      <View style={styles.card}>
-        <Text style={styles.title}>{data.name}</Text>
-        <Text style={styles.mutedHeading}>{data.partner}</Text>
-        <Rating
-          item_type="Product"
-          item_name={props.route.params.product}
-          value={data.average_rating}
-          size={20}
-        />
-        <Text style={styles.description}>{data.description}</Text>
-      </View>
-
-      <View>
-        <View style={styles.row}>
-          <Text style={styles.heading}>
-            {`${data.currency} ${parseFloat(data.price).toFixed(2)}`}
-          </Text>
-          <WishListButton
-            label={true}
-            product_id={data.billable_id}
-            product_name={data.name}
-            styles={{padding: 12, width: width * 0.6}}
+      <ImageIcon width={width} height={height / 3} url={img} />
+      <View style={[styles.content, {top: (height / 3) - 50, height: ((height * 2) / 3) -50 }]}>
+        <ScrollView>
+          <Text style={styles.title}>{data.name}</Text>
+          <Text style={styles.mutedHeading}>{data.partner}</Text>
+          <Rating
+            item_type="Product"
+            item_name={props.route.params.product}
+            value={data.average_rating}
+            size={20}
           />
-        </View>
-        <View style={[styles.row, {gap: 4}]}>
-          <View style={styles.row}>
-            <Pressable onPress={() => setQty(qty > 1 ? qty - 1 : 0)}>
-              <View style={styles.button}>
-                <FontAwesomeIcon icon={faMinus} size={24} color={'white'} />
-              </View>
-            </Pressable>
-            <View>
-              <Text style={styles.heading}>{qty}</Text>
+          <Text style={styles.description}>{data.description}</Text>
+          <View>
+            <View style={styles.row}>
+              <Text style={styles.heading}>
+                {`${data.currency} ${parseFloat(data.price).toFixed(2)}`}
+              </Text>
+              <WishListButton
+                label={true}
+                product_id={data.billable_id}
+                product_name={data.name}
+                styles={{padding: 12, width: width * 0.6}}
+              />
             </View>
-            <Pressable onPress={() => setQty(qty + 1)}>
-              <View style={styles.button}>
-                <FontAwesomeIcon icon={faPlus} size={24} color={'white'} />
+            <View style={[styles.row, {gap: 4}]}>
+              <View style={styles.row}>
+                <Pressable onPress={() => setQty(qty > 1 ? qty - 1 : 0)}>
+                  <View style={styles.button}>
+                    <FontAwesomeIcon icon={faMinus} size={24} color={'white'} />
+                  </View>
+                </Pressable>
+                <View>
+                  <Text style={styles.heading}>{qty}</Text>
+                </View>
+                <Pressable onPress={() => setQty(qty + 1)}>
+                  <View style={styles.button}>
+                    <FontAwesomeIcon icon={faPlus} size={24} color={'white'} />
+                  </View>
+                </Pressable>
               </View>
-            </Pressable>
+              <AddToCartButton
+                qty={qty}
+                product_id={data.billable_id}
+                product_name={data.name}
+                label={true}
+                styles={{padding: 12, width: width * 0.6}}
+              />
+            </View>
+            {data.related_products.length > 0 && (
+              <Heading heading="Related Products" />
+            )}
+            <ScrollView horizontal>
+              {data.related_products.map(pro => {
+                return (
+                  <ItemButton
+                    key={pro.name}
+                    title={pro.product_name}
+                    onPress={() =>
+                      navigation.navigate('Product', {product: pro.name})
+                    }
+                    image_url={pro.cover_image}
+                  />
+                );
+              })}
+            </ScrollView>
+            {data.courses.length > 0 && <Heading heading="Courses" />}
+            <ScrollView horizontal>
+              {data.courses &&
+                data.courses.map(c => {
+                  return (
+                    <CourseButton
+                      key={c.name}
+                      name={c.title}
+                      onPress={() => {
+                        props.navigation.navigate('Course', {
+                          course_id: c.name,
+                        });
+                      }}
+                      image_url={c.cover_image}
+                    />
+                  );
+                })}
+            </ScrollView>
+            <View>
+              {data.bundles.length > 0 && <Heading heading="Bundles" />}
+              <ScrollView horizontal>
+                {data.bundles.map(bun => {
+                  console.log(bun);
+                  return (
+                    <BundleButton
+                      key={bun.billable_id}
+                      name={bun.bundle_name}
+                      onPress={() =>
+                        navigation.navigate('Bundle', {bundle: bun.name})
+                      }
+                      image_url={bun.cover_image}
+                    />
+                  );
+                })}
+              </ScrollView>
+            </View>
           </View>
-          <AddToCartButton
-            qty={qty}
-            product_id={data.billable_id}
-            product_name={data.name}
-            label={true}
-            styles={{padding: 12, width: width * 0.6}}
-          />
-        </View>
-        <View>
-          <Text style={styles.heading}>Related Products</Text>
-          {data.related_products.map(pro => {
-            return (
-              <SquareProductButton
-                key={pro.name}
-                name={pro.product_name}
-                id={pro.name}
-                product_id={pro.billable_id}
-                actions={true}
-                url={`${constants.server_url}/${pro.cover_image}`}
-              />
-            );
-          })}
-        </View>
-        <View>
-          <Text style={styles.heading}>Courses</Text>
-          {data.courses &&
-            data.courses.map(c => {
-              return (
-                <RoundedRectButton
-                  key={c.name}
-                  title={c.title}
-                  subtitle={c.publisher}
-                  handler={() => {
-                    props.navigation.navigate('Course', {course_id: c.name});
-                  }}
-                  url={`${constants.server_url}/${c.cover_image}`}
-                />
-              );
-            })}
-        </View>
-        <View>
-          <Text style={styles.heading}>Bundles</Text>
-          {data.bundles.map(bun => {
-            return (
-              <SquareBundleButton
-                key={bun.billable_id}
-                name={bun.bundle_name}
-                id={bun.name}
-                url={`${constants.server_url}${bun.cover_image}`}
-              />
-            );
-          })}
-        </View>
+        </ScrollView>
       </View>
-    </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+    position: 'relative',
+  },
+  content: {
+    position: 'absolute',
+    backgroundColor: 'white',
+    borderRadius: 24,
+    flex: 1,
+    elevation: 5,
+    right: 0,
+    left: 0,
+    paddingTop: 36,
+    paddingLeft: 12,
+  },
   button: {
     padding: 12,
     backgroundColor: colors.primary,

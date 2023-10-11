@@ -7,18 +7,31 @@ import {
   Pressable,
   Modal,
   Switch,
+  Dimensions,
 } from 'react-native';
 import Video from 'react-native-video';
 import axios from 'axios';
 import Loading from '../../components/loading';
 import constants from '../../constants';
-import {Row} from '../../components/layout';
+import Centered, {Row} from '../../components/layout';
 import ImageIcon from '../../components/image';
 import CourseItem from '../../components/edutec/course';
-import {faEllipsis, faTimes} from '@fortawesome/free-solid-svg-icons';
+import {
+  faCog,
+  faTimes,
+  faPlay,
+  faFastForward,
+  faFastBackward,
+  faAngleRight,
+  faAngleLeft,
+  faPause,
+} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {Picker} from '@react-native-picker/picker';
 import {card, text} from '../../styles/inputs';
+import colors from '../../styles/colors';
+import {useNavigation} from '@react-navigation/native';
+import VideoOverlay from './video/overlay';
 
 const OptionsModal = props => {
   return (
@@ -48,6 +61,7 @@ const OptionsModal = props => {
   );
 };
 
+
 export default function VideoPlayer(props) {
   const [data, setData] = React.useState(null);
   const playerRef = React.useRef(null);
@@ -56,24 +70,10 @@ export default function VideoPlayer(props) {
   const [loading, setLoading] = React.useState(true);
   const [overlay, setOverlay] = React.useState(false);
   const [showOptions, setShowOptions] = React.useState(false);
+  const [position, setPosition] = React.useState(0);
+  const [duration, setDuration] = React.useState(0);
   const [quality, setQuality] = React.useState('url_360p');
-
-  const onProgress = progressData => {
-    axios
-      .get(
-        `${constants.server_url}/api/method/edutec_courses.edutec_courses.api.update_video_progress`,
-        {
-          params: {
-            video_id: props.route.params.video_id,
-            position: parseInt(progressData.currentTime),
-            course_id: data.course
-          },
-        },
-      )
-      .catch(err => {
-        console.log(err.response.data);
-      });
-  };
+  const [paused, setPaused] = React.useState(true);
 
   React.useEffect(() => {
     if (!(playerRef && playerRef.current)) {
@@ -107,6 +107,29 @@ export default function VideoPlayer(props) {
     return <Loading />;
   }
 
+  const onProgress = progressData => {
+    setPosition(parseInt(progressData.currentTime));
+    setDuration(parseInt(progressData.playableDuration));
+    if (parseInt(progressData.currentTime) % 3 != 0) {
+      return;
+    }
+
+    axios
+      .get(
+        `${constants.server_url}/api/method/edutec_courses.edutec_courses.api.update_video_progress`,
+        {
+          params: {
+            video_id: props.route.params.video_id,
+            position: parseInt(progressData.currentTime),
+            course_id: data.course,
+          },
+        },
+      )
+      .catch(err => {
+        console.log(err.response.data);
+      });
+  };
+
   return (
     <View style={{flex: 1}}>
       <View style={{position: 'relative', flex: 1}}>
@@ -114,10 +137,12 @@ export default function VideoPlayer(props) {
           style={{width: '100%', flex: 1}}
           onPress={() => {
             setOverlay(!overlay);
-            setTimeout(() => setOverlay(false), 1500);
+            setTimeout(() => setOverlay(false), 2000);
           }}>
           <Video
-            progressUpdateInterval={3000}
+            progressUpdateInterval={1000}
+            loop
+            paused={paused}
             onProgress={onProgress}
             source={{uri: data[quality]}}
             style={{width: '100%', flex: 1}}
@@ -127,32 +152,20 @@ export default function VideoPlayer(props) {
             }}
             onLoad={stats => {
               setLoading(false);
+              setPaused(false);
             }}
           />
         </Pressable>
         {loading ? <Loading styles={styles.overlay} /> : null}
         {overlay ? (
-          <View
-            style={[
-              styles.overlay,
-              {
-                backgroundColor: 'rgba(0,0,0,0.3)',
-              },
-            ]}>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'flex-end',
-                padding: 8,
-              }}>
-              <Pressable
-                onPress={() => {
-                  setShowOptions(true);
-                }}>
-                <FontAwesomeIcon icon={faEllipsis} size={36} color={'white'} />
-              </Pressable>
-            </View>
-          </View>
+          <VideoOverlay
+            player={playerRef.current}
+            videoData={data}
+            toggleOptions={() => setShowOptions(true)}
+            position={position}
+            videoLength={duration}
+            togglePlayback={() => setPaused(!paused)}
+          />
         ) : null}
       </View>
       {fullScreen ? null : (
@@ -213,6 +226,18 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
+  },
+  controls: {
+    padding: 8,
+  },
+  playControls: {
+    justifyContent: 'center',
+    gap: 12,
+    flex: 2,
+  },
+  seekerView: {
+    flex: 1,
+    justifyContent: 'flex-end',
   },
   title: {
     fontSize: 24,

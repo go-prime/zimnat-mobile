@@ -28,18 +28,23 @@ import {
 } from '../../components/partner_store/buttons';
 import Loading from '../../components/loading';
 import {RoundedSquareButton} from '../../components/partner_store/buttons';
-import {useIsFocused} from '@react-navigation/native';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
+import {Heading} from '../../components/text';
+import {getAbsoluteURL} from '../../utils';
 
 const BundleProduct = props => {
+  const navigation = useNavigation();
   return (
-    <View style={[styles.card, {flexDirection: 'row', padding: 12}]}>
-      <View>
+    <Pressable
+      onPress={() => navigation.navigate('Product', {product: props.id})}
+      style={[styles.card, {flexDirection: 'row', padding: 12}]}>
+      <Centered>
         <ImageIcon
           width={75}
           height={75}
           url={`${constants.server_url}/${props.image}`}
         />
-      </View>
+      </Centered>
       <View>
         <Text style={styles.heading}>{props.id}</Text>
         <Text style={styles.description}>{props.description}</Text>
@@ -47,13 +52,14 @@ const BundleProduct = props => {
           {parseFloat(props.price).toFixed(2)} x {props.qty}
         </Text>
       </View>
-    </View>
+    </Pressable>
   );
 };
 
 export default function BundleScreen(props) {
   const [data, setData] = React.useState(null);
   const width = Dimensions.get('screen').width;
+  const height = Dimensions.get('screen').height;
   const navigation = props.navigation;
   const isFocused = useIsFocused();
   React.useEffect(() => {
@@ -76,73 +82,82 @@ export default function BundleScreen(props) {
   }
 
   return (
-    <ScrollView>
-      <View style={styles.card}>
-        <Centered styles={{margin: 16}}>
-          {data && data.cover_image ? (
-            <Image
-              source={{
-                uri: `${constants.server_url}/${data.cover_image}`,
-                width: 100,
-                height: 100,
-              }}
+    <View style={styles.root}>
+      <ImageIcon
+        width={width}
+        height={height / 3}
+        url={getAbsoluteURL(data.cover_image)}
+      />
+      <View style={styles.content}>
+        <ScrollView>
+          <Text style={styles.title}>{data.name}</Text>
+          <Text style={styles.heading}>{data.partner}</Text>
+          <Text style={styles.description}>{data.description}</Text>
+          <View>
+            <Rating
+              item_type="Bundle"
+              item_name={props.route.params.bundle}
+              value={data.average_ratnig}
+              size={20}
             />
-          ) : (
-            <FontAwesomeIcon icon={faImage} size={72} color={colors.primary} />
-          )}
-        </Centered>
-        <Text style={styles.title}>{data.name}</Text>
-        <Text style={styles.heading}>{data.partner}</Text>
-        <Text style={styles.description}>{data.description}</Text>
-      </View>
-      <View>
-        <Rating
-          item_type="Bundle"
-          item_name={props.route.params.bundle}
-          value={data.average_ratnig}
-          size={20}
-        />
-      </View>
-      <View />
-      <View>
-        <Text style={styles.heading}>Components</Text>
-        {data.products.map(pro => (
-          <BundleProduct key={pro.id} {...pro} />
-        ))}
-      </View>
-      <View style={styles.row}>
-        <WishListButton
-          label
-          styles={{padding: 12, width: width / 2 - 6}}
-          product_id={data.product_id}
-          product_name={data.name}
-        />
-        <AddToCartButton
-          label
-          styles={{padding: 12, width: width / 2 - 6}}
-          qty={1}
-          product_id={data.product_id}
-          product_name={data.name}
-        />
-      </View>
-      <View>
-        <Text style={styles.heading}>Courses</Text>
-        {data.courses.map(c => {
-          return (
-            <RoundedSquareButton
-              key={c.name}
-              title={c.name}
-              url={`${constants.server_url}${c.cover_image}`}
-              handler={() => navigation.navigate('Course', {course_id: c.name})}
+          </View>
+          <View />
+          <View>
+            <Heading heading="Components" />
+            {data.products.map(pro => (
+              <BundleProduct key={pro.id} {...pro} />
+            ))}
+          </View>
+          <View style={styles.row}>
+            <WishListButton
+              label
+              styles={{padding: 12, width: width / 2 - 6}}
+              product_id={data.product_id}
+              product_name={data.name}
             />
-          );
-        })}
+            <AddToCartButton
+              label
+              styles={{padding: 12, width: width / 2 - 6}}
+              qty={1}
+              product_id={data.product_id}
+              product_name={data.name}
+            />
+          </View>
+          {data.courses.length > 0 && <Heading heading="Courses" />}
+          <ScrollView horizontal>
+            {data.courses.map(c => {
+              return (
+                <RoundedSquareButton
+                  key={c.name}
+                  title={c.name}
+                  url={`${constants.server_url}${c.cover_image}`}
+                  handler={() =>
+                    navigation.navigate('Course', {course_id: c.name})
+                  }
+                />
+              );
+            })}
+          </ScrollView>
+        </ScrollView>
       </View>
-    </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  root: {
+    position:'relative',
+    flex: 1
+  }, 
+  content: {
+    backgroundColor: "white",
+    borderRadius: 24,
+    marginTop: -48,
+    paddingTop: 36,
+    flex: 1,
+    paddingLeft: 12,
+    paddingRight: 12,
+  },
   row: {
     flexDirection: 'row',
     gap: 4,

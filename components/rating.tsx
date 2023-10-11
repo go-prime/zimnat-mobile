@@ -127,40 +127,41 @@ const RatingModal = props => {
 
 export default function Rating(props) {
   const fullStars = Math.floor(props.value);
+  const emptyStars = 5 - fullStars;
   const halfStar = props.value - fullStars > 0;
   const [modalVisible, setModalVisible] = React.useState(false);
+  const containerWidth = (((props.size || 24) + 4) * 5) + 24
+
 
   return (
     <>
-      <View style={styles.container}>
-        <Pressable
-          onPress={() => {
+      <Pressable style={[styles.container, {width: containerWidth }]} onPress={() => {
             setModalVisible(true);
           }}>
-          <FontAwesomeIcon
-            style={{marginRight: 12}}
-            icon={faArrowUpRightFromSquare}
-            size={props.size}
-            color={'#FFA41C'}
-          />
-        </Pressable>
-
         {new Array(fullStars).fill(0).map((_, i) => (
           <FontAwesomeIcon
             key={i}
             icon={faStar}
-            size={props.size}
+            size={props.size || 24}
             color={'#FFA41C'}
           />
         ))}
         {halfStar && (
           <FontAwesomeIcon
             icon={faStarHalfStroke}
-            size={props.size}
+            size={props.size  || 24}
             color={'#FFA41C'}
           />
         )}
-      </View>
+        {new Array(emptyStars).fill(0).map((_, i) => (
+          <FontAwesomeIcon
+            key={i}
+            icon={faStar}
+            size={props.size  || 24}
+            color={'#ddd'}
+          />
+        ))}
+      </Pressable>
       <RatingModal
         visible={modalVisible}
         item_type={props.item_type}
@@ -180,9 +181,9 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     borderWidth: 1,
     padding: 12,
-    width: 175,
     borderColor: '#FFA41C',
     backgroundColor: 'white',
+    gap: 4
   },
   modalBody: {
     margin: 24,

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {View, Text, Pressable, StyleSheet, Image} from 'react-native';
+import {View, Text, Pressable, StyleSheet, ScrollView} from 'react-native';
 import colors from '../../styles/colors';
 import {shadow, text} from '../../styles/inputs';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
@@ -12,10 +12,13 @@ import SearchBar from '../../components/search';
 import {SquareProductButton} from '../../components/partner_store/product';
 import ImageIcon from '../../components/image';
 import Loading from '../../components/loading';
+import { ItemButton } from '../../components/button';
+import { useNavigation } from '@react-navigation/native';
 
 
 export default function CategoryScreen(props) {
   const [data, setData] = React.useState(null);
+  const navigation = useNavigation()
   React.useEffect(() => {
     axios
       .get(
@@ -36,7 +39,7 @@ export default function CategoryScreen(props) {
   }
 
   return (
-    <View>
+    <ScrollView>
       <View style={{flexDirection: 'row'}}>
         <SearchBar />
       </View>
@@ -54,19 +57,17 @@ export default function CategoryScreen(props) {
         <View>
           {data.products.map(pro => {
               return (
-                <SquareProductButton
+                <ItemButton
                   key={pro.name}
-                  name={pro.product_name}
-                  id={pro.name}
-                  product_id={pro.billable_id}
-                  actions={true}
-                  url={`${constants.server_url}/${pro.cover_image}`}
+                  title={pro.product_name}
+                  image_url={pro.cover_image}
+                  onPress={() => navigation.navigate("Product", {product: pro.name})}
                 />
               );
             })}
         </View>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 

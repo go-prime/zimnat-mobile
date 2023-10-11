@@ -14,7 +14,7 @@ const Heading = (props) => {
 const Title = (props) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>{props.title}</Text>
+      <Text style={styles.title}>{props.title}</Text>
     </View>
   );
 };
@@ -22,7 +22,23 @@ const Title = (props) => {
 const SubTitle = (props) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>{props.subtitle}</Text>
+      <Text style={styles.subtitle}>{props.subtitle}</Text>
+    </View>
+  );
+};
+
+const Label = (props) => {
+  return (
+    <View style={styles.labelContainer}>
+      <Text style={[styles.label, {fontWeight: props.bold ? "bold": "400"}]}>{props.label}</Text>
+    </View>
+  );
+};
+
+const SmallLabel = (props) => {
+  return (
+    <View style={styles.labelContainer}>
+      <Text style={styles.smallLabel}>{props.label}</Text>
     </View>
   );
 };
@@ -40,6 +56,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     margin: 4,
     padding: 4
+  },
+  title: {
+    ...text,
+    fontSize: 28,
+    fontWeight: "bold",
+    
+  },
+  subtitle: {
+    ...text,
+    fontSize: 18,
+    fontWeight: "bold"
   },
   text: {
     ...text,
@@ -61,6 +88,19 @@ const styles = StyleSheet.create({
     ...text,
     fontSize: 14,
   },
+  labelContainer: {
+    
+  },
+  label: {
+    textAlign: 'center',
+    ...text,
+    fontSize: 16
+  },
+  smallLabel: {
+    textAlign: 'center',
+    ...text,
+    fontSize: 14
+  }
 });
 
-export {Heading, Title, SubTitle, Paragraph};
+export {Heading, Title, SubTitle, Paragraph, Label, SmallLabel};

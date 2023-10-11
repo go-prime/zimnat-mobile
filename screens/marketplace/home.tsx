@@ -1,5 +1,5 @@
 import React from 'react';
-import {Dimensions, Text, ScrollView, View, StyleSheet} from 'react-native';
+import {Dimensions, Text, ScrollView, View, StyleSheet, Alert} from 'react-native';
 import Carousel from 'react-native-reanimated-carousel';
 import axios from 'axios';
 import Loading from '../../components/loading';
@@ -10,6 +10,7 @@ import {Row} from '../../components/layout';
 import ProduceCard from '../../components/marketplace/produce';
 import CategoryPill from '../../components/marketplace/category';
 import {Heading} from '../../components/text';
+import { CategoryButton, ItemButton } from '../../components/button';
 
 export default function MarketplaceHome({navigation}) {
   const [data, setData] = React.useState(null);
@@ -67,8 +68,9 @@ export default function MarketplaceHome({navigation}) {
       <Heading heading="Categories" />
       <View style={{flexWrap: 'wrap'}}>
         {data.categories.map((p, index) => (
-          <CategoryPill
-            {...p}
+          <CategoryButton
+            name={p.name}
+            image_url={p.image}
             key={index}
             onPress={() =>
               navigation.navigate('Produce Category', {category: p.name})
@@ -81,11 +83,16 @@ export default function MarketplaceHome({navigation}) {
         <View style={styles.column}>
           {data.produce
             .map((p, index) => ({...p, index: index}))
-            .filter(p => p.index % 2 == 0)
+            .map(p => {console.log(p); return p})
+            .filter(p => p.index % 2 === 0)
+            .map(p => {console.log(p); return p})
             .map(p => (
-              <ProduceCard
-                {...p}
+              <ItemButton
                 key={p.index}
+                bold
+                image_url={p.image}
+                title={p.name}
+                subtitle={p.category}
                 onPress={() => {
                   navigation.navigate('Produce', {produce: p.name});
                 }}
@@ -97,8 +104,11 @@ export default function MarketplaceHome({navigation}) {
             .map((p, index) => ({...p, index: index}))
             .filter(p => p.index % 2 == 1)
             .map(p => (
-              <ProduceCard 
-                {...p} 
+              <ItemButton 
+                bold
+                image_url={p.image}
+                title={p.name}
+                subtitle={p.category}
                 key={p.index}
                 onPress={() => {
                   navigation.navigate('Produce', {produce: p.name});
@@ -131,6 +141,7 @@ const styles = StyleSheet.create({
   column: {
     flex: 1,
     padding: 16,
+    gap: 24
   },
   row: {
     paddingLeft: 4,

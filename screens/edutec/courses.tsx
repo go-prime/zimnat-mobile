@@ -12,6 +12,7 @@ import SearchBar from '../../components/search';
 import {RoundedRectButton} from '../../components/partner_store/buttons';
 import ImageIcon from '../../components/image';
 import Loading from '../../components/loading';
+import { CourseButton } from '../../components/button';
 
 export default function CourseCategoryScreen(props) {
   const [data, setData] = React.useState(null);
@@ -52,17 +53,16 @@ export default function CourseCategoryScreen(props) {
       </View>
       <View>
         <Text style={styles.heading}>Courses</Text>
-        <View>
+        <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
           {data.courses.map(c => {
             return (
-              <RoundedRectButton
+              <CourseButton
                 key={c.name}
-                title={c.title}
-                subtitle={c.publisher}
-                handler={() => {
+                name={c.title}
+                onPress={() => {
                     props.navigation.navigate('Course', {course_id: c.name});
                 }}
-                url={`${constants.server_url}/${c.cover_image}`}
+                image_url={`${constants.server_url}/${c.cover_image}`}
               />
             );
           })}

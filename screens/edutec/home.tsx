@@ -9,9 +9,8 @@ import {
 } from 'react-native';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 
-import {createDrawerNavigator} from '@react-navigation/drawer';
 import Carousel from 'react-native-reanimated-carousel';
-import {faSearch, faUser, faImage, faUserGraduate} from '@fortawesome/free-solid-svg-icons';
+import {faUserGraduate} from '@fortawesome/free-solid-svg-icons';
 import {shadow, text} from '../../styles/inputs';
 import axios from 'axios';
 import {Alert} from 'react-native';
@@ -19,13 +18,10 @@ import constants from '../../constants';
 import Loading from '../../components/loading';
 import SearchBar from '../../components/search';
 import ImageIcon from '../../components/image';
-import {
-  RoundButton,
-  RoundedSquareButton,
-} from '../../components/partner_store/buttons';
-import {CourseButton} from '../../components/edutec/course';
-import { Heading } from '../../components/text';
+import {RoundButton} from '../../components/partner_store/buttons';
+import {Heading} from '../../components/text';
 import colors from '../../styles/colors';
+import {CategoryButton, CourseButton} from '../../components/button';
 
 export default function CoursesHomeScreen({navigation}): JSX.Element {
   const width = Dimensions.get('window').width;
@@ -38,7 +34,7 @@ export default function CoursesHomeScreen({navigation}): JSX.Element {
         `${constants.server_url}/api/method/edutec_courses.edutec_courses.api.edutec_home`,
       )
       .then(res => {
-        console.log(res.data.message)
+        console.log(res.data.message);
         setData(res.data.message);
       })
       .catch(err => {
@@ -81,56 +77,54 @@ export default function CoursesHomeScreen({navigation}): JSX.Element {
       </View>
 
       <View>
+        <Pressable
+          style={styles.myCourseCard}
+          onPress={() => navigation.navigate('Subscriptions')}>
+          <FontAwesomeIcon icon={faUserGraduate} size={36} color={'white'} />
+          <Text style={styles.myCourseCardText}>My Courses</Text>
+        </Pressable>
         <Heading heading="Continue Learning" />
+
         <ScrollView horizontal={true}>
-          <Pressable 
-            style={styles.myCourseCard}
-            onPress={() => navigation.navigate("Subscriptions")}
-          >
-            <FontAwesomeIcon icon={faUserGraduate} size={48} color={"white"} />
-            <Text style={styles.myCourseCardText}>My Courses</Text>
-          </Pressable>
           {data.continue_learning.map(b => (
             <CourseButton
               key={b.name}
-              title={b.name}
+              name={b.name}
               progress={
-                b.duration > b.progress
-                  ? (b.progress / b.duration) * 100
-                  : 0
+                b.duration >= b.progress ? (b.progress / b.duration) * 100 : 0
               }
-              url={`${constants.server_url}${b.cover_image}`}
-              handler={() => navigation.navigate('Course', {course_id: b.name})}
+              image_url={b.cover_image}
+              onPress={() => navigation.navigate('Course', {course_id: b.name})}
             />
           ))}
         </ScrollView>
       </View>
 
       <Heading heading="Subjects" />
-      <ScrollView horizontal={true}>
+      <ScrollView horizontal>
         {data.categories.map(cat => (
-          <RoundButton
+          <CategoryButton
             key={cat.name}
-            title={cat.name}
-            url={`${constants.server_url}/${cat.image}`}
-            handler={() =>
+            name={cat.name}
+            image_url={cat.image}
+            onPress={() =>
               navigation.navigate('Course Category', {category: cat.name})
             }
           />
         ))}
       </ScrollView>
       <Heading heading="Featured Courses" />
-      <ScrollView horizontal={true}>
+      <ScrollView horizontal  >
         {data.courses.map(b => (
           <CourseButton
             key={b.name}
-            title={b.name}
-            url={`${constants.server_url}${b.image}`}
-            handler={() => navigation.navigate('Course', {course_id: b.name})}
+            name={b.name}
+            image_url={b.image}
+            onPress={() => navigation.navigate('Course', {course_id: b.name})}
           />
         ))}
       </ScrollView>
-      <Heading heading="Featured Partners" />
+      {/* <Heading heading="Featured Partners" />
       <ScrollView horizontal={true}>
         {data.publishers.map(p => (
           <RoundedSquareButton
@@ -140,7 +134,7 @@ export default function CoursesHomeScreen({navigation}): JSX.Element {
             handler={() => navigation.navigate('Partner', {partner: p.name})}
           />
         ))}
-      </ScrollView>
+      </ScrollView> */}
     </ScrollView>
   );
 }
@@ -181,19 +175,20 @@ const styles = StyleSheet.create({
     margin: 12,
   },
   myCourseCard: {
-    height: 100,
-    width: 100,
-    marginLeft: 12,
-    marginRight: 12,
-    justifyContent: 'center',
+    height: 50,
+    width: 200,
+    paddingLeft: 18,
+    paddingRight: 18,
+    margin: 12,
+    justifyContent: 'space-around',
     alignItems: 'center',
     backgroundColor: colors.primary,
-    borderRadius: 12
+    borderRadius: 25,
+    flexDirection: "row"
   },
   myCourseCardText: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "bold",
-    marginTop: 6
-  }
+    color: 'white',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
 });

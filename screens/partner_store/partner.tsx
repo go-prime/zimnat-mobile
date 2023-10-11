@@ -13,7 +13,7 @@ import {shadow, text} from '../../styles/inputs';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import axios from 'axios';
 import constants from '../../constants';
-import Centered from '../../components/layout';
+import Centered, {Row} from '../../components/layout';
 import ImageIcon from '../../components/image';
 import {SquareProductButton} from '../../components/partner_store/product';
 import {SquareBundleButton} from '../../components/partner_store/bundle';
@@ -60,43 +60,51 @@ export default function PartnerScreen(props) {
 
       <View>
         <Text style={styles.heading}>Products</Text>
-        {data.products.map(pro => {
-          return (
-            <SquareProductButton
-              key={pro.product_name}
-              name={pro.product_name}
-              product_id={pro.billable_id}
-              id={pro.name}
-              url={`${constants.server_url}${pro.cover_image}`}
-            />
-          );
-        })}
+        <Row styles={{flexWrap: 'wrap'}}>
+          {data.products.map(pro => {
+            return (
+              <SquareProductButton
+                key={pro.product_name}
+                name={pro.product_name}
+                product_id={pro.billable_id}
+                id={pro.name}
+                url={`${constants.server_url}${pro.cover_image}`}
+              />
+            );
+          })}
+        </Row>
       </View>
       <View>
         <Text style={styles.heading}>Bundles</Text>
-        {data.bundles.map(bun => {
-          return (
-            <SquareBundleButton
-              key={bun.billable_id}
-              name={bun.bundle_name}
-              id={bun.name}
-              url={`${constants.server_url}${bun.cover_image}`}
-            />
-          );
-        })}
+        <Row styles={{flexWrap: 'wrap'}}>
+          {data.bundles.map(bun => {
+            return (
+              <SquareBundleButton
+                key={bun.billable_id}
+                name={bun.bundle_name}
+                id={bun.name}
+                url={`${constants.server_url}${bun.cover_image}`}
+              />
+            );
+          })}
+        </Row>
       </View>
       <View>
         <Text style={styles.heading}>Courses</Text>
-        {data.courses.map(c => {
-          return (
-            <RoundedSquareButton
-              key={c.name}
-              title={c.name}
-              url={`${constants.server_url}${c.cover_image}`}
-              handler={() => navigation.navigate('Course', {course_id: c.name})}
-            />
-          );
-        })}
+        <Row styles={{flexWrap: 'wrap'}}>
+          {data.courses.map(c => {
+            return (
+              <RoundedSquareButton
+                key={c.name}
+                title={c.name}
+                url={`${constants.server_url}${c.cover_image}`}
+                handler={() =>
+                  navigation.navigate('Course', {course_id: c.name})
+                }
+              />
+            );
+          })}
+        </Row>
       </View>
     </ScrollView>
   );

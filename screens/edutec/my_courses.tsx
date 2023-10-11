@@ -13,7 +13,7 @@ import {shadow, text} from '../../styles/inputs';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import axios from 'axios';
 import constants from '../../constants';
-import {faImage} from '@fortawesome/free-solid-svg-icons';
+import {faVideo, faFilm} from '@fortawesome/free-solid-svg-icons';
 import Centered, {Row} from '../../components/layout';
 import SearchBar from '../../components/search';
 import {RoundedRectButton} from '../../components/partner_store/buttons';
@@ -21,7 +21,7 @@ import ImageIcon from '../../components/image';
 import Loading from '../../components/loading';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
 import ProgressBar from '../../components/edutec/progress';
-import { Title, Subtitle } from '../../components/text';
+import { Title, SubTitle } from '../../components/text';
 
 
 const SubscriptionCard = props => {
@@ -64,8 +64,19 @@ export default function Subscriptions(props) {
     return <Loading />;
   }
 
+  if(data.length == 0) {
+    return <View style={{flex: 1}}>
+      <Centered  styles={{flex: 1}}>
+        <Title title="You don't have any courses." />
+        <SubTitle subtitle="Subscribe to start learning!" />
+        <FontAwesomeIcon icon={faFilm} size={72} color={colors.primary} />
+      </Centered>
+    </View>
+  }
+
   return (
     <ScrollView>
+
       {data.map(course => (
         <SubscriptionCard
           progress={

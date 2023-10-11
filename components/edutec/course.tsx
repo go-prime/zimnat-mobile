@@ -17,7 +17,6 @@ import {shadow, text} from '../../styles/inputs';
 import ImageIcon from '../image';
 
 const CourseButton = props => {
-  console.log(parseInt(props.progress))
   return (
     <Pressable onPress={props.handler}>
       <View style={styles.courseButton}>

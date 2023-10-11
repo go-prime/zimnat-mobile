@@ -15,7 +15,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import axios from 'axios';
 import Rating from '../../components/rating';
 import ImageIcon from '../../components/image';
-import Centered, {Row} from '../../components/layout';
+import Centered, {Circle, Row} from '../../components/layout';
 import constants from '../../constants';
 import {
   faHeart,
@@ -33,12 +33,14 @@ import {SquareProductButton} from '../../components/partner_store/product';
 import {SquareBundleButton} from '../../components/partner_store/bundle';
 import {Heading} from '../../components/text';
 import ProduceCard from '../../components/marketplace/produce';
+import { ItemButton } from '../../components/button';
 
 export default function ProductScreen(props) {
   const [data, setData] = React.useState(null);
   const [img, setImg] = React.useState(null);
   const [qty, setQty] = React.useState(1);
   const width = Dimensions.get('screen').width;
+  const navigation = props.navigation;
 
   React.useEffect(() => {
     axios
@@ -88,15 +90,26 @@ export default function ProductScreen(props) {
         <Row styles={{justifyContent: 'center'}} />
 
         <View style={styles.card}>
-          <Row styles={{gap: 8, paddingLeft: 12}}>
-            <Centered>
-              <ImageIcon width={48} height={48} />
-            </Centered>
-            <View>
-              <Text style={styles.title}>{data.name}</Text>
-              <Text style={styles.mutedHeading}>{data.merchant}</Text>
-            </View>
-          </Row>
+          <Pressable 
+            onPress={() => {
+              if(! data.merchant_storefront) return 
+              navigation.navigate("Storefront", {storefront: data.merchant_storefront})
+            }}>
+            <Row styles={{gap: 8, paddingLeft: 12, alignItems: "center"}}>
+              <Circle radius={24}>
+                <ImageIcon 
+                  width={48} 
+                  height={48}
+                  url={data.merchant_image 
+                    ? `${constants.server_url}${data.merchant_image}`
+                    : null} />
+              </Circle>
+              <View>
+                <Text style={styles.title}>{data.name}</Text>
+                <Text style={styles.mutedHeading}>{data.merchant}</Text>
+              </View>
+            </Row>
+          </Pressable>
           <Rating
             item_type="Produce"
             item_name={props.route.params.produce}
@@ -147,12 +160,11 @@ export default function ProductScreen(props) {
             <ScrollView horizontal={true} style={styles.horizontalScroll}>
               {data.related_produce.map(pro => {
                 return (
-                  <ProduceCard
+                  <ItemButton
                     key={pro.name}
-                    name={pro.name}
-                    id={pro.name}
-                    product_id={pro.billable_id}
-                    image={pro.cover_image}
+                    title={pro.name}
+                    onPress={() => navigation.navigate('Produce', {produce: pro.name})}
+                    image_url={pro.cover_image}
                   />
                 );
               })}
