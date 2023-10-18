@@ -146,7 +146,8 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 12,
     height: 200,
-    margin: 4,
+    margin: 12,
+    overflow: 'hidden'
   },
   carouselItemContainer: {
     flex: 1,

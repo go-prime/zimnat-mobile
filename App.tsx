@@ -16,6 +16,7 @@ import React from 'react';
 import {StyleSheet} from 'react-native';
 import HomeScreenNavigator from './screens/navigator';
 import {Appearance} from 'react-native';
+import ChatButton from './components/chat';
 
 
 const LightTheme = {
@@ -34,6 +35,7 @@ function App(): JSX.Element {
   return (
     <NavigationContainer theme={Appearance.getColorScheme() === 'dark' ? NightTheme : LightTheme}>
       <HomeScreenNavigator />
+      <ChatButton />
     </NavigationContainer>
   );
 }

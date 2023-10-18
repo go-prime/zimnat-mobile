@@ -22,7 +22,7 @@ import PartnerScreen from './partner_store/partner';
 import BundleScreen from './partner_store/bundle';
 import ProductScreen from './partner_store/product';
 import CategoryScreen from './partner_store/category';
-import {StyleSheet, Pressable, Text, View} from 'react-native';
+import {StyleSheet, Pressable, Text, View, Image} from 'react-native';
 import colors from '../styles/colors';
 import WishlistScreen from './billing/wishlist';
 import CartScreen from './billing/cart';
@@ -40,6 +40,8 @@ import MarketplaceCategoryScreen from './marketplace/category';
 import {useNavigation} from '@react-navigation/native';
 import Subscriptions from './edutec/my_courses';
 import InAppWebViewScreen from './web';
+import BooksHomeScreen from './books/home';
+import Centered from '../components/layout';
 
 const Drawer = createDrawerNavigator();
 
@@ -47,7 +49,14 @@ const DrawerItem = props => {
   return (
     <Pressable onPress={props.handler}>
       <View style={styles.statusContainer}>
-        <FontAwesomeIcon icon={props.icon} color={colors.primary} size={24} />
+        {props.icon && (
+          <FontAwesomeIcon icon={props.icon} color={colors.primary} size={24} />
+        )}
+        {props.source && (
+          <Centered styles={{width: 24, height: 24, overflow: 'hidden'}}>
+            <Image source={props.source} style={{width: 72, height: 72}} />
+          </Centered>
+        )}
         <Text style={styles.status}>{props.label}</Text>
       </View>
     </Pressable>
@@ -58,22 +67,26 @@ function DrawerContent(props): JSX.Element {
   return (
     <DrawerContentScrollView {...props}>
       <DrawerItem
-        icon={faShop}
+        source={require('../assets/images/marketplace.png')}
         label="Marketplace"
         handler={() => props.navigation.navigate('Marketplace Home')}
       />
       <DrawerItem
-        icon={faHandshake}
+        source={require('../assets/images/partner_store.png')}
         label="Partner Store"
         handler={() => props.navigation.navigate('Home')}
       />
 
       <DrawerItem
-        icon={faUserGraduate}
+        source={require('../assets/images/edutec.png')}
         label="Edutec"
         handler={() => props.navigation.navigate('Courses Home')}
       />
-
+      <DrawerItem
+        source={require('../assets/images/books.png')}
+        label="Business Books"
+        handler={() => props.navigation.navigate('Courses Home')}
+      />
       <DrawerItem
         icon={faUser}
         label="My Profile"
@@ -119,6 +132,7 @@ const NavOptions = props => {
 };
 
 export default function HomeScreenNavigator({navigation}): JSX.Element {
+  console.log(navigation)
   return (
     <Drawer.Navigator
       backBehavior="history"
@@ -160,7 +174,12 @@ export default function HomeScreenNavigator({navigation}): JSX.Element {
       <Drawer.Screen component={Subscriptions} name="Subscriptions" />
       <Drawer.Screen component={ProduceScreen} name="Produce" />
       <Drawer.Screen component={StorefrontScreen} name="Storefront" />
-      <Drawer.Screen options={{headerShown: false}} component={InAppWebViewScreen} name="WebView" />
+      <Drawer.Screen component={BooksHomeScreen} name="Books" />
+      <Drawer.Screen
+        options={{headerShown: false}}
+        component={InAppWebViewScreen}
+        name="WebView"
+      />
     </Drawer.Navigator>
   );
 }

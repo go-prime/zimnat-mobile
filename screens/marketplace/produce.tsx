@@ -33,13 +33,14 @@ import {SquareProductButton} from '../../components/partner_store/product';
 import {SquareBundleButton} from '../../components/partner_store/bundle';
 import {Heading} from '../../components/text';
 import ProduceCard from '../../components/marketplace/produce';
-import { ItemButton } from '../../components/button';
+import {ItemButton} from '../../components/button';
 
 export default function ProductScreen(props) {
   const [data, setData] = React.useState(null);
   const [img, setImg] = React.useState(null);
   const [qty, setQty] = React.useState(1);
   const width = Dimensions.get('screen').width;
+  const height = Dimensions.get('screen').height;
   const navigation = props.navigation;
 
   React.useEffect(() => {
@@ -64,45 +65,51 @@ export default function ProductScreen(props) {
     return <Loading />;
   }
   return (
-    <>
+    <View style={styles.root}>
+      <ImageIcon width={width} height={height / 3} url={img} />
+      <Row
+        styles={{
+          position: 'absolute',
+          justifyContent: 'center',
+          zIndex: 100,
+          top: height / 3 - 90,
+        }}>
+        {data.images.map(img => (
+          <Pressable
+            key={img.name}
+            onPress={() => setImg(`${constants.server_url}/${img.url}`)}>
+            <ImageIcon
+              width={40}
+              height={40}
+              url={`${constants.server_url}/${img.url}`}
+              styles={styles.card}
+            />
+          </Pressable>
+        ))}
+      </Row>
+      <View style={[styles.content, {top: (height / 3) - 50, height: ((height * 2) / 3) -50 }]}>
       <ScrollView>
-        <View style={styles.card}>
-          <Row>
-            <Centered styles={{margin: 16, flex: 1}}>
-              <ImageIcon width={200} height={150} url={img} />
-            </Centered>
-            <View>
-              {data.images.map(img => (
-                <Pressable
-                  key={img.name}
-                  onPress={() => setImg(`${constants.server_url}/${img.url}`)}>
-                  <ImageIcon
-                    width={40}
-                    height={40}
-                    url={`${constants.server_url}/${img.url}`}
-                    styles={styles.card}
-                  />
-                </Pressable>
-              ))}
-            </View>
-          </Row>
-        </View>
         <Row styles={{justifyContent: 'center'}} />
-
-        <View style={styles.card}>
-          <Pressable 
+          <Pressable
             onPress={() => {
-              if(! data.merchant_storefront) return 
-              navigation.navigate("Storefront", {storefront: data.merchant_storefront})
+              if (!data.merchant_storefront) {
+                return;
+              }
+              navigation.navigate('Storefront', {
+                storefront: data.merchant_storefront,
+              });
             }}>
-            <Row styles={{gap: 8, paddingLeft: 12, alignItems: "center"}}>
+            <Row styles={{gap: 8, paddingLeft: 12, alignItems: 'center'}}>
               <Circle radius={24}>
-                <ImageIcon 
-                  width={48} 
+                <ImageIcon
+                  width={48}
                   height={48}
-                  url={data.merchant_image 
-                    ? `${constants.server_url}${data.merchant_image}`
-                    : null} />
+                  url={
+                    data.merchant_image
+                      ? `${constants.server_url}${data.merchant_image}`
+                      : null
+                  }
+                />
               </Circle>
               <View>
                 <Text style={styles.title}>{data.name}</Text>
@@ -117,8 +124,6 @@ export default function ProductScreen(props) {
             size={20}
           />
           <Text style={styles.description}>{data.description}</Text>
-        </View>
-
         <View>
           <View style={styles.row}>
             <Text style={styles.heading}>
@@ -163,7 +168,9 @@ export default function ProductScreen(props) {
                   <ItemButton
                     key={pro.name}
                     title={pro.name}
-                    onPress={() => navigation.navigate('Produce', {produce: pro.name})}
+                    onPress={() =>
+                      navigation.navigate('Produce', {produce: pro.name})
+                    }
                     image_url={pro.cover_image}
                   />
                 );
@@ -172,11 +179,16 @@ export default function ProductScreen(props) {
           </View>
         </View>
       </ScrollView>
-    </>
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+    position: 'relative',
+  },
   button: {
     padding: 12,
     backgroundColor: colors.primary,
@@ -203,7 +215,7 @@ const styles = StyleSheet.create({
     color: '#999',
     paddingLeft: 12,
     fontWeight: 'bold',
-    paddingBottom: 4
+    paddingBottom: 4,
   },
   description: {
     ...text,
@@ -234,5 +246,16 @@ const styles = StyleSheet.create({
   horizontalScroll: {
     gap: 8,
     padding: 12,
+  },
+  content: {
+    position: 'absolute',
+    backgroundColor: 'white',
+    borderRadius: 24,
+    flex: 1,
+    elevation: 5,
+    right: 0,
+    left: 0,
+    paddingTop: 36,
+    paddingLeft: 12,
   },
 });

@@ -185,9 +185,8 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
   },
   card: {
-    ...shadow,
-    margin: 12,
-    elevation: 5,
     borderRadius: 12,
+    borderBottomColor: "#CCC",
+    borderBottomWidth: 1
   },
 });

@@ -1,15 +1,25 @@
 import React from 'react';
-import {View, Text, Pressable, StyleSheet, ImageBackground, Alert} from 'react-native';
+import {
+  View,
+  Text,
+  Pressable,
+  StyleSheet,
+  ImageBackground,
+  Alert,
+  Dimensions,
+  ScrollView,
+  TextInput
+} from 'react-native';
 import {card, shadow} from '../styles/inputs';
 import axios from 'axios';
 import constants from '../constants';
-import {Image} from 'react-native-svg';
+import {Image} from 'react-native';
 import colors from '../styles/colors';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Centered, {Row} from '../components/layout';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faLock} from '@fortawesome/free-solid-svg-icons';
-import {TextInput} from 'react-native-gesture-handler';
+
 import {useNavigation} from '@react-navigation/native';
 
 const toCookieObj = (cookie: string) => {
@@ -21,28 +31,24 @@ const toCookieObj = (cookie: string) => {
   return resp;
 };
 
-const LoginCard = props => {
+const LoginCard = (props) => {
+  
   return (
     <Pressable
       onPress={() => {
-        console.log('pressed');
         props.handler();
       }}>
       <View style={[styles.container]}>
-        <ImageBackground
+      <Centered>
+      <Image
           source={props.source}
-          style={{flex: 1, position: 'realative'}}
-          imageStyle={{
-            right: 0,
-            left: '30%',
-            width: '70%',
-            height: '100%',
-            position: 'absolute',
-            resizeMode: 'cover',
-          }}>
-          <Text style={styles.title}>{props.title}</Text>
-          <Text style={styles.subtitle}>{props.message}</Text>
-        </ImageBackground>
+          style={{ width: props.width  , height: props.height,marginBottom: 18 }}
+        />
+      </Centered>
+      <View style={styles.loginText}>
+        <Text style={styles.title}>{props.title}</Text>
+        <Text style={styles.subtitle}>{props.message}</Text>
+      </View>
       </View>
     </Pressable>
   );
@@ -96,22 +102,28 @@ const SignInView = props => {
         navigator.navigate('Profile');
       })
       .catch(err => {
-        Alert.alert("Error", "Could not log in with provided credentials")
-      })
-  }
+        Alert.alert('Error', 'Could not log in with provided credentials');
+      });
+  };
 
   return (
     <View style={styles.signInCard}>
       <View style={styles.inputContainer}>
-        <TextInput placeholder="Username" value={username} onChangeText={setUsername} />
+        <TextInput
+          placeholder="Username"
+          value={username}
+          onChangeText={setUsername}
+        />
       </View>
       <View style={styles.inputContainer}>
-        <TextInput value={password} placeholder="Password" onChangeText={setPassword} />
+        <TextInput
+          value={password}
+          placeholder="Password"
+          onChangeText={setPassword}
+        />
       </View>
       <Row styles={styles.buttonRow}>
-        <Pressable
-          style={styles.primaryButton}
-          onPress={onLogin}>
+        <Pressable style={styles.primaryButton} onPress={onLogin}>
           <Text style={styles.buttonText}>Login</Text>
         </Pressable>
         <Pressable
@@ -130,6 +142,8 @@ const SignInView = props => {
 
 export default function LoginScreen({navigation}) {
   const [showLogin, setShowLogin] = React.useState(false);
+  const width = Dimensions.get('screen').width;
+  const height = Dimensions.get('screen').height;
   React.useEffect(() => {
     AsyncStorage.getItem('user').then(value => {
       if (value === 'Guest') {
@@ -143,8 +157,11 @@ export default function LoginScreen({navigation}) {
     <ImageBackground
       source={require('../assets/images/background.jpg')}
       style={{width: '100%', height: '100%'}}>
-      <View>
-        <Text style={[styles.welcome]}>Welcome to Hustle Hub</Text>
+      <ScrollView>
+        <Image
+          source={require('../assets/images/Logo-01.png')}
+          style={{width: width, height: height / 4}}
+        />
         <Centered>
           <Pressable onPress={() => setShowLogin(!showLogin)}>
             <Row styles={styles.pill}>
@@ -167,55 +184,75 @@ export default function LoginScreen({navigation}) {
           <SignInView />
         ) : (
           <View>
-            <LoginCard
-              title="Marketplace"
-              message="Shop with our hustlers."
-              source={require('../assets/images/street-market.png')}
-              handler={() => login(navigation, 'Marketplace Home')}
-              backgroundColor={colors.secondary}
-            />
-            <LoginCard
-              title="Partners"
-              message="Equip your next hustle."
-              source={require('../assets/images/partnership.png')}
-              handler={() => login(navigation)}
-              backgroundColor={colors.tertiary}
-            />
-            <LoginCard
-              title="Edutec"
-              source={require('../assets/images/studying.png')}
-              message="Get the skills needed for your next hustle."
-              handler={() => login(navigation, 'Courses Home')}
-              backgroundColor={colors.primary}
-            />
+            <Row >
+              <LoginCard
+                title="Marketplace"
+                message="Shop with our hustlers."
+                source={require('../assets/images/marketplace.png')}
+                handler={() => login(navigation, 'Marketplace Home')}
+                width={(width / 2) - 48}
+                height={(height / 5) - 12}
+              />
+              <LoginCard
+                title="Partners"
+                message="Equip your next hustle."
+                source={require('../assets/images/partner_store.png')}
+                handler={() => login(navigation)}
+                width={(width / 2) - 48}
+                height={(height / 5) - 12}
+              />
+            </Row>
+            <Row>
+              <LoginCard
+                title="Edutec"
+                source={require('../assets/images/edutec.png')}
+                message="Get the skills needed for your next hustle."
+                handler={() => login(navigation, 'Courses Home')}
+                width={(width / 2) - 48}
+                height={(height / 5) - 12}
+              />
+              <LoginCard
+                title="Business Books"
+                source={require('../assets/images/books.png')}
+                message="Stay on top of your hustle."
+                handler={() => login(navigation, 'Books')}
+                width={(width / 2) - 48}
+                height={(height / 5) - 12}
+              />
+            </Row>
           </View>
         )}
-      </View>
+      </ScrollView>
     </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    height: 150,
     borderRadius: 12,
     ...shadow,
     elevation: 5,
     margin: 12,
     backgroundColor: 'white',
     padding: 12,
+    position: 'relative',
   },
   title: {
-    fontSize: 24,
+    fontSize: 18,
     color: 'black',
     backgroundColor: 'white',
-    width: 180,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
   subtitle: {
     fontSize: 14,
     color: 'black',
     backgroundColor: 'white',
-    width: 180,
+  },
+  loginText: {
+    position: 'absolute',
+    bottom: 12,
+    left: 12
   },
   welcome: {
     fontSize: 36,
@@ -244,10 +281,11 @@ const styles = StyleSheet.create({
   pill: {
     alignItems: 'center',
     backgroundColor: 'white',
-    padding: 6,
+    padding: 12,
     borderRadius: 18,
-    paddingLeft: 12,
-    paddingRight: 12,
+    paddingLeft: 40,
+    paddingRight: 40,
+    margin: 12,
     borderWidth: 1,
     borderColor: colors.primary,
   },
@@ -283,4 +321,5 @@ const styles = StyleSheet.create({
   signInCard: {
     marginTop: 48,
   },
+  
 });

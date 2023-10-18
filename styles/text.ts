@@ -30,8 +30,8 @@ const title = {
 
 const subTitle = {
     fontSize: 18,
-    marginBottom: 8,
-    color: "#999"
+    marginBottom: 6,
+    ...text
 
 };
 
