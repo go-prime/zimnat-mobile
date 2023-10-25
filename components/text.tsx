@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
     ...text,
     fontSize: 18,
     fontWeight: "bold",
-    borderBottomColor: colors.secondary,
+    borderBottomColor: colors.primary,
     borderBottomWidth: 4,
     paddingBottom: 6,
     marginBottom: 8,

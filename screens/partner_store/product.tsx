@@ -10,7 +10,7 @@ import {
   Dimensions,
 } from 'react-native';
 import colors from '../../styles/colors';
-import {shadow, text} from '../../styles/inputs';
+import {card, shadow, text} from '../../styles/inputs';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import axios from 'axios';
 import Rating from '../../components/rating';
@@ -201,7 +201,7 @@ const styles = StyleSheet.create({
   },
   content: {
     position: 'absolute',
-    backgroundColor: 'white',
+    ...card,
     borderRadius: 24,
     flex: 1,
     elevation: 5,

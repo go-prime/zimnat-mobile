@@ -57,9 +57,7 @@ export default function MarketplaceHome({navigation}) {
                   width={width - 48}
                   height={width - 48}
                 />
-                <Text style={[styles.carouselTextStyle, {width: width - 96}]}>
-                  {item.title}
-                </Text>
+                
               </View>
             );
           }}
@@ -83,9 +81,9 @@ export default function MarketplaceHome({navigation}) {
         <View style={styles.column}>
           {data.produce
             .map((p, index) => ({...p, index: index}))
-            .map(p => {console.log(p); return p})
+            
             .filter(p => p.index % 2 === 0)
-            .map(p => {console.log(p); return p})
+            
             .map(p => (
               <ItemButton
                 key={p.index}

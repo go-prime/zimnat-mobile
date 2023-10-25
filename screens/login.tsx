@@ -113,6 +113,8 @@ const SignInView = props => {
           placeholder="Username"
           value={username}
           onChangeText={setUsername}
+          style={styles.inputText}
+          placeholderTextColor={'black'}
         />
       </View>
       <View style={styles.inputContainer}>
@@ -120,6 +122,8 @@ const SignInView = props => {
           value={password}
           placeholder="Password"
           onChangeText={setPassword}
+          placeholderTextColor={'black'}
+          style={styles.inputText}
         />
       </View>
       <Row styles={styles.buttonRow}>
@@ -155,7 +159,7 @@ export default function LoginScreen({navigation}) {
 
   return (
     <ImageBackground
-      source={require('../assets/images/background.jpg')}
+      source={require('../assets/images/background_2.png')}
       style={{width: '100%', height: '100%'}}>
       <ScrollView>
         <Image
@@ -314,6 +318,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     padding: 4,
     ...card,
+    backgroundColor: 'white',
     margin: 8,
     borderRadius: 8,
     elevation: 5,
@@ -321,5 +326,7 @@ const styles = StyleSheet.create({
   signInCard: {
     marginTop: 48,
   },
-  
+  inputText: {
+    color: 'black'
+  }
 });

@@ -17,14 +17,9 @@ import Centered, {Row} from '../../components/layout';
 import ImageIcon from '../../components/image';
 import CourseItem from '../../components/edutec/course';
 import {
-  faCog,
+  faAngleDown,
   faTimes,
-  faPlay,
-  faFastForward,
-  faFastBackward,
-  faAngleRight,
-  faAngleLeft,
-  faPause,
+  faAngleUp
 } from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {Picker} from '@react-native-picker/picker';
@@ -32,6 +27,7 @@ import {card, text} from '../../styles/inputs';
 import colors from '../../styles/colors';
 import {useNavigation} from '@react-navigation/native';
 import VideoOverlay from './video/overlay';
+import { Heading, Paragraph, SubTitle, Title } from '../../components/text';
 
 const OptionsModal = props => {
   return (
@@ -74,6 +70,7 @@ export default function VideoPlayer(props) {
   const [duration, setDuration] = React.useState(0);
   const [quality, setQuality] = React.useState('url_360p');
   const [paused, setPaused] = React.useState(true);
+  const [showDescription, setShowDescription] = React.useState(false);
 
   React.useEffect(() => {
     if (!(playerRef && playerRef.current)) {
@@ -137,7 +134,6 @@ export default function VideoPlayer(props) {
           style={{width: '100%', flex: 1}}
           onPress={() => {
             setOverlay(!overlay);
-            setTimeout(() => setOverlay(false), 2000);
           }}>
           <Video
             progressUpdateInterval={1000}
@@ -165,23 +161,31 @@ export default function VideoPlayer(props) {
             position={position}
             videoLength={duration}
             togglePlayback={() => setPaused(!paused)}
+            toggleOverlay={setOverlay}
           />
         ) : null}
       </View>
       {fullScreen ? null : (
         <View style={styles.card}>
-          <Text style={styles.title}>{data.title}</Text>
-          <Text style={styles.subTitle}>{data.course}</Text>
-          <Row styles={{alignItems: 'center'}}>
+          <Title title={data.title}></Title>
+          <SubTitle subtitle={data.course} />
+          <Row styles={{alignItems: 'flex-start', marginLeft: 8, padding: 8, borderWidth: 1, borderRadius: 4, borderColor: "#ccc"}}>
             <ImageIcon
               url={`${constants.server_url}/${data.publisher_image}`}
               width={50}
               height={50}
             />
-            <Text style={styles.subTitle}>{data.publisher}</Text>
+            <SubTitle subtitle={data.publisher} />
           </Row>
-
-          <Text style={styles.description}>{data.description}</Text>
+          <Row styles={{alignItems: 'center', justifyContent: 'space-between' }}>
+          
+          <Heading heading={"Description"}/>
+          <Pressable onPress={() => setShowDescription(!showDescription)}>
+            <FontAwesomeIcon  icon={showDescription ? faAngleUp : faAngleDown} color={colors.primary} size={28}/>
+          </Pressable>
+          </Row>
+          {showDescription && <Paragraph text={data.description} />}
+          <Heading heading={"Next Videos"}/>
           <ScrollView>
             {data.videos.map((video, index) => {
               return (

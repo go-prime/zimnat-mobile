@@ -18,16 +18,12 @@ import {
   Dimensions,
   ScrollView,
 } from 'react-native';
-import {shadow} from '../styles/inputs';
+import {card, shadow} from '../styles/inputs';
 import axios from 'axios';
 import constants from '../constants';
-import ImageIcon from './image';
 import {Row} from './layout';
-import {subTitle, paragraph} from '../styles/text';
 import {useNavigation} from '@react-navigation/native';
 import colors from '../styles/colors';
-import Centered from './layout';
-import { err } from 'react-native-svg/lib/typescript/xml';
 
 const ChatBubble = props => {
   return (
@@ -58,7 +54,7 @@ const ChatModal = props => {
   const [inputText, setInputText] = React.useState('');
   const [isSending, setIsSending] = React.useState(false);
   const [customMargin, setCustomMargin] = React.useState(12);
-  const scrollRef = React.useRef<ScrollView>(null)
+  const scrollRef = React.useRef<ScrollView>(null);
 
   const sendMessage = () => {
     if (!inputText.length) {
@@ -77,76 +73,80 @@ const ChatModal = props => {
         },
       )
       .then(res => {
-        const newMessages = res.data.message.map(msg => ({text: msg.content, bot: true}))
-        
+        const newMessages = res.data.message.map(msg => ({
+          text: msg.content,
+          bot: true,
+        }));
+
         setChat(prevChat => {
           const newChat = [...prevChat, ...newMessages];
-          return newChat
+          return newChat;
         });
-        
+
         setIsSending(false);
       })
       .catch(err => {
-        Alert.alert("Error", "Cannot communicate with the chatbot service.")
-        console.log(err)
-        if(err.response) {
-          console.log(err.response)
+        Alert.alert('Error', 'Cannot communicate with the chatbot service.');
+        console.log(err);
+        if (err.response) {
+          console.log(err.response);
         }
-      })
+      });
   };
 
   return (
     <Modal animationType="slide" transparent visible>
-      <View style={[styles.modalContent, {height: height - 162}]}>
-        <ScrollView 
-          ref={scrollRef} 
-          style={styles.messageContainer}
-          onContentSizeChange={() => scrollRef.current?.scrollToEnd()}>
-          {chat.map((c, i) => (
-            <ChatBubble {...c} key={i} />
-          ))}
-          {isSending && <SendingBubble />}
-        </ScrollView>
-        <Row styles={{marginBottom: customMargin}}>
-          <Row styles={styles.inputContainer}>
-            <Pressable onPress={props.toggleVisible}>
-              <FontAwesomeIcon
-                icon={faTimesCircle}
-                color={'white'}
-                style={{marginLeft: 6}}
-                size={24}
+      <ScrollView
+        automaticallyAdjustKeyboardInsets={true}
+        style={styles.scrollable}>
+        <View style={[styles.modalContent, {height: height - 74}]}>
+          <ScrollView
+            ref={scrollRef}
+            style={styles.messageContainer}
+            onContentSizeChange={() => scrollRef.current?.scrollToEnd()}>
+            {chat.map((c, i) => (
+              <ChatBubble {...c} key={i} />
+            ))}
+            {isSending && <SendingBubble />}
+          </ScrollView>
+          <Row>
+            <Row styles={styles.inputContainer}>
+              <Pressable onPress={props.toggleVisible}>
+                <FontAwesomeIcon
+                  icon={faTimesCircle}
+                  color={'white'}
+                  style={{marginLeft: 6}}
+                  size={24}
+                />
+              </Pressable>
+              <TextInput
+                style={styles.input}
+                autoFocus
+                value={inputText}
+                onChangeText={setInputText}
+                onFocus={() => setCustomMargin(height / 3)}
+                onBlur={() => setCustomMargin(12)}
               />
+            </Row>
+            <Pressable onPress={sendMessage} style={styles.sendButton}>
+              <FontAwesomeIcon icon={faPaperPlane} size={20} color={'white'} />
             </Pressable>
-            <TextInput
-              style={styles.input}
-              autoFocus
-              value={inputText}
-              onChangeText={setInputText}
-              onFocus={() => setCustomMargin(height / 3)}
-              onBlur={() => setCustomMargin(12)}
-            />
           </Row>
-          <Pressable onPress={sendMessage} style={styles.sendButton}>
-            <FontAwesomeIcon icon={faPaperPlane} size={20} color={'white'} />
-          </Pressable>
-        </Row>
-      </View>
+        </View>
+      </ScrollView>
     </Modal>
   );
 };
 
 export default function ChatButton(props) {
   const [showModal, setShowModal] = React.useState(false);
-
   return (
     <>
       <Pressable
         onPress={() => setShowModal(true)}
-        disabled={props.disabled}
-        hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}
         android_ripple={{color: 'rgba(0,0,0,0.1)'}}
         activeOpacity={0.7}
-        style={styles.chatButton}>
+        style={[styles.chatButton, {display: props.visible ? 'block': "none"}]}>
         <FontAwesomeIcon color={'white'} size={36} icon={faComments} />
       </Pressable>
       {showModal && (
@@ -172,9 +172,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   modalContent: {
-    marginHorizontal: 12,
-    backgroundColor: 'white',
-    marginTop: 100,
+    margin: 12,
+    ...card,
     borderRadius: 24,
     overflow: 'hidden',
     elevation: 5,
@@ -227,5 +226,6 @@ const styles = StyleSheet.create({
     padding: 12,
     paddingTop: 24,
     flex: 1,
+    flexDirection: 'column-reverse',
   },
 });

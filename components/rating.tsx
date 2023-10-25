@@ -15,7 +15,7 @@ import {
   faStarHalfStroke,
   faArrowUpRightFromSquare,
   faTimes,
-  faTimesCircle,
+  faTimesCircle
 } from '@fortawesome/free-solid-svg-icons';
 import {TextInput} from 'react-native-gesture-handler';
 import {Picker} from '@react-native-picker/picker';
@@ -23,7 +23,7 @@ import {Heading, Paragraph, SubTitle} from './text';
 import axios from 'axios';
 import {card, shadow, text} from '../styles/inputs';
 import constants from '../constants';
-
+import {Row} from './layout';
 
 const submitRating = (rating, description, item_type, item_name, onRating) => {
   axios
@@ -40,12 +40,12 @@ const submitRating = (rating, description, item_type, item_name, onRating) => {
     )
     .then(res => {
       console.log(res.data.message);
-      Alert.alert("Submitted Rating Successfully")
-      onRating()
+      Alert.alert('Submitted Rating Successfully');
+      onRating();
     })
     .catch(err => {
       console.log(err);
-      console.log(err.response.data)
+      console.log(err.response.data);
     });
 };
 
@@ -82,13 +82,18 @@ const RatingModal = props => {
         </Pressable>
 
         <SubTitle subtitle="Rating" />
-        <Picker selectedValue={rating} onValueChange={setRating}>
-          <Picker.Item label="1 Star" value="1" />
-          <Picker.Item label="2 Stars" value="2" />
-          <Picker.Item label="3 Stars" value="3" />
-          <Picker.Item label="4 Stars" value="4" />
-          <Picker.Item label="5 Stars" value="5" />
-        </Picker>
+        <Row styles={{justifyContent: 'space-around'}}>
+          {new Array(5).fill(0).map((_, i) => (
+            <Pressable onPress={() => setRating(i+ 1)}>
+              <FontAwesomeIcon
+                key={i}
+                icon={faStar}
+                size={36}
+                color={rating >= i + 1 ? '#FFA41C' : "#ccc"}
+              />
+            </Pressable>
+          ))}
+        </Row>
         <SubTitle subtitle="Description" />
         <View style={styles.inputContainer}>
           <TextInput
@@ -102,7 +107,13 @@ const RatingModal = props => {
         </View>
         <Pressable
           onPress={() =>
-            submitRating(rating, description, props.item_type, props.item_name, props.onClose)
+            submitRating(
+              rating,
+              description,
+              props.item_type,
+              props.item_name,
+              props.onClose,
+            )
           }
           style={styles.button}>
           <Text style={styles.buttonText}>Submit</Text>
@@ -113,7 +124,14 @@ const RatingModal = props => {
             <View style={styles.rating} key={index}>
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <Text style={styles.number}>{r.rating}</Text>
-                <FontAwesomeIcon icon={faStar} color="#FFA41C" size={24} />
+                {new Array(r.rating).fill(0).map((_, i) => (
+                  <FontAwesomeIcon
+                    key={i}
+                    icon={faStar}
+                    size={20}
+                    color={'#FFA41C'}
+                  />
+                ))}
               </View>
               <Text style={styles.user}>{r.subscriber} says:</Text>
               <Paragraph text={r.description} />
@@ -130,14 +148,15 @@ export default function Rating(props) {
   const emptyStars = 5 - fullStars;
   const halfStar = props.value - fullStars > 0;
   const [modalVisible, setModalVisible] = React.useState(false);
-  const containerWidth = (((props.size || 24) + 4) * 5) + 24
-
+  const containerWidth = ((props.size || 24) + 4) * 5 + 24;
 
   return (
     <>
-      <Pressable style={[styles.container, {width: containerWidth }]} onPress={() => {
-            setModalVisible(true);
-          }}>
+      <Pressable
+        style={[styles.container, {width: containerWidth}]}
+        onPress={() => {
+          setModalVisible(true);
+        }}>
         {new Array(fullStars).fill(0).map((_, i) => (
           <FontAwesomeIcon
             key={i}
@@ -149,7 +168,7 @@ export default function Rating(props) {
         {halfStar && (
           <FontAwesomeIcon
             icon={faStarHalfStroke}
-            size={props.size  || 24}
+            size={props.size || 24}
             color={'#FFA41C'}
           />
         )}
@@ -157,7 +176,7 @@ export default function Rating(props) {
           <FontAwesomeIcon
             key={i}
             icon={faStar}
-            size={props.size  || 24}
+            size={props.size || 24}
             color={'#ddd'}
           />
         ))}
@@ -179,11 +198,11 @@ const styles = StyleSheet.create({
     margin: 12,
     marginLeft: 0,
     borderRadius: 24,
-    borderWidth: 1,
+    borderWidth: 2,
     padding: 12,
     borderColor: '#FFA41C',
-    backgroundColor: 'white',
-    gap: 4
+    ...card,
+    gap: 4,
   },
   modalBody: {
     margin: 24,

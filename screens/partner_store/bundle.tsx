@@ -10,7 +10,7 @@ import {
   Dimensions,
 } from 'react-native';
 import colors from '../../styles/colors';
-import {shadow, text} from '../../styles/inputs';
+import {card, shadow, text} from '../../styles/inputs';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import axios from 'axios';
 import {
@@ -150,13 +150,16 @@ const styles = StyleSheet.create({
     flex: 1
   }, 
   content: {
-    backgroundColor: "white",
+    ...card,
     borderRadius: 24,
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
     marginTop: -48,
     paddingTop: 36,
     flex: 1,
     paddingLeft: 12,
     paddingRight: 12,
+    elevation: 5
   },
   row: {
     flexDirection: 'row',

@@ -10,6 +10,7 @@ import {
   DefaultTheme,
   DarkTheme,
   NavigationContainer,
+  useNavigationContainerRef,
 } from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
@@ -18,24 +19,44 @@ import HomeScreenNavigator from './screens/navigator';
 import {Appearance} from 'react-native';
 import ChatButton from './components/chat';
 
-
 const LightTheme = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
-    background: "#DFF6FF",
-  }
-}
+    background: '#DFF6FF',
+  },
+};
 
 const NightTheme = {
-  ...DarkTheme
-}
+  ...DarkTheme,
+};
 
 function App(): JSX.Element {
+  const [chatVisible, setChatVisible] = React.useState(false);
+  const navContainerRef = useNavigationContainerRef();
+
+  React.useEffect(() => {
+    navContainerRef.addListener('state', e => {
+      if (e.data.state.history.length) {
+        const length = e.data.state.history.length;
+        const index = length - 1;
+        const route = e.data.state.history[e.data.state.history.length - 1];
+        let route_name = '';
+        if (route) {
+          route_name = route.key && route.key.split ? route.key.split('-')[0] : '';
+        }
+
+        setChatVisible(route_name != 'Login');
+      }
+    });
+  }, []);
+
   return (
-    <NavigationContainer theme={Appearance.getColorScheme() === 'dark' ? NightTheme : LightTheme}>
+    <NavigationContainer
+      ref={navContainerRef}
+      theme={Appearance.getColorScheme() === 'dark' ? NightTheme : LightTheme}>
       <HomeScreenNavigator />
-      <ChatButton />
+      <ChatButton visible={chatVisible} />
     </NavigationContainer>
   );
 }

@@ -4,6 +4,7 @@ import Centered, {Row} from '../../../components/layout';
 
 import {
   faCog,
+  faEllipsisH,
   faPlay,
   faFastForward,
   faFastBackward,
@@ -30,7 +31,10 @@ const VideoOverlay = props => {
         },
       ]}>
       <View style={styles.seekerView}>
-        <Seeker currentTime={props.position} videoLength={props.videoLength} />
+        <Seeker 
+          currentTime={props.position} 
+          videoLength={props.videoLength}
+          player={props.player} />
       </View>
       <Row styles={styles.controls}>
         <Row styles={{flex: 1}}>
@@ -98,7 +102,7 @@ const VideoOverlay = props => {
           </Row>
           <Centered style={{width: 44}}>
             <Pressable onPress={props.toggleOptions}>
-              <FontAwesomeIcon icon={faCog} size={36} color={'white'} />
+              <FontAwesomeIcon icon={faEllipsisH} size={36} color={'white'} />
             </Pressable>
           </Centered>
         </Row>

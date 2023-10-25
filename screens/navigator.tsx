@@ -22,7 +22,14 @@ import PartnerScreen from './partner_store/partner';
 import BundleScreen from './partner_store/bundle';
 import ProductScreen from './partner_store/product';
 import CategoryScreen from './partner_store/category';
-import {StyleSheet, Pressable, Text, View, Image} from 'react-native';
+import {
+  StyleSheet,
+  Pressable,
+  Text,
+  View,
+  Image,
+  Appearance,
+} from 'react-native';
 import colors from '../styles/colors';
 import WishlistScreen from './billing/wishlist';
 import CartScreen from './billing/cart';
@@ -46,15 +53,21 @@ import Centered from '../components/layout';
 const Drawer = createDrawerNavigator();
 
 const DrawerItem = props => {
+  let source = props.source;
+  const dark_mode = Appearance.getColorScheme() === "dark"
+  if(dark_mode && props.dark_source) {
+    source = props.dark_source
+  }
+
   return (
     <Pressable onPress={props.handler}>
       <View style={styles.statusContainer}>
         {props.icon && (
           <FontAwesomeIcon icon={props.icon} color={colors.primary} size={24} />
         )}
-        {props.source && (
-          <Centered styles={{width: 24, height: 24, overflow: 'hidden'}}>
-            <Image source={props.source} style={{width: 72, height: 72}} />
+        {source && (
+          <Centered styles={{width: 30, height: 30, overflow: 'hidden'}}>
+            <Image source={source} style={{width: 80, height: 80}} />
           </Centered>
         )}
         <Text style={styles.status}>{props.label}</Text>
@@ -68,24 +81,28 @@ function DrawerContent(props): JSX.Element {
     <DrawerContentScrollView {...props}>
       <DrawerItem
         source={require('../assets/images/marketplace.png')}
+        dark_source={require('../assets/images/marketplace_dark.png')}
         label="Marketplace"
         handler={() => props.navigation.navigate('Marketplace Home')}
       />
       <DrawerItem
         source={require('../assets/images/partner_store.png')}
+        dark_source={require('../assets/images/partner_store_dark.png')}
         label="Partner Store"
         handler={() => props.navigation.navigate('Home')}
       />
 
       <DrawerItem
         source={require('../assets/images/edutec.png')}
+        dark_source={require('../assets/images/edutec_dark.png')}
         label="Edutec"
         handler={() => props.navigation.navigate('Courses Home')}
       />
       <DrawerItem
         source={require('../assets/images/books.png')}
+        dark_source={require('../assets/images/books_dark.png')}
         label="Business Books"
-        handler={() => props.navigation.navigate('Courses Home')}
+        handler={() => props.navigation.navigate('Books')}
       />
       <DrawerItem
         icon={faUser}
@@ -132,10 +149,10 @@ const NavOptions = props => {
 };
 
 export default function HomeScreenNavigator({navigation}): JSX.Element {
-  console.log(navigation)
   return (
     <Drawer.Navigator
       backBehavior="history"
+      swipeEnabled={false}
       screenOptions={{
         headerRight: () => <NavOptions />,
         headerStyle: {
@@ -169,7 +186,7 @@ export default function HomeScreenNavigator({navigation}): JSX.Element {
       <Drawer.Screen component={CourseCategoryScreen} name="Course Category" />
       <Drawer.Screen component={MarketplaceHome} name="Marketplace Home" />
       <Drawer.Screen component={CourseScreen} name="Course" />
-      <Drawer.Screen component={VideoPlayer} name="Video" />
+      <Drawer.Screen component={VideoPlayer} name="Video" gestureEnabled={false} swipeEnabled={false} />
       <Drawer.Screen component={ArticleViewer} name="Article" />
       <Drawer.Screen component={Subscriptions} name="Subscriptions" />
       <Drawer.Screen component={ProduceScreen} name="Produce" />

@@ -1,8 +1,8 @@
 import React from 'react';
 
-import {View, Text, Pressable, StyleSheet, ScrollView} from 'react-native';
+import {View, Text, Dimensions, StyleSheet, ScrollView} from 'react-native';
 import colors from '../../styles/colors';
-import {shadow, text} from '../../styles/inputs';
+import {card, shadow, text} from '../../styles/inputs';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import axios from 'axios';
 import constants from '../../constants';
@@ -14,11 +14,14 @@ import ImageIcon from '../../components/image';
 import Loading from '../../components/loading';
 import { ItemButton } from '../../components/button';
 import { useNavigation } from '@react-navigation/native';
+import { Heading, Paragraph, Title } from '../../components/text';
 
 
 export default function CategoryScreen(props) {
   const [data, setData] = React.useState(null);
   const navigation = useNavigation()
+  const width = Dimensions.get('screen').width;
+  const height = Dimensions.get('screen').height;
   React.useEffect(() => {
     axios
       .get(
@@ -39,39 +42,71 @@ export default function CategoryScreen(props) {
   }
 
   return (
-    <ScrollView>
-      <View style={{flexDirection: 'row'}}>
-        <SearchBar />
+    <View style={styles.root}>
+      <ImageIcon width={width}
+        height={height / 3} url={data.image} />
+      <View style={styles.content}>
+        <Title title={props.route.params.category}/>
+        <Paragraph text={data.description}/>
+        <Heading heading="Products" />
+        <ScrollView  >
+          <Row styles={{justifyContent: 'space-around'}}>
+          <View>
+            {data.products
+              .map((p, index) => ({...p, index: index}))
+              .filter(p => p.index % 2 === 0)
+              .map(pro => {
+                return (
+                  <ItemButton
+                    key={pro.name}
+                    title={pro.product_name}
+                    image_url={pro.cover_image}
+                    onPress={() => navigation.navigate("Product", {product: pro.name})}
+                  />
+                );
+              })}
+          </View>
+          <View style={{marginTop: 40}}>
+          {data.products
+              .map((p, index) => ({...p, index: index}))
+              .filter(p => p.index % 2 === 1)
+              .map(pro => {
+                return (
+                  <ItemButton
+                    key={pro.name}
+                    title={pro.product_name}
+                    image_url={pro.cover_image}
+                    onPress={() => navigation.navigate("Product", {product: pro.name})}
+                  />
+                );
+              })}
+          </View>
+          </Row>
+          
+          
+        </ScrollView>
       </View>
-      <View style={styles.card}>
-        <Centered styles={{margin: 16}}>
-          <ImageIcon width={75} height={75} url={data && `${constants.server_url}/${data.image}`} />
-        </Centered>
-        <Text style={styles.title}>{props.route.params.category}</Text>
-        <Text style={styles.description}>
-          {(data && data.description) || 'Loading description...'}
-        </Text>
-      </View>
-      <View>
-        <Text style={styles.heading}>Products</Text>
-        <View>
-          {data.products.map(pro => {
-              return (
-                <ItemButton
-                  key={pro.name}
-                  title={pro.product_name}
-                  image_url={pro.cover_image}
-                  onPress={() => navigation.navigate("Product", {product: pro.name})}
-                />
-              );
-            })}
-        </View>
-      </View>
-    </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  root: {
+    position:'relative',
+    flex: 1
+  }, 
+  content: {
+    ...card,
+    borderRadius: 24,
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
+    marginTop: -48,
+    paddingTop: 36,
+    flex: 1,
+    paddingLeft: 12,
+    paddingRight: 12,
+    elevation: 5
+  },
   title: {
     fontSize: 24,
     padding: 12,

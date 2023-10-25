@@ -23,7 +23,6 @@ export default function CourseCategoryScreen(props) {
         {params: {category_id: props.route.params.category}},
       )
       .then(res => {
-        console.log(res.data.message);
         setData(res.data.message);
       })
       .catch(err => {

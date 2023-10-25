@@ -4,6 +4,7 @@ import {
   StyleSheet,
   Animated,
   Dimensions,
+  PanResponder,
 } from 'react-native';
 import colors from '../../../styles/colors';
 
@@ -13,8 +14,49 @@ const seekerProps = {
   seekHandler: Function,
 };
 
+const SeekerThumb = ({anim, clipLength, windowWidth, videoPlayer}) => {
+  const [dragging, setDragging] = React.useState(false);
+
+  const panResponder = React.useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: () => true,
+      onPanResponderGrant: () => {
+        setDragging(true);
+      },
+      onPanResponderMove: Animated.event( 
+        [ 
+            null, 
+            { 
+                dx: anim,
+            }, 
+        ], 
+        { 
+          useNativeDriver: false,
+        } 
+    ),
+      onPanResponderRelease: (evt, gesture) => {
+        setDragging(false);
+        const {dx} = gesture;
+        const clipLengthRatio = dx / windowWidth
+        const seekTime = clipLength * clipLengthRatio;
+        videoPlayer.seek(seekTime)
+      }
+    }),
+  ).current;
+
+  return (
+    <Animated.View
+    style={[
+      dragging ? styles.draggingSeekerThumb : styles.seekerThumb,
+      {left: anim},
+    ]}
+    {...panResponder.panHandlers}
+  />
+  )
+}
+
 const Seeker = (props: seekerProps) => {
-  const [seekerPositionPx, setSeekerPositionPx] = React.useState(0);
   const width = Dimensions.get('window').width;
   const seekAnim = React.useRef(new Animated.Value(0)).current;
 
@@ -22,16 +64,13 @@ const Seeker = (props: seekerProps) => {
     if (!(props.videoLength && props.videoLength > 0)) {
       return;
     }
-    setSeekerPositionPx(width * (props.currentTime / props.videoLength));
-  }, [props.currentTime, props.videoLength]);
-
-  React.useEffect(() => {
+    const newValue = width * (props.currentTime / props.videoLength)
     Animated.timing(seekAnim, {
-        toValue: seekerPositionPx - 11,
-        duration: 100,
-        useNativeDriver: false,
-    }).start()
-  }, [seekerPositionPx])
+      toValue: newValue - 11,
+      duration: 100,
+      useNativeDriver: false,
+    }).start();
+  }, [props.currentTime, props.videoLength]);
 
   if (!props.currentTime && props.videoLength) {
     return <View />;
@@ -40,19 +79,30 @@ const Seeker = (props: seekerProps) => {
   return (
     <View style={styles.seekerContainer}>
       <View style={styles.seekerTrack}>
-        <View
+        <Animated.View
           style={[
             styles.seeker,
-            {width: `${(seekerPositionPx / width) * 100}%`},
+            {width: seekAnim},
           ]}
         />
-        <Animated.View style={[styles.seekerThumb, {left: seekAnim}]} />
+       <SeekerThumb 
+        anim={seekAnim}
+        clipLength={props.videoLength}
+        windowWidth={width}
+        videoPlayer={props.player} />
       </View>
     </View>
   );
 };
 
 export default Seeker;
+
+const thumbBase = {
+  backgroundColor: colors.primary,
+  position: 'absolute',
+  elevation: 10,
+  zIndex: 100,
+};
 
 const styles = StyleSheet.create({
   seekerContainer: {
@@ -68,16 +118,22 @@ const styles = StyleSheet.create({
   seekerThumb: {
     width: 22,
     height: 22,
-    backgroundColor: colors.primary,
     borderRadius: 11,
-    position: 'absolute',
     top: -8,
-    elevation: 10,
-    zIndex: 100,
+    ...thumbBase,
+  },
+  draggingSeekerThumb: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    top: -22,
+    ...thumbBase,
   },
   seeker: {
     height: 5,
+    left: 0,
+    top: 0, 
     backgroundColor: colors.primary,
+    position: 'absolute',
   },
- 
 });

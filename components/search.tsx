@@ -1,6 +1,6 @@
 import React from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {faSearch} from '@fortawesome/free-solid-svg-icons';
+import {faSearch, faTimes} from '@fortawesome/free-solid-svg-icons';
 import {
   Alert,
   View,
@@ -12,7 +12,7 @@ import {
   Pressable,
   ActivityIndicator,
 } from 'react-native';
-import {shadow} from '../styles/inputs';
+import {card, shadow} from '../styles/inputs';
 import axios from 'axios';
 import constants from '../constants';
 import ImageIcon from './image';
@@ -78,7 +78,12 @@ const SearchModal = props => {
     <Modal transparent visible>
       <View style={styles.modalContent}>
         <View style={styles.modalSearchInput}>
-          <FontAwesomeIcon style={{width: 50}} size={28} icon={faSearch} />
+          <Pressable onPress={() => {
+            props.input.blur()
+            props.toggleVisible()
+          }}>
+            <FontAwesomeIcon color={colors.primary} style={{width: 50}} size={28} icon={faTimes} />
+          </Pressable>
           <TextInput
             style={styles.input}
             placeholder="Search"
@@ -105,17 +110,18 @@ const SearchModal = props => {
 
 export default function SearchBar(props) {
   const [showModal, setShowModal] = React.useState(false);
-
+  const inputRef = React.useRef();
   return (
     <View style={styles.searchInput}>
-      <FontAwesomeIcon style={{width: 50}} size={28} icon={faSearch} />
+      <FontAwesomeIcon style={{width: 50}} size={28} color={colors.primary} icon={faSearch} />
       <TextInput
         style={styles.input}
         placeholder="Search"
         onFocus={() => setShowModal(true)}
+        ref={inputRef}
       />
       {showModal && (
-        <SearchModal toggleVisible={() => setShowModal(!showModal)} />
+        <SearchModal input={inputRef.current} toggleVisible={() => setShowModal(!showModal)} />
       )}
     </View>
   );
@@ -128,8 +134,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingLeft: 12,
-    ...shadow,
-    elevation: 5,
+    borderWidth: 2,
+    borderColor: colors.primary,
+    
     flex: 1,
   },
   modalSearchInput: {
@@ -144,7 +151,7 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     marginHorizontal: 12,
-    backgroundColor: 'white',
+    ...card,
     height: 300,
     marginTop: 65,
     borderRadius: 24,

@@ -32,7 +32,7 @@ import CourseItem from '../../components/edutec/course';
 import {SquareBundleButton} from '../../components/partner_store/bundle';
 import {SquareProductButton} from '../../components/partner_store/product';
 import {Appearance} from 'react-native';
-import {Heading, SubTitle, Title} from '../../components/text';
+import {Heading, Paragraph, SubTitle, Title} from '../../components/text';
 import {useIsFocused} from '@react-navigation/native';
 import ProduceCard from '../../components/marketplace/produce';
 import { ItemButton } from '../../components/button';
@@ -64,21 +64,16 @@ export default function MarketplaceCategoryScreen(props) {
   const width = Dimensions.get('window').width;
 
   return (
-    <View style={styles.container}>
-      <Centered styles={{position: 'relative'}}>
-        <ImageIcon
+    <View style={styles.root}>
+      <ImageIcon
           width={width}
           height={200}
           url={`${constants.server_url}/${data.image}`}
         />
-        <Text style={styles.title}>{data.name}</Text>
-      </Centered>
-
-      <View>
-        <Text style={styles.description}>{data.description}</Text>
-      </View>
-      <View style={styles.half_card}>
+      <View style={styles.content}>
         <ScrollView>
+        <Title title={data.name}/>
+        <Paragraph text={data.description}/>
           <Row styles={styles.row}>
             <View style={styles.column}>
               {data.produce
@@ -116,8 +111,21 @@ export default function MarketplaceCategoryScreen(props) {
 }
 
 const styles = StyleSheet.create({
-  container: {
+  root: {
+    position:'relative',
+    flex: 1
+  }, 
+  content: {
+    ...card,
+    borderRadius: 24,
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
+    marginTop: -48,
+    paddingTop: 36,
     flex: 1,
+    paddingLeft: 12,
+    paddingRight: 12,
+    elevation: 5
   },
   column: {
     flex: 1,
