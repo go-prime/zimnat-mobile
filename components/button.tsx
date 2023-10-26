@@ -85,7 +85,7 @@ const ItemButton = ({onPress, title, subtitle, image_url, bold}) => {
   return (
     <Pressable onPress={onPress} style={styles.itemContainer}>
       <View style={styles.itemImageContainer}>
-        <ImageIcon url={getAbsoluteURL(image_url)} width={125} height={125} />
+        <ImageIcon url={getAbsoluteURL(image_url)} width={100} height={100} />
       </View>
       <Label bold={bold} label={title} />
       <SmallLabel label={subtitle} />
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
   },
   itemContainer: {
     height: 175,
-    width: 125,
+    width: 100,
     position: 'relative',
   },
   bundleContainer: {
@@ -114,8 +114,8 @@ const styles = StyleSheet.create({
     margin: 12,
   },
   itemImageContainer: {
-    width: 125,
-    height: 125,
+    width: 100,
+    height: 100,
     borderRadius: 12,
     overflow: 'hidden',
   },

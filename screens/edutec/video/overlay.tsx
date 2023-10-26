@@ -11,6 +11,8 @@ import {
   faAngleRight,
   faAngleLeft,
   faPause,
+  faRotateRight,
+  faRotateLeft,
 } from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 
@@ -60,7 +62,7 @@ const VideoOverlay = props => {
                 }
                 props.player.seek(parseInt(props.position) - 5);
               }}>
-              <FontAwesomeIcon icon={faAngleLeft} size={36} color={'white'} />
+              <FontAwesomeIcon icon={faRotateLeft} size={36} color={'white'} />
             </Pressable>
             <Pressable
               onPress={() => {
@@ -83,7 +85,7 @@ const VideoOverlay = props => {
                 }
                 props.player.seek(parseInt(props.position) + 15);
               }}>
-              <FontAwesomeIcon icon={faAngleRight} size={36} color={'white'} />
+              <FontAwesomeIcon icon={faRotateRight} size={36} color={'white'} />
             </Pressable>
             {props.videoData.videos.length > 0 && (
               <Pressable

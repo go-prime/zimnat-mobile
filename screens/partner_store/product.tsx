@@ -15,7 +15,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import axios from 'axios';
 import Rating from '../../components/rating';
 import ImageIcon from '../../components/image';
-import Centered, {Row} from '../../components/layout';
+import Centered, {Circle, Row} from '../../components/layout';
 import constants from '../../constants';
 import {
   faHeart,
@@ -28,10 +28,7 @@ import {
   AddToCartButton,
 } from '../../components/partner_store/buttons';
 import Loading from '../../components/loading';
-import {RoundedRectButton} from '../../components/partner_store/buttons';
-import {SquareProductButton} from '../../components/partner_store/product';
-import {SquareBundleButton} from '../../components/partner_store/bundle';
-import {Heading} from '../../components/text';
+import {Heading, Paragraph, SubTitle, Title} from '../../components/text';
 import {BundleButton, CourseButton, ItemButton} from '../../components/button';
 import {useNavigation} from '@react-navigation/native';
 
@@ -39,8 +36,8 @@ export default function ProductScreen(props) {
   const [data, setData] = React.useState(null);
   const [img, setImg] = React.useState(null);
   const [qty, setQty] = React.useState(1);
-  const width = Dimensions.get('screen').width;
-  const height = Dimensions.get('screen').height;
+  const {width, height} = Dimensions.get('screen');
+
   const navigation = useNavigation();
 
   React.useEffect(() => {
@@ -87,17 +84,28 @@ export default function ProductScreen(props) {
         ))}
       </Row>
       <ImageIcon width={width} height={height / 3} url={img} />
-      <View style={[styles.content, {top: (height / 3) - 50, height: ((height * 2) / 3) -50 }]}>
+      <View
+        style={[
+          styles.content,
+          {top: height / 3 - 50, height: (height * 2) / 3 - 50},
+        ]}>
         <ScrollView>
-          <Text style={styles.title}>{data.name}</Text>
-          <Text style={styles.mutedHeading}>{data.partner}</Text>
+          <Title title={data.name} />
+          <Pressable onPress={() => navigation.navigate('Partner', {partner: data.partner})} >
+            <Row>
+              <Circle radius={37.5}>
+                <ImageIcon url={data.partner_image} width={75} height={50} />
+              </Circle>
+              <SubTitle subtitle={data.partner} />
+            </Row>
+          </Pressable>
           <Rating
             item_type="Product"
             item_name={props.route.params.product}
             value={data.average_rating}
             size={20}
           />
-          <Text style={styles.description}>{data.description}</Text>
+          <Paragraph text={data.description} />
           <View>
             <View style={styles.row}>
               <Text style={styles.heading}>
@@ -138,53 +146,58 @@ export default function ProductScreen(props) {
               <Heading heading="Related Products" />
             )}
             <ScrollView horizontal>
-              {data.related_products.map(pro => {
-                return (
-                  <ItemButton
-                    key={pro.name}
-                    title={pro.product_name}
-                    onPress={() =>
-                      navigation.navigate('Product', {product: pro.name})
-                    }
-                    image_url={pro.cover_image}
-                  />
-                );
-              })}
-            </ScrollView>
-            {data.courses.length > 0 && <Heading heading="Courses" />}
-            <ScrollView horizontal>
-              {data.courses &&
-                data.courses.map(c => {
+              <Row styles={{gap: 12, marginLeft: 12}}>
+                {data.related_products.map(pro => {
                   return (
-                    <CourseButton
-                      key={c.name}
-                      name={c.title}
-                      onPress={() => {
-                        props.navigation.navigate('Course', {
-                          course_id: c.name,
-                        });
-                      }}
-                      image_url={c.cover_image}
+                    <ItemButton
+                      key={pro.name}
+                      title={pro.product_name}
+                      onPress={() =>
+                        navigation.navigate('Product', {product: pro.name})
+                      }
+                      image_url={pro.cover_image}
                     />
                   );
                 })}
+              </Row>
+            </ScrollView>
+            {data.courses.length > 0 && <Heading heading="Courses" />}
+            <ScrollView horizontal>
+              <Row styles={{gap: 12, marginLeft: 12}}>
+                {data.courses &&
+                  data.courses.map(c => {
+                    return (
+                      <CourseButton
+                        key={c.name}
+                        name={c.title}
+                        onPress={() => {
+                          props.navigation.navigate('Course', {
+                            course_id: c.name,
+                          });
+                        }}
+                        image_url={c.cover_image}
+                      />
+                    );
+                  })}
+              </Row>
             </ScrollView>
             <View>
               {data.bundles.length > 0 && <Heading heading="Bundles" />}
               <ScrollView horizontal>
-                {data.bundles.map(bun => {
-                  console.log(bun);
-                  return (
-                    <BundleButton
-                      key={bun.billable_id}
-                      name={bun.bundle_name}
-                      onPress={() =>
-                        navigation.navigate('Bundle', {bundle: bun.name})
-                      }
-                      image_url={bun.cover_image}
-                    />
-                  );
-                })}
+                <Row styles={{gap: 12, marginLeft: 12}}>
+                  {data.bundles.map(bun => {
+                    return (
+                      <BundleButton
+                        key={bun.billable_id}
+                        name={bun.bundle_name}
+                        onPress={() =>
+                          navigation.navigate('Bundle', {bundle: bun.name})
+                        }
+                        image_url={bun.cover_image}
+                      />
+                    );
+                  })}
+                </Row>
               </ScrollView>
             </View>
           </View>

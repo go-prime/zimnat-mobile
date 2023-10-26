@@ -21,7 +21,7 @@ import {
   faFileAlt,
   faPlay,
 } from '@fortawesome/free-solid-svg-icons';
-import Centered, {Row} from '../../components/layout';
+import Centered, {Circle, Row} from '../../components/layout';
 import SearchBar from '../../components/search';
 import {RoundedRectButton} from '../../components/partner_store/buttons';
 import ImageIcon from '../../components/image';
@@ -32,8 +32,8 @@ import CourseItem from '../../components/edutec/course';
 import {SquareBundleButton} from '../../components/partner_store/bundle';
 import {SquareProductButton} from '../../components/partner_store/product';
 import {Appearance} from 'react-native';
-import {Heading, SubTitle, Title} from '../../components/text';
-import {useIsFocused} from '@react-navigation/native';
+import {Heading, Paragraph, SubTitle, Title} from '../../components/text';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
 import {BundleButton, ItemButton} from '../../components/button';
 
 const onSubscribe = course_id => {
@@ -72,8 +72,8 @@ export default function CourseScreen(props) {
     return <Loading />;
   }
 
-  const width = Dimensions.get('window').width;
-  const height = Dimensions.get('window').height;
+  const {width, height} = Dimensions.get('window');
+  const navigation = useNavigation();
 
   return (
     <View style={styles.container}>
@@ -83,27 +83,35 @@ export default function CourseScreen(props) {
         url={`${constants.server_url}/${data.image}`}
       />
       <Pressable
-              style={[
-                data.is_subscribed ? styles.subscribedBtn : styles.subscribeBtn,
-                {left: width / 2 - 100, top: height / 3 - 76},
-              ]}
-              onPress={() =>
-                data.is_subscribed
-                  ? null
-                  : onSubscribe(props.route.params.course_id)
-              }>
-              {data.is_subscribed ? (
-                <Text style={styles.subscribedBtnText}>SUBSCRIBED</Text>
-              ) : (
-                <Text style={styles.subscribeBtnText}>SUBSCRIBE</Text>
-              )}
-            </Pressable>
+        style={[
+          data.is_subscribed ? styles.subscribedBtn : styles.subscribeBtn,
+          {left: width / 2 - 100, top: height / 3 - 76},
+        ]}
+        onPress={() =>
+          data.is_subscribed ? null : onSubscribe(props.route.params.course_id)
+        }>
+        {data.is_subscribed ? (
+          <Text style={styles.subscribedBtnText}>SUBSCRIBED</Text>
+        ) : (
+          <Text style={styles.subscribeBtnText}>SUBSCRIBE</Text>
+        )}
+      </Pressable>
       <View style={styles.content}>
         <ScrollView>
           <Row styles={{padding: 12}}>
             <View style={{flex: 1}}>
-              <Text style={styles.title}>{data.title}</Text>
-              <Text style={styles.subtitle}>{data.publisher}</Text>
+              <Title title={data.title} />
+              <Pressable
+                onPress={() =>
+                  navigation.navigate('Partner', {partner: data.publisher})
+                }>
+                <Row>
+                  <Circle radius={37.5}>
+                    <ImageIcon url={data.publisher_image} width={75} height={50} />
+                  </Circle>
+                  <SubTitle subtitle={data.publisher} />
+                </Row>
+              </Pressable>
               <Rating
                 size={20}
                 value={data.average_rating}
@@ -117,10 +125,9 @@ export default function CourseScreen(props) {
             </Centered>
           </Row>
           <View>
-            <Text style={styles.description}>{data.description}</Text>
+            <Paragraph text={data.description} />
           </View>
           <View>
-            
             {data.items.map((item, index) => (
               <CourseItem
                 {...item}
@@ -197,27 +204,6 @@ const styles = StyleSheet.create({
     paddingLeft: 12,
     paddingRight: 12,
   },
-  title: {
-    fontSize: 18,
-    paddingBottom: 4,
-    ...text,
-    fontWeight: 'bold',
-  },
-  subtitle: {
-    fontSize: 14,
-    ...text,
-    fontWeight: 'bold',
-  },
-  heading: {
-    fontSize: 18,
-    padding: 8,
-    ...text,
-    fontWeight: 'bold',
-  },
-  description: {
-    ...text,
-    padding: 12,
-  },
   card: {
     ...shadow,
     margin: 12,
@@ -238,8 +224,7 @@ const styles = StyleSheet.create({
     width: 200,
     position: 'absolute',
     borderRadius: 24,
-    zIndex: 100
-    
+    zIndex: 100,
   },
   subscribedBtn: {
     borderColor: colors.primary,
@@ -250,7 +235,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     borderRadius: 24,
     top: -24,
-    zIndex: 100
+    zIndex: 100,
   },
   subscribeBtnText: {
     fontSize: 18,

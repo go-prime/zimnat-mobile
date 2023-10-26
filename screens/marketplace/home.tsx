@@ -77,13 +77,9 @@ export default function MarketplaceHome({navigation}) {
         ))}
       </View>
       <Heading heading="Featured Produce" />
-      <Row styles={styles.row}>
-        <View style={styles.column}>
-          {data.produce
-            .map((p, index) => ({...p, index: index}))
-            
-            .filter(p => p.index % 2 === 0)
-            
+      <ScrollView horizontal>
+      <Row styles={{gap: 12, marginLeft: 12, marginBottom: 24}}>
+      {data.produce
             .map(p => (
               <ItemButton
                 key={p.index}
@@ -96,25 +92,8 @@ export default function MarketplaceHome({navigation}) {
                 }}
               />
             ))}
-        </View>
-        <View style={[styles.column, {paddingTop: 36}]}>
-          {data.produce
-            .map((p, index) => ({...p, index: index}))
-            .filter(p => p.index % 2 == 1)
-            .map(p => (
-              <ItemButton 
-                bold
-                image_url={p.image}
-                title={p.name}
-                subtitle={p.category}
-                key={p.index}
-                onPress={() => {
-                  navigation.navigate('Produce', {produce: p.name});
-                }}
-              />
-            ))}
-        </View>
       </Row>
+      </ScrollView>
     </ScrollView>
   );
 }

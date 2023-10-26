@@ -24,8 +24,8 @@ import SearchBar from '../../components/search';
 import ImageIcon from '../../components/image';
 import Loading from '../../components/loading';
 
-import {Heading, Title} from '../../components/text'
-import { BundleButton, CategoryButton } from '../../components/button';
+import {Heading, Title} from '../../components/text';
+import {BundleButton, CategoryButton} from '../../components/button';
 
 const variable = 0;
 
@@ -40,6 +40,7 @@ export default function HomeScreen({navigation}): JSX.Element {
         `${constants.server_url}/api/method/partner_hub.partner_hub.api.get_landing_screen`,
       )
       .then(res => {
+        console.log(res.data.message);
         setData(res.data.message);
       })
       .catch(err => {
@@ -93,28 +94,28 @@ export default function HomeScreen({navigation}): JSX.Element {
           />
         ))}
       </ScrollView>
+      <Heading heading="Featured Vendors" />
+      <ScrollView horizontal={true}>
+        {data.partners.map(p => (
+          <RoundedSquareButton
+            key={p.name}
+            title={p.name}
+            url={`${constants.server_url}${p.image}`}
+            handler={() => navigation.navigate('Partner', {partner: p.name})}
+          />
+        ))}
+      </ScrollView>
       <Heading heading="Featured Bundles" />
       <ScrollView horizontal={true}>
         {data.bundles.map(b => (
-            <BundleButton
-              key={b.name}
-              name={b.name}
-              image_url={b.image}
-              onPress={() => navigation.navigate('Bundle', {bundle: b.name})}
-            />
-          ))}
+          <BundleButton
+            key={b.name}
+            name={b.bundle_name}
+            image_url={b.image}
+            onPress={() => navigation.navigate('Bundle', {bundle: b.name})}
+          />
+        ))}
       </ScrollView>
-      {/* <Text style={styles.heading}>Featured Vendors</Text>
-      <ScrollView horizontal={true}>
-        {data.partners.map(p => (
-            <RoundedSquareButton
-              key={p.name}
-              title={p.name}
-              url={`${constants.server_url}${p.image}`}
-              handler={() => navigation.navigate('Partner', {partner: p.name})}
-            />
-          ))}
-      </ScrollView> */}
     </ScrollView>
   );
 }

@@ -28,11 +28,7 @@ import {
   AddToCartButton,
 } from '../../components/partner_store/buttons';
 import Loading from '../../components/loading';
-import {RoundedRectButton} from '../../components/partner_store/buttons';
-import {SquareProductButton} from '../../components/partner_store/product';
-import {SquareBundleButton} from '../../components/partner_store/bundle';
 import {Heading} from '../../components/text';
-import ProduceCard from '../../components/marketplace/produce';
 import {ItemButton} from '../../components/button';
 
 export default function ProductScreen(props) {
@@ -244,7 +240,7 @@ const styles = StyleSheet.create({
     padding: 12,
   },
   horizontalScroll: {
-    gap: 8,
+    gap: 12,
     padding: 12,
   },
   content: {

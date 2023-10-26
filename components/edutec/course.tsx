@@ -57,18 +57,15 @@ export default function CourseItem(props) {
               )}
               <Text style={styles.cardTitle}>{props.title}</Text>
             </View>
-            <Centered
-              styles={{
-                padding: 12,
-                marginBottom: 4,
-                borderRadius: 6,
-                backgroundColor: '#BEFFF7',
-              }}>
-              <FontAwesomeIcon
-                color={colors.primary}
-                size={28}
-                icon={props.video ? faPlay : faFileAlt}
-              />
+            <Centered>
+                <View style={styles.componentBtn}>
+                  <FontAwesomeIcon
+                  color={colors.primary}
+                  size={28}
+                  icon={props.video ? faPlay : faFileAlt}
+                />
+                </View>
+              
             </Centered>
           </Row>
           <ProgressBar
@@ -128,4 +125,12 @@ const styles = StyleSheet.create({
     marginRight: 0,
     zIndex: 1,
   },
+  componentBtn: {
+      padding: 12,
+      marginBottom: 4,
+      borderRadius: 6,
+      borderWidth: 2,
+      height: 52,
+      borderColor: colors.primary
+  }
 });

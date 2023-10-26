@@ -23,6 +23,7 @@ import {
 import Centered, {Row} from '../components/layout';
 import {useIsFocused} from '@react-navigation/native';
 import ImageIcon from '../components/image';
+import { Heading } from '../components/text';
 
 const onSave = (fullname, phone, address, email) => {
   axios
@@ -84,7 +85,7 @@ export default function ProfileScreen({navigation}) {
           {data.photo ? <ImageIcon url={`${constants.server_url}${data.photo}`} width={175} height={175} /> :<FontAwesomeIcon icon={faUser} size={72} color={colors.primary} />}
         </View>
       </Centered>
-      <Text style={styles.title}>User Details</Text>
+      <Heading heading="User Details" />
       <View style={styles.inputContainer}>
         <TextInput
           value={fullname}
@@ -122,16 +123,6 @@ export default function ProfileScreen({navigation}) {
           placeholderTextColor={'black'}
         />
       </View>
-      <Text style={styles.title}>Subscription</Text>
-      <Row>
-        <View style={styles.tier}>
-          <Text style={styles.tierText}>{data.subscription ? data.subscription.subscription_type : "Hustle Shopper"}</Text>
-        </View>
-        <Pressable style={styles.upgrade}>
-          <FontAwesomeIcon icon={faArrowUp} color={'white'} />
-          <Text style={[styles.tierText, {marginLeft: 8}]}>Upgrade</Text>
-        </Pressable>
-      </Row>
       <Pressable
         onPress={() => onSave(fullname, phone, address, email)}
         style={styles.save}>
@@ -143,15 +134,23 @@ export default function ProfileScreen({navigation}) {
         />
         <Text style={styles.tierText}>Save Changes</Text>
       </Pressable>
+      <Heading heading="My Subscriptions" />
+        <View style={styles.tier}>
+          <Text style={styles.tierText}>{data.subscription ? data.subscription.subscription_type : "Hustle Shopper"}</Text>
+        </View>
+        <Pressable style={styles.upgrade} onPress={() => { navigation.navigate("Subscriptions")}}>
+          <FontAwesomeIcon icon={faArrowUp} color={'white'} />
+          <Text style={[styles.tierText, {marginLeft: 8}]}>Upgrade</Text>
+        </Pressable>
+      
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   tier: {
-    padding: 8,
+    padding: 12,
     backgroundColor: colors.primary,
-    width: 200,
     margin: 8,
     borderRadius: 24,
     justifyContent: 'center',

@@ -1,25 +1,35 @@
 import React from 'react';
-import {View, Text, StyleSheet, ScrollView, Pressable, Alert} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Pressable,
+  Alert,
+} from 'react-native';
 import axios from 'axios';
 import Loading from '../../components/loading';
 import constants from '../../constants';
-import {Row} from '../../components/layout';
+import {Circle, Row} from '../../components/layout';
 import ImageIcon from '../../components/image';
 import CourseItem from '../../components/edutec/course';
 import RenderHtml from 'react-native-render-html';
-import {shadow, text} from '../../styles/inputs';
+import {card, shadow, text} from '../../styles/inputs';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faCheck} from '@fortawesome/free-solid-svg-icons';
 import colors from '../../styles/colors';
+import { SubTitle, Title } from '../../components/text';
 
 const markAsRead = (article_id, course_id) => {
   axios
     .get(
       `${constants.server_url}/api/method/edutec_courses.edutec_courses.api.mark_article_read`,
-      {params: {
-        article_id: article_id,
-        course_id: course_id
-    }},
+      {
+        params: {
+          article_id: article_id,
+          course_id: course_id,
+        },
+      },
     )
     .then(res => {
       Alert.alert('Success', `Marked ${article_id} as read`);
@@ -46,22 +56,24 @@ export default function ArticleViewer(props) {
       .catch(err => {
         console.log(err.response.data);
       });
-  }, []);
+  }, [props.route.params.article_id]);
   if (data === null) {
     return <Loading />;
   }
   return (
-    <ScrollView style={{padding: 8}}>
-      <View style={styles.card}>
-        <Text style={styles.title}>{data.title}</Text>
-        <Text style={styles.subTitle}>{data.course}</Text>
-        <Row styles={{alignItems: 'center'}}>
-          <ImageIcon
-            url={`${constants.server_url}/${data.publisher_image}`}
-            width={50}
-            height={50}
-          />
-          <Text style={styles.subTitle}>{data.publisher}</Text>
+    <ScrollView style={styles.container}>
+      <View style={styles.header}>
+        <Title title={data.title} />
+        <SubTitle subtitle={data.course} />
+        <Row styles={{alignItems: 'flex-start'}}>
+          <Circle radius={37.5}>
+            <ImageIcon
+              url={`${constants.server_url}/${data.publisher_image}`}
+              width={75}
+              height={50}
+            />
+          </Circle>
+          <SubTitle subtitle={data.publisher} />
         </Row>
       </View>
       <RenderHtml source={{html: data.content}} contentWidth={200} />
@@ -80,6 +92,16 @@ export default function ArticleViewer(props) {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    padding: 12,
+    ...card
+  },
+  header: {
+    borderBottomColor: "#ccc",
+    borderBottomWidth: 1,
+    marginBottom: 12,
+    paddingBottom: 12
+  },
   title: {
     fontSize: 24,
     fontWeight: 'bold',

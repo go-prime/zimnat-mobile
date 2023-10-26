@@ -167,6 +167,7 @@ export default function VideoPlayer(props) {
       </View>
       {fullScreen ? null : (
         <View style={styles.card}>
+          <ScrollView>
           <Title title={data.title}></Title>
           <SubTitle subtitle={data.course} />
           <Row styles={{alignItems: 'flex-start', marginLeft: 8, padding: 8, borderWidth: 1, borderRadius: 4, borderColor: "#ccc"}}>
@@ -186,7 +187,7 @@ export default function VideoPlayer(props) {
           </Row>
           {showDescription && <Paragraph text={data.description} />}
           <Heading heading={"Next Videos"}/>
-          <ScrollView>
+          <View style={{marginBottom: 80}}>
             {data.videos.map((video, index) => {
               return (
                 <CourseItem
@@ -208,6 +209,7 @@ export default function VideoPlayer(props) {
                 />
               );
             })}
+          </View>
           </ScrollView>
         </View>
       )}

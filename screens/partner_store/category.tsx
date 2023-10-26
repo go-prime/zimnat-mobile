@@ -1,15 +1,9 @@
 import React from 'react';
 
-import {View, Text, Dimensions, StyleSheet, ScrollView} from 'react-native';
-import colors from '../../styles/colors';
+import {View, FlatList, Dimensions, StyleSheet} from 'react-native';
 import {card, shadow, text} from '../../styles/inputs';
-import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import axios from 'axios';
 import constants from '../../constants';
-import {faImage} from '@fortawesome/free-solid-svg-icons';
-import Centered, {Row} from '../../components/layout';
-import SearchBar from '../../components/search';
-import {SquareProductButton} from '../../components/partner_store/product';
 import ImageIcon from '../../components/image';
 import Loading from '../../components/loading';
 import { ItemButton } from '../../components/button';
@@ -20,8 +14,7 @@ import { Heading, Paragraph, Title } from '../../components/text';
 export default function CategoryScreen(props) {
   const [data, setData] = React.useState(null);
   const navigation = useNavigation()
-  const width = Dimensions.get('screen').width;
-  const height = Dimensions.get('screen').height;
+  const {width, height} = Dimensions.get('screen')
   React.useEffect(() => {
     axios
       .get(
@@ -41,6 +34,17 @@ export default function CategoryScreen(props) {
     return <Loading />
   }
 
+  const renderProduct = (item) => {
+    return (
+      <ItemButton
+      key={item.name}
+      title={item.product_name}
+      image_url={item.cover_image}
+      onPress={() => navigation.navigate("Product", {product: item.name})}
+    />
+    )
+  }
+
   return (
     <View style={styles.root}>
       <ImageIcon width={width}
@@ -49,42 +53,13 @@ export default function CategoryScreen(props) {
         <Title title={props.route.params.category}/>
         <Paragraph text={data.description}/>
         <Heading heading="Products" />
-        <ScrollView  >
-          <Row styles={{justifyContent: 'space-around'}}>
-          <View>
-            {data.products
-              .map((p, index) => ({...p, index: index}))
-              .filter(p => p.index % 2 === 0)
-              .map(pro => {
-                return (
-                  <ItemButton
-                    key={pro.name}
-                    title={pro.product_name}
-                    image_url={pro.cover_image}
-                    onPress={() => navigation.navigate("Product", {product: pro.name})}
-                  />
-                );
-              })}
-          </View>
-          <View style={{marginTop: 40}}>
-          {data.products
-              .map((p, index) => ({...p, index: index}))
-              .filter(p => p.index % 2 === 1)
-              .map(pro => {
-                return (
-                  <ItemButton
-                    key={pro.name}
-                    title={pro.product_name}
-                    image_url={pro.cover_image}
-                    onPress={() => navigation.navigate("Product", {product: pro.name})}
-                  />
-                );
-              })}
-          </View>
-          </Row>
-          
-          
-        </ScrollView>
+        <FlatList 
+          data={data.products}
+          renderItem={({item}) => (renderProduct(item))}
+          numColumns={3}
+          keyExtractor={item => item.name}
+          columnWrapperStyle={{justifyContent: 'space-between'}}
+          />
       </View>
     </View>
   );

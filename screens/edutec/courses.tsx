@@ -1,21 +1,27 @@
 import React from 'react';
 
-import {View, ScrollView, Text, Pressable, StyleSheet, Image} from 'react-native';
-import colors from '../../styles/colors';
-import {shadow, text} from '../../styles/inputs';
-import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
+import {
+  View,
+  ScrollView,
+  Text,
+  StyleSheet,
+  Dimensions,
+  FlatList,
+} from 'react-native';
+import {card, shadow, text} from '../../styles/inputs';
 import axios from 'axios';
 import constants from '../../constants';
-import {faImage} from '@fortawesome/free-solid-svg-icons';
-import Centered, {Row} from '../../components/layout';
+import Centered from '../../components/layout';
 import SearchBar from '../../components/search';
-import {RoundedRectButton} from '../../components/partner_store/buttons';
 import ImageIcon from '../../components/image';
 import Loading from '../../components/loading';
-import { CourseButton } from '../../components/button';
+import {CourseButton} from '../../components/button';
+import {Heading, Paragraph, Title} from '../../components/text';
 
 export default function CourseCategoryScreen(props) {
   const [data, setData] = React.useState(null);
+  const {width, height} = Dimensions.get('screen');
+
   React.useEffect(() => {
     axios
       .get(
@@ -34,64 +40,57 @@ export default function CourseCategoryScreen(props) {
     return <Loading />;
   }
 
+  const renderCourse = c => {
+    return (
+      <CourseButton
+        key={c.name}
+        name={c.title}
+        onPress={() => {
+          props.navigation.navigate('Course', {course_id: c.name});
+        }}
+        image_url={`${constants.server_url}/${c.cover_image}`}
+      />
+    );
+  };
+
   return (
-    <ScrollView>
-      <View style={{flexDirection: 'row'}}>
-        <SearchBar />
+    <View style={styles.root}>
+      <ImageIcon
+        width={width}
+        height={height / 3}
+        url={data && `${constants.server_url}/${data.image}`}
+      />
+      <View style={styles.content}>
+        <Title title={props.route.params.category} />
+        <Paragraph text={data.description} />
+        <Heading heading="Courses" />
+        <FlatList
+          data={data.courses}
+          renderItem={({item}) => renderCourse(item)}
+          numColumns={3}
+          keyExtractor={item => item.name}
+          columnWrapperStyle={{gap: 12, paddingLeft: 12}}
+        />
       </View>
-      <View style={styles.card}>
-        <Centered styles={{margin: 16}}>
-          <ImageIcon
-            width={150}
-            height={100}
-            url={data && `${constants.server_url}/${data.image}`}
-          />
-        </Centered>
-        <Text style={styles.title}>{props.route.params.category}</Text>
-        <Text style={styles.description}>{data.description}</Text>
-      </View>
-      <View>
-        <Text style={styles.heading}>Courses</Text>
-        <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
-          {data.courses.map(c => {
-            return (
-              <CourseButton
-                key={c.name}
-                name={c.title}
-                onPress={() => {
-                    props.navigation.navigate('Course', {course_id: c.name});
-                }}
-                image_url={`${constants.server_url}/${c.cover_image}`}
-              />
-            );
-          })}
-        </View>
-      </View>
-    </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  title: {
-    fontSize: 24,
-    padding: 12,
-    ...text,
-    fontWeight: 'bold',
+  root: {
+    position: 'relative',
+    flex: 1,
   },
-  heading: {
-    fontSize: 18,
-    padding: 8,
-    ...text,
-    fontWeight: 'bold',
-  },
-  description: {
-    ...text,
-    padding: 12,
-  },
-  card: {
-    ...shadow,
-    margin: 12,
+  content: {
+    ...card,
+    borderRadius: 24,
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
+    marginTop: -48,
+    paddingTop: 36,
+    flex: 1,
+    paddingLeft: 12,
+    paddingRight: 12,
     elevation: 5,
-    borderRadius: 12,
   },
 });

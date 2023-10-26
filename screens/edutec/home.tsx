@@ -79,7 +79,7 @@ export default function CoursesHomeScreen({navigation}): JSX.Element {
       <View>
         <Pressable
           style={styles.myCourseCard}
-          onPress={() => navigation.navigate('Subscriptions')}>
+          onPress={() => navigation.navigate('My Course Subscriptions')}>
           <FontAwesomeIcon icon={faUserGraduate} size={36} color={'white'} />
           <Text style={styles.myCourseCardText}>My Courses</Text>
         </Pressable>

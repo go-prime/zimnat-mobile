@@ -92,14 +92,15 @@ const styles = StyleSheet.create({
     
   },
   label: {
-    textAlign: 'center',
+    // textAlign: 'center',
     ...text,
     fontSize: 16
   },
   smallLabel: {
-    textAlign: 'center',
+    // textAlign: 'center',
     ...text,
-    fontSize: 14
+    fontSize: 14,
+    fontWeight: 'bold'
   }
 });
 

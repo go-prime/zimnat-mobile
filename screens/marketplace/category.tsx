@@ -9,33 +9,20 @@ import {
   Image,
   Dimensions,
   Alert,
+  FlatList,
 } from 'react-native';
 import colors from '../../styles/colors';
 import {card, shadow, text} from '../../styles/inputs';
-import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import axios from 'axios';
 import constants from '../../constants';
-import {
-  faImage,
-  faVideo,
-  faFileAlt,
-  faPlay,
-} from '@fortawesome/free-solid-svg-icons';
+
 import Centered, {Row} from '../../components/layout';
-import SearchBar from '../../components/search';
-import {RoundedRectButton} from '../../components/partner_store/buttons';
 import ImageIcon from '../../components/image';
 import Loading from '../../components/loading';
-import Rating from '../../components/rating';
-import ProgressBar from '../../components/edutec/progress';
-import CourseItem from '../../components/edutec/course';
-import {SquareBundleButton} from '../../components/partner_store/bundle';
-import {SquareProductButton} from '../../components/partner_store/product';
 import {Appearance} from 'react-native';
 import {Heading, Paragraph, SubTitle, Title} from '../../components/text';
 import {useIsFocused} from '@react-navigation/native';
-import ProduceCard from '../../components/marketplace/produce';
-import { ItemButton } from '../../components/button';
+import {ItemButton} from '../../components/button';
 
 export default function MarketplaceCategoryScreen(props) {
   const [data, setData] = React.useState(null);
@@ -49,7 +36,6 @@ export default function MarketplaceCategoryScreen(props) {
         {params: {category_id: props.route.params.category}},
       )
       .then(res => {
-        console.log(res.data.message);
         setData(res.data.message);
       })
       .catch(err => {
@@ -61,50 +47,37 @@ export default function MarketplaceCategoryScreen(props) {
     return <Loading />;
   }
 
-  const width = Dimensions.get('window').width;
+  const {width, height} = Dimensions.get('window');
+
+  const renderProduce = p => (
+    <ItemButton
+      title={p.name}
+      image_url={p.cover_image}
+      key={p.index}
+      onPress={() => {
+        navigation.navigate('Produce', {produce: p.name});
+      }}
+    />
+  )
 
   return (
     <View style={styles.root}>
       <ImageIcon
-          width={width}
-          height={200}
-          url={`${constants.server_url}/${data.image}`}
-        />
+        width={width}
+        height={height / 3}
+        url={`${constants.server_url}/${data.image}`}
+      />
       <View style={styles.content}>
-        <ScrollView>
-        <Title title={data.name}/>
-        <Paragraph text={data.description}/>
-          <Row styles={styles.row}>
-            <View style={styles.column}>
-              {data.produce
-                .map((p, index) => ({...p, index: index}))
-                .filter(p => p.index % 2 == 0)
-                .map(p => (
-                  <ItemButton 
-                    title={p.name}
-                    image_url={p.cover_image} 
-                    key={p.index}
-                    onPress={() => {
-                      navigation.navigate('Produce', {produce: p.name});
-                    }} />
-                ))}
-            </View>
-            <View style={[styles.column, {paddingTop: 36}]}>
-              {data.produce
-                .map((p, index) => ({...p, index: index}))
-                .filter(p => p.index % 2 == 1)
-                .map(p => (
-                  <ItemButton 
-                    title={p.name} 
-                    image_url={p.cover_image} 
-                    key={p.index}
-                    onPress={() => {
-                      navigation.navigate('Produce', {produce: p.name});
-                    }} />
-                ))}
-            </View>
-          </Row>
-        </ScrollView>
+          <Title title={data.name} />
+          <Paragraph text={data.description} />
+          <FlatList 
+            data={data.produce}
+            renderItem={({item}) => (renderProduce(item))}
+            numColumns={3}
+            keyExtractor={item => item.name}
+            columnWrapperStyle={{gap: 12, paddingLeft: 12}}
+          />  
+        
       </View>
     </View>
   );
@@ -112,9 +85,9 @@ export default function MarketplaceCategoryScreen(props) {
 
 const styles = StyleSheet.create({
   root: {
-    position:'relative',
-    flex: 1
-  }, 
+    position: 'relative',
+    flex: 1,
+  },
   content: {
     ...card,
     borderRadius: 24,
@@ -125,7 +98,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingLeft: 12,
     paddingRight: 12,
-    elevation: 5
+    elevation: 5,
   },
   column: {
     flex: 1,

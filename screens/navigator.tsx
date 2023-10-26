@@ -15,6 +15,7 @@ import {
   faShop,
   faHandshake,
   faDoorOpen,
+  faSearch,
 } from '@fortawesome/free-solid-svg-icons';
 import {shadow, text} from '../styles/inputs';
 import HomeScreen from './partner_store/home';
@@ -49,6 +50,9 @@ import Subscriptions from './edutec/my_courses';
 import InAppWebViewScreen from './web';
 import BooksHomeScreen from './books/home';
 import Centered from '../components/layout';
+import SearchScreen from './search'
+import SubscriptionScreen from './billing/subscription';
+import SubscriptionListScreen from './billing/subscriptions';
 
 const Drawer = createDrawerNavigator();
 
@@ -128,9 +132,9 @@ const NavOptions = props => {
 
   return (
     <View style={{flexDirection: 'row', alignItems: 'flex-end'}}>
-      <Pressable onPress={() => navigation.navigate('Profile')}>
+      <Pressable onPress={() => navigation.navigate('Search')}>
         <FontAwesomeIcon
-          icon={faUser}
+          icon={faSearch}
           size={28}
           color={colors.primary}
           style={{marginRight: 16}}
@@ -188,10 +192,13 @@ export default function HomeScreenNavigator({navigation}): JSX.Element {
       <Drawer.Screen component={CourseScreen} name="Course" />
       <Drawer.Screen component={VideoPlayer} name="Video" gestureEnabled={false} swipeEnabled={false} />
       <Drawer.Screen component={ArticleViewer} name="Article" />
-      <Drawer.Screen component={Subscriptions} name="Subscriptions" />
+      <Drawer.Screen component={Subscriptions} name="My Course Subscriptions" />
       <Drawer.Screen component={ProduceScreen} name="Produce" />
       <Drawer.Screen component={StorefrontScreen} name="Storefront" />
       <Drawer.Screen component={BooksHomeScreen} name="Books" />
+      <Drawer.Screen component={SearchScreen} name="Search" />
+      <Drawer.Screen component={SubscriptionListScreen} name="Subscriptions" />
+      <Drawer.Screen component={SubscriptionScreen} name="Subscription" />
       <Drawer.Screen
         options={{headerShown: false}}
         component={InAppWebViewScreen}

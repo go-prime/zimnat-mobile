@@ -19,7 +19,7 @@ import {
   faShoppingCart,
 } from '@fortawesome/free-solid-svg-icons';
 import constants from '../../constants';
-import Centered from '../../components/layout';
+import Centered, { Circle, Row } from '../../components/layout';
 import Rating from '../../components/rating';
 import ImageIcon from '../../components/image';
 import {
@@ -29,7 +29,7 @@ import {
 import Loading from '../../components/loading';
 import {RoundedSquareButton} from '../../components/partner_store/buttons';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
-import {Heading} from '../../components/text';
+import {Heading, Paragraph, SubTitle, Title} from '../../components/text';
 import {getAbsoluteURL} from '../../utils';
 
 const BundleProduct = props => {
@@ -69,13 +69,12 @@ export default function BundleScreen(props) {
         {params: {bundle_id: props.route.params.bundle}},
       )
       .then(res => {
-        console.log(res.data.message);
         setData(res.data.message);
       })
       .catch(err => {
         console.log(err.response.data);
       });
-  }, [isFocused]);
+  }, [props.route.params.bundle]);
 
   if (!data) {
     return <Loading />;
@@ -90,14 +89,21 @@ export default function BundleScreen(props) {
       />
       <View style={styles.content}>
         <ScrollView>
-          <Text style={styles.title}>{data.name}</Text>
-          <Text style={styles.heading}>{data.partner}</Text>
-          <Text style={styles.description}>{data.description}</Text>
+          <Title title={data.name} />
+          <Pressable onPress={() => navigation.navigate('Partner', {partner: data.partner})}>
+            <Row>
+              <Circle radius={37.5}>
+                <ImageIcon url={data.partner_image} width={75} height={50} />
+              </Circle>
+            <SubTitle subtitle={data.partner} />
+          </Row>
+          </Pressable>
+          <Paragraph text={data.description} />
           <View>
             <Rating
               item_type="Bundle"
               item_name={props.route.params.bundle}
-              value={data.average_ratnig}
+              value={data.average_rating}
               size={20}
             />
           </View>
