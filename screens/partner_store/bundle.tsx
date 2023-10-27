@@ -14,12 +14,11 @@ import {card, shadow, text} from '../../styles/inputs';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import axios from 'axios';
 import {
-  faImage,
-  faHeart,
-  faShoppingCart,
+  faTimes,
+  
 } from '@fortawesome/free-solid-svg-icons';
 import constants from '../../constants';
-import Centered, { Circle, Row } from '../../components/layout';
+import Centered, {Circle, Row} from '../../components/layout';
 import Rating from '../../components/rating';
 import ImageIcon from '../../components/image';
 import {
@@ -29,7 +28,7 @@ import {
 import Loading from '../../components/loading';
 import {RoundedSquareButton} from '../../components/partner_store/buttons';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
-import {Heading, Paragraph, SubTitle, Title} from '../../components/text';
+import {Heading, Label, Paragraph, SubTitle, Title} from '../../components/text';
 import {getAbsoluteURL} from '../../utils';
 
 const BundleProduct = props => {
@@ -46,11 +45,11 @@ const BundleProduct = props => {
         />
       </Centered>
       <View>
-        <Text style={styles.heading}>{props.id}</Text>
-        <Text style={styles.description}>{props.description}</Text>
-        <Text style={styles.heading}>
-          {parseFloat(props.price).toFixed(2)} x {props.qty}
-        </Text>
+        <SubTitle>{props.id}</SubTitle>
+        <Paragraph>{props.description}</Paragraph>
+        <Label>
+          {props.formatted} <FontAwesomeIcon icon={faTimes} /> {props.qty}
+        </Label>
       </View>
     </Pressable>
   );
@@ -82,6 +81,11 @@ export default function BundleScreen(props) {
 
   return (
     <View style={styles.root}>
+      <WishListButton
+        styles={styles.floatingWishList}
+        product_id={data.product_id}
+        product_name={data.name}
+      />
       <ImageIcon
         width={width}
         height={height / 3}
@@ -90,23 +94,28 @@ export default function BundleScreen(props) {
       <View style={styles.content}>
         <ScrollView>
           <Title title={data.name} />
-          <Pressable onPress={() => navigation.navigate('Partner', {partner: data.partner})}>
-            <Row>
-              <Circle radius={37.5}>
-                <ImageIcon url={data.partner_image} width={75} height={50} />
-              </Circle>
-            <SubTitle subtitle={data.partner} />
-          </Row>
-          </Pressable>
-          <Paragraph text={data.description} />
-          <View>
+          <SubTitle>{data.formatted}</SubTitle>
+          <Row styles={{justifyContent: 'space-between'}}>
+            <Pressable
+              onPress={() =>
+                navigation.navigate('Partner', {partner: data.partner})
+              }>
+              <Row>
+                <Circle radius={37.5}>
+                  <ImageIcon url={data.partner_image} width={75} height={50} />
+                </Circle>
+                <SubTitle subtitle={data.partner} />
+              </Row>
+            </Pressable>
             <Rating
               item_type="Bundle"
               item_name={props.route.params.bundle}
               value={data.average_rating}
               size={20}
             />
-          </View>
+          </Row>
+          <Heading heading="Description" />
+          <Paragraph text={data.description} />
           <View />
           <View>
             <Heading heading="Components" />
@@ -115,15 +124,9 @@ export default function BundleScreen(props) {
             ))}
           </View>
           <View style={styles.row}>
-            <WishListButton
-              label
-              styles={{padding: 12, width: width / 2 - 6}}
-              product_id={data.product_id}
-              product_name={data.name}
-            />
             <AddToCartButton
               label
-              styles={{padding: 12, width: width / 2 - 6}}
+              styles={{padding: 12, width: width - 24}}
               qty={1}
               product_id={data.product_id}
               product_name={data.name}
@@ -152,9 +155,9 @@ export default function BundleScreen(props) {
 
 const styles = StyleSheet.create({
   root: {
-    position:'relative',
-    flex: 1
-  }, 
+    position: 'relative',
+    flex: 1,
+  },
   content: {
     ...card,
     borderRadius: 24,
@@ -165,7 +168,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingLeft: 12,
     paddingRight: 12,
-    elevation: 5
+    elevation: 5,
   },
   row: {
     flexDirection: 'row',
@@ -195,7 +198,13 @@ const styles = StyleSheet.create({
   },
   card: {
     borderRadius: 12,
-    borderBottomColor: "#CCC",
-    borderBottomWidth: 1
+    borderBottomColor: '#CCC',
+    borderBottomWidth: 1,
+  },
+  floatingWishList: {
+    position: 'absolute',
+    zIndex: 100,
+    right: 15,
+    top: 15,
   },
 });

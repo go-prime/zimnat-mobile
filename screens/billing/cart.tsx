@@ -26,7 +26,7 @@ import {
   faTimes,
   faPlus,
   faMinus,
-  faShoppingBasket
+  faShoppingBasket,
 } from '@fortawesome/free-solid-svg-icons';
 import Loading from '../../components/loading';
 import {removeBtn} from '../../styles/buttons';
@@ -60,7 +60,6 @@ const addToCart = (product_id, product_name, qty, onChange) => {
       },
     )
     .then(res => {
-      console.log(res.data);
       console.log(onChange);
       if (onChange) {
         onChange('add');
@@ -74,22 +73,17 @@ const addToCart = (product_id, product_name, qty, onChange) => {
 
 const CartItem = props => {
   const navigator = useNavigation();
-  const [qty, setQty] = React.useState(props.qty);
 
   const increment = () => {
     props.beforeChange();
-    const newQty = qty + 1;
-    setQty(newQty);
     addToCart(props.id, props.name, 1, props.onChange);
   };
 
   const decrement = () => {
-    if (!(qty > 1)) {
+    if (!(props.qty > 1)) {
       return;
     }
     props.beforeChange();
-    const newQty = qty - 1;
-    setQty(newQty);
     removeFromCart(props.id, props.name, 1, props.onChange);
   };
 
@@ -99,15 +93,11 @@ const CartItem = props => {
         <Pressable
           style={removeBtn}
           onPress={() =>
-            removeFromCart(props.id, props.name, qty, props.onChange)
+            removeFromCart(props.id, props.name, props.qty, props.onChange)
           }>
           <FontAwesomeIcon icon={faTimes} size={30} color={'white'} />
         </Pressable>
-        <ImageIcon
-          width={100}
-          height={100}
-          url={`${constants.server_url}/${props.image}`}
-        />
+        <ImageIcon width={100} height={100} url={props.image} />
       </Centered>
       <View style={{flex: 2}}>
         <Pressable
@@ -134,7 +124,7 @@ const CartItem = props => {
               </View>
             </Pressable>
             <View>
-              <Text style={styles.qty}>{qty}</Text>
+              <Text style={styles.qty}>{props.qty}</Text>
             </View>
             <Pressable onPress={increment}>
               <View style={styles.button}>

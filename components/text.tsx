@@ -3,10 +3,33 @@ import {text} from '../styles/text';
 import colors from '../styles/colors';
 import {View, Text, StyleSheet} from 'react-native';
 
+
+const Pill = (props) => {
+  const inlineContainerStyle = {
+    backgroundColor: props.color ? props.color : colors.primary ,
+    borderRadius: props.lg ? 20 : 14,
+    padding: props.lg ? 8 :  4,
+    margin: props.lg ? 4 : 2,
+  }
+
+  const inlineTextStyle = {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    fontSize: props.lg ? 18 : 14
+  }
+
+  return (
+    <View style={inlineContainerStyle}>
+      <Text style={inlineTextStyle}>{props.pill || props.children}</Text>
+    </View>
+  );
+};
+
 const Heading = (props) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.heading}>{props.heading}</Text>
+      <Text style={styles.heading}>{props.heading || props.children}</Text>
     </View>
   );
 };
@@ -14,7 +37,7 @@ const Heading = (props) => {
 const Title = (props) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{props.title}</Text>
+      <Text style={styles.title}>{props.title || props.children}</Text>
     </View>
   );
 };
@@ -22,7 +45,7 @@ const Title = (props) => {
 const SubTitle = (props) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.subtitle}>{props.subtitle}</Text>
+      <Text style={styles.subtitle}>{props.subtitle || props.children}</Text>
     </View>
   );
 };
@@ -30,7 +53,7 @@ const SubTitle = (props) => {
 const Label = (props) => {
   return (
     <View style={styles.labelContainer}>
-      <Text style={[styles.label, {fontWeight: props.bold ? "bold": "400"}]}>{props.label}</Text>
+      <Text style={[styles.label, {fontWeight: props.bold ? "bold": "400"}]}>{props.label || props.children}</Text>
     </View>
   );
 };
@@ -38,7 +61,7 @@ const Label = (props) => {
 const SmallLabel = (props) => {
   return (
     <View style={styles.labelContainer}>
-      <Text style={styles.smallLabel}>{props.label}</Text>
+      <Text style={styles.smallLabel}>{props.label || props.children}</Text>
     </View>
   );
 };
@@ -46,7 +69,7 @@ const SmallLabel = (props) => {
 const Paragraph = (props) => {
     return (
       <View style={styles.container}>
-        <Text style={styles.paragraph}>{props.text}</Text>
+        <Text style={styles.paragraph}>{props.text || props.children}</Text>
       </View>
     );
   };
@@ -55,7 +78,8 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     margin: 4,
-    padding: 4
+    padding: 4,
+    paddingTop: 0
   },
   title: {
     ...text,
@@ -89,7 +113,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   labelContainer: {
-    
+    margin: 4
   },
   label: {
     // textAlign: 'center',
@@ -101,7 +125,13 @@ const styles = StyleSheet.create({
     ...text,
     fontSize: 14,
     fontWeight: 'bold'
+  },
+  pillContainer: {
+    
+  },
+  pillText: {
+    
   }
 });
 
-export {Heading, Title, SubTitle, Paragraph, Label, SmallLabel};
+export {Heading, Title, SubTitle, Paragraph, Label, SmallLabel, Pill};

@@ -12,25 +12,14 @@ import {
 } from 'react-native';
 import colors from '../../styles/colors';
 import {card, shadow, text} from '../../styles/inputs';
-import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
+
 import axios from 'axios';
 import constants from '../../constants';
-import {
-  faImage,
-  faVideo,
-  faFileAlt,
-  faPlay,
-} from '@fortawesome/free-solid-svg-icons';
 import Centered, {Circle, Row} from '../../components/layout';
-import SearchBar from '../../components/search';
-import {RoundedRectButton} from '../../components/partner_store/buttons';
 import ImageIcon from '../../components/image';
 import Loading from '../../components/loading';
 import Rating from '../../components/rating';
-import ProgressBar from '../../components/edutec/progress';
 import CourseItem from '../../components/edutec/course';
-import {SquareBundleButton} from '../../components/partner_store/bundle';
-import {SquareProductButton} from '../../components/partner_store/product';
 import {Appearance} from 'react-native';
 import {Heading, Paragraph, SubTitle, Title} from '../../components/text';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
@@ -163,7 +152,6 @@ export default function CourseScreen(props) {
                 );
               })}
             </View>
-
             <View>
               {data.bundles.length > 0 && <Heading heading="Bundles" />}
               {data.bundles.map(bun => {

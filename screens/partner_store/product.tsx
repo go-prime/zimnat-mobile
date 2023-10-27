@@ -18,8 +18,6 @@ import ImageIcon from '../../components/image';
 import Centered, {Circle, Row} from '../../components/layout';
 import constants from '../../constants';
 import {
-  faHeart,
-  faShoppingCart,
   faPlus,
   faMinus,
 } from '@fortawesome/free-solid-svg-icons';
@@ -63,6 +61,11 @@ export default function ProductScreen(props) {
   }
   return (
     <View style={styles.root}>
+      <WishListButton
+        product_id={data.billable_id}
+        product_name={data.name}
+        styles={styles.floatingWishList}
+      />
       <Row
         styles={{
           position: 'absolute',
@@ -91,32 +94,33 @@ export default function ProductScreen(props) {
         ]}>
         <ScrollView>
           <Title title={data.name} />
-          <Pressable onPress={() => navigation.navigate('Partner', {partner: data.partner})} >
-            <Row>
-              <Circle radius={37.5}>
-                <ImageIcon url={data.partner_image} width={75} height={50} />
-              </Circle>
-              <SubTitle subtitle={data.partner} />
-            </Row>
-          </Pressable>
-          <Rating
-            item_type="Product"
-            item_name={props.route.params.product}
-            value={data.average_rating}
-            size={20}
-          />
+          <SubTitle>{data.formatted}</SubTitle>
+          <Row styles={{justifyContent: 'space-between'}}>
+            <Pressable
+              onPress={() =>
+                navigation.navigate('Partner', {partner: data.partner})
+              }>
+              <Row>
+                <Circle radius={37.5}>
+                  <ImageIcon url={data.partner_image} width={75} height={50} />
+                </Circle>
+                <SubTitle subtitle={data.partner} />
+              </Row>
+            </Pressable>
+            <Rating
+              item_type="Product"
+              item_name={props.route.params.product}
+              value={data.average_rating}
+              size={20}
+            />
+          </Row>
+          <Heading heading="Description" />
           <Paragraph text={data.description} />
           <View>
             <View style={styles.row}>
               <Text style={styles.heading}>
                 {`${data.currency} ${parseFloat(data.price).toFixed(2)}`}
               </Text>
-              <WishListButton
-                label={true}
-                product_id={data.billable_id}
-                product_name={data.name}
-                styles={{padding: 12, width: width * 0.6}}
-              />
             </View>
             <View style={[styles.row, {gap: 4}]}>
               <View style={styles.row}>
@@ -152,6 +156,7 @@ export default function ProductScreen(props) {
                     <ItemButton
                       key={pro.name}
                       title={pro.product_name}
+                      subtitle={pro.formatted}
                       onPress={() =>
                         navigation.navigate('Product', {product: pro.name})
                       }
@@ -190,6 +195,7 @@ export default function ProductScreen(props) {
                       <BundleButton
                         key={bun.billable_id}
                         name={bun.bundle_name}
+                        price={bun.formatted}
                         onPress={() =>
                           navigation.navigate('Bundle', {bundle: bun.name})
                         }
@@ -274,5 +280,11 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     flexDirection: 'row',
     padding: 12,
+  },
+  floatingWishList: {
+    position: 'absolute',
+    zIndex: 100,
+    right: 15,
+    top: 15,
   },
 });

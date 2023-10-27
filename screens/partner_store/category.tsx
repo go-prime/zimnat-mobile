@@ -22,7 +22,6 @@ export default function CategoryScreen(props) {
         {params: {category_id: props.route.params.category}},
       )
       .then(res => {
-        console.log(res.data.message);
         setData(res.data.message);
       })
       .catch(err => {
@@ -39,6 +38,7 @@ export default function CategoryScreen(props) {
       <ItemButton
       key={item.name}
       title={item.product_name}
+      subtitle={item.formatted}
       image_url={item.cover_image}
       onPress={() => navigation.navigate("Product", {product: item.name})}
     />

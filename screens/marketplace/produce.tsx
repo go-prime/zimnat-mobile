@@ -28,7 +28,7 @@ import {
   AddToCartButton,
 } from '../../components/partner_store/buttons';
 import Loading from '../../components/loading';
-import {Heading} from '../../components/text';
+import {Heading, Paragraph, SubTitle, Title} from '../../components/text';
 import {ItemButton} from '../../components/button';
 
 export default function ProductScreen(props) {
@@ -62,6 +62,11 @@ export default function ProductScreen(props) {
   }
   return (
     <View style={styles.root}>
+      <WishListButton
+        product_id={data.billable_id}
+        product_name={data.name}
+        styles={styles.floatingWishList}
+      />
       <ImageIcon width={width} height={height / 3} url={img} />
       <Row
         styles={{
@@ -83,98 +88,96 @@ export default function ProductScreen(props) {
           </Pressable>
         ))}
       </Row>
-      <View style={[styles.content, {top: (height / 3) - 50, height: ((height * 2) / 3) -50 }]}>
-      <ScrollView>
-        <Row styles={{justifyContent: 'center'}} />
-          <Pressable
-            onPress={() => {
-              if (!data.merchant_storefront) {
-                return;
-              }
-              navigation.navigate('Storefront', {
-                storefront: data.merchant_storefront,
-              });
-            }}>
-            <Row styles={{gap: 8, paddingLeft: 12, alignItems: 'center'}}>
-              <Circle radius={24}>
-                <ImageIcon
-                  width={48}
-                  height={48}
-                  url={
-                    data.merchant_image
-                      ? `${constants.server_url}${data.merchant_image}`
-                      : null
-                  }
-                />
-              </Circle>
-              <View>
-                <Text style={styles.title}>{data.name}</Text>
-                <Text style={styles.mutedHeading}>{data.merchant}</Text>
-              </View>
-            </Row>
-          </Pressable>
-          <Rating
-            item_type="Produce"
-            item_name={props.route.params.produce}
-            value={data.average_rating}
-            size={20}
-          />
-          <Text style={styles.description}>{data.description}</Text>
-        <View>
-          <View style={styles.row}>
-            <Text style={styles.heading}>
-              {`${data.currency} ${parseFloat(data.price).toFixed(2)}`}
-            </Text>
-            <WishListButton
-              label={true}
-              product_id={data.billable_id}
-              product_name={data.name}
-              styles={{padding: 12, width: width * 0.6}}
-            />
-          </View>
-          <View style={[styles.row, {gap: 4}]}>
-            <View style={styles.row}>
-              <Pressable onPress={() => setQty(qty > 1 ? qty - 1 : 0)}>
-                <View style={styles.button}>
-                  <FontAwesomeIcon icon={faMinus} size={24} color={'white'} />
-                </View>
-              </Pressable>
-              <View>
-                <Text style={styles.heading}>{qty}</Text>
-              </View>
-              <Pressable onPress={() => setQty(qty + 1)}>
-                <View style={styles.button}>
-                  <FontAwesomeIcon icon={faPlus} size={24} color={'white'} />
-                </View>
-              </Pressable>
-            </View>
-            <AddToCartButton
-              qty={qty}
-              product_id={data.billable_id}
-              product_name={data.name}
-              label={true}
-              styles={{padding: 12, width: width * 0.6}}
-            />
-          </View>
-          <View>
-            <Heading heading="Related Produce" />
-            <ScrollView horizontal={true} style={styles.horizontalScroll}>
-              {data.related_produce.map(pro => {
-                return (
-                  <ItemButton
-                    key={pro.name}
-                    title={pro.name}
-                    onPress={() =>
-                      navigation.navigate('Produce', {produce: pro.name})
+      <View
+        style={[
+          styles.content,
+          {top: height / 3 - 50, height: (height * 2) / 3 - 50},
+        ]}>
+        <ScrollView>
+          <Row styles={{justifyContent: 'center'}} />
+
+          <Title>{data.name}</Title>
+          <SubTitle>{data.formatted}</SubTitle>
+          <Row styles={{justifyContent: 'space-between'}}>
+            <Pressable
+              onPress={() => {
+                if (!data.merchant_storefront) {
+                  return;
+                }
+                navigation.navigate('Storefront', {
+                  storefront: data.merchant_storefront,
+                });
+              }}>
+              <Row styles={{marginTop: 12, alignItems: 'flex-start'}}>
+                <Circle radius={24}>
+                  <ImageIcon
+                    width={48}
+                    height={48}
+                    url={
+                      data.merchant_image
+                        ? `${constants.server_url}${data.merchant_image}`
+                        : null
                     }
-                    image_url={pro.cover_image}
                   />
-                );
-              })}
-            </ScrollView>
+                </Circle>
+                <SubTitle>{data.merchant}</SubTitle>
+              </Row>
+            </Pressable>
+            <Rating
+              item_type="Produce"
+              item_name={props.route.params.produce}
+              value={data.average_rating}
+              size={20}
+            />
+          </Row>
+          <Heading>Description</Heading>
+          <Paragraph>{data.description}</Paragraph>
+          <View>
+            <View style={styles.row} />
+            <View style={[styles.row, {gap: 4}]}>
+              <View style={styles.row}>
+                <Pressable onPress={() => setQty(qty > 1 ? qty - 1 : 0)}>
+                  <View style={styles.button}>
+                    <FontAwesomeIcon icon={faMinus} size={24} color={'white'} />
+                  </View>
+                </Pressable>
+                <View>
+                  <Text style={styles.heading}>{qty}</Text>
+                </View>
+                <Pressable onPress={() => setQty(qty + 1)}>
+                  <View style={styles.button}>
+                    <FontAwesomeIcon icon={faPlus} size={24} color={'white'} />
+                  </View>
+                </Pressable>
+              </View>
+              <AddToCartButton
+                qty={qty}
+                product_id={data.billable_id}
+                product_name={data.name}
+                label={true}
+                styles={{padding: 12, width: width * 0.6}}
+              />
+            </View>
+            <View>
+              <Heading heading="Related Produce" />
+              <ScrollView horizontal={true} style={styles.horizontalScroll}>
+                {data.related_produce.map(pro => {
+                  return (
+                    <ItemButton
+                      key={pro.name}
+                      title={pro.name}
+                      subtitle={pro.formatted}
+                      onPress={() =>
+                        navigation.navigate('Produce', {produce: pro.name})
+                      }
+                      image_url={pro.cover_image}
+                    />
+                  );
+                })}
+              </ScrollView>
+            </View>
           </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
       </View>
     </View>
   );
@@ -253,5 +256,11 @@ const styles = StyleSheet.create({
     left: 0,
     paddingTop: 36,
     paddingLeft: 12,
+  },
+  floatingWishList: {
+    position: 'absolute',
+    zIndex: 100,
+    right: 15,
+    top: 15
   },
 });

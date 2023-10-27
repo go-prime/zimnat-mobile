@@ -1,25 +1,12 @@
 import React from 'react';
 
-import {
-  View,
-  ScrollView,
-  Text,
-  Pressable,
-  FlatList,
-  StyleSheet,
-  Image,
-} from 'react-native';
-import colors from '../../styles/colors';
+import {View, ScrollView, FlatList, StyleSheet, Image} from 'react-native';
 import {card, shadow, text} from '../../styles/inputs';
-import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import axios from 'axios';
 import constants from '../../constants';
 import Centered, {Row} from '../../components/layout';
 import ImageIcon from '../../components/image';
-import {SquareProductButton} from '../../components/partner_store/product';
-import {SquareBundleButton} from '../../components/partner_store/bundle';
 import Loading from '../../components/loading';
-import {RoundedSquareButton} from '../../components/partner_store/buttons';
 import {Dimensions} from 'react-native';
 import {Title, Heading, Paragraph} from '../../components/text';
 import {BundleButton, CourseButton, ItemButton} from '../../components/button';
@@ -52,6 +39,7 @@ export default function PartnerScreen(props) {
       <ItemButton
         key={item.name}
         title={item.product_name}
+        subtitle={item.formatted}
         image_url={item.cover_image}
         onPress={() => navigation.navigate('Product', {product: item.name})}
       />
@@ -60,7 +48,9 @@ export default function PartnerScreen(props) {
 
   return (
     <View style={styles.root}>
-      <ImageIcon width={width} height={height / 3} url={data.image} />
+      <Centered>
+        <ImageIcon width={width} height={height / 3} url={data.image} />
+      </Centered>
       <View style={styles.content}>
         <ScrollView>
           <Title title={data.name} />
@@ -71,7 +61,7 @@ export default function PartnerScreen(props) {
             renderItem={({item}) => renderProduct(item)}
             numColumns={3}
             keyExtractor={item => item.name}
-            scrollEnabled={false} 
+            scrollEnabled={false}
             columnWrapperStyle={{gap: 12, paddingLeft: 12}}
           />
           <View>
@@ -82,6 +72,7 @@ export default function PartnerScreen(props) {
                   <BundleButton
                     key={bun.billable_id}
                     name={bun.bundle_name}
+                    price={bun.formatted}
                     onPress={() =>
                       navigation.navigate('Bundle', {bundle: bun.name})
                     }

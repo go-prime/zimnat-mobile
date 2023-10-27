@@ -26,6 +26,8 @@ import Loading from '../../components/loading';
 
 import {Heading, Title} from '../../components/text';
 import {BundleButton, CategoryButton} from '../../components/button';
+import useColors from '../../hooks/colors';
+import { useTheme } from '@react-navigation/native';
 
 const variable = 0;
 
@@ -33,6 +35,8 @@ export default function HomeScreen({navigation}): JSX.Element {
   const width = Dimensions.get('window').width;
   const [search, setSearch] = React.useState('');
   const [data, setData] = React.useState();
+  const colorScheme = useColors(navigation)
+  console.log(colorScheme)
 
   React.useEffect(() => {
     axios
@@ -111,6 +115,7 @@ export default function HomeScreen({navigation}): JSX.Element {
           <BundleButton
             key={b.name}
             name={b.bundle_name}
+            price={b.formatted}
             image_url={b.image}
             onPress={() => navigation.navigate('Bundle', {bundle: b.name})}
           />
@@ -125,7 +130,7 @@ const styles = StyleSheet.create({
     ...card,
     ...shadow,
     elevation: 5,
-    padding: 12,
+    margin: 12,
     borderRadius: 24,
     height: 200,
   },

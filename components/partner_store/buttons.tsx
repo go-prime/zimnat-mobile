@@ -80,6 +80,7 @@ type CartButtonProps = {
   qty: number;
   label: boolean;
   styles: object;
+  innerStyles: object;
   onSuccess: Function;
 };
 
@@ -102,8 +103,10 @@ const WishListButton = function (props: WishListButtonProps) {
   };
 
   return (
-    <Pressable onPress={props.handler ? props.handler : defaultHandler}>
-      <View style={[styles.wishlist, props.styles]}>
+    <Pressable
+        style={props.styles} 
+        onPress={props.handler ? props.handler : defaultHandler}>
+      <View style={[styles.wishlist, props.innerStyles]}>
         <FontAwesomeIcon
           icon={faHeart}
           size={props.size || 24}

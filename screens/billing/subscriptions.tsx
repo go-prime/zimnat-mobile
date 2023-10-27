@@ -16,11 +16,13 @@ import Loading from '../../components/loading';
 import {CourseButton} from '../../components/button';
 import {Heading, Paragraph, Title} from '../../components/text';
 import SubscriptionCard from '../../components/billing_engine/subscription_card';
+import {useIsFocused} from '@react-navigation/native';
+import SubscriptionHistory from '../../components/billing_engine/subscription_history';
 
 export default function SubscriptionListScreen(props) {
   const [data, setData] = React.useState(null);
   const {width, height} = Dimensions.get('screen');
-
+  const isFocused = useIsFocused();
   React.useEffect(() => {
     axios
       .get(
@@ -33,37 +35,37 @@ export default function SubscriptionListScreen(props) {
       .catch(err => {
         console.log(err.response.data);
       });
-  }, []);
+  }, [isFocused]);
 
   if (!data) {
     return <Loading />;
   }
 
   return (
-    <View style={styles.content}>
-      <FlatList
-        data={data.subscriptions}
-        renderItem={({item}) => {
-          return <SubscriptionCard {...item} />;
-        }}
-        numColumns={2}
-        keyExtractor={item => item.name}
-        columnWrapperStyle={{gap: 12, paddingLeft: 12}}
-      />
-    </View>
+    <ScrollView>
+      <View style={styles.content}>
+        <Heading heading="Purchase Subscriptions" />
+        <FlatList
+          data={data.subscriptions}
+          scrollEnabled={false}
+          renderItem={({item}) => {
+            return <SubscriptionCard {...item} />;
+          }}
+          numColumns={2}
+          keyExtractor={item => item.name}
+          columnWrapperStyle={{gap: 12, paddingLeft: 12}}
+        />
+        <Heading heading="My Subscription History" />
+        {data.subscription_history.map(item => (
+          <SubscriptionHistory key={item.subscription_id} {...item} />
+        ))}
+      </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  root: {
-    position: 'relative',
-    flex: 1,
-  },
   content: {
-    borderRadius: 24,
-    borderBottomLeftRadius: 0,
-    borderBottomRightRadius: 0,
-    paddingTop: 36,
     flex: 1,
     paddingLeft: 12,
     paddingRight: 12,

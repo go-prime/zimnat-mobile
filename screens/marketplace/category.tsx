@@ -52,6 +52,7 @@ export default function MarketplaceCategoryScreen(props) {
   const renderProduce = p => (
     <ItemButton
       title={p.name}
+      subtitle={p.formatted}
       image_url={p.cover_image}
       key={p.index}
       onPress={() => {

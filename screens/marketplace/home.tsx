@@ -11,11 +11,12 @@ import ProduceCard from '../../components/marketplace/produce';
 import CategoryPill from '../../components/marketplace/category';
 import {Heading} from '../../components/text';
 import { CategoryButton, ItemButton } from '../../components/button';
+import { useIsFocused } from '@react-navigation/native';
 
 export default function MarketplaceHome({navigation}) {
   const [data, setData] = React.useState(null);
-  const width = Dimensions.get('window').width;
-  const height = Dimensions.get('window').height;
+  const {width, height} = Dimensions.get('window');
+  const isFocused = useIsFocused()
 
   React.useEffect(() => {
     axios
@@ -30,7 +31,7 @@ export default function MarketplaceHome({navigation}) {
         console.log(err);
         Alert.alert('Error', 'Failed to get resources.');
       });
-  }, []);
+  }, [isFocused]);
 
   if (!data) {
     return <Loading />;
@@ -86,7 +87,7 @@ export default function MarketplaceHome({navigation}) {
                 bold
                 image_url={p.image}
                 title={p.name}
-                subtitle={p.category}
+                subtitle={p.formatted}
                 onPress={() => {
                   navigation.navigate('Produce', {produce: p.name});
                 }}

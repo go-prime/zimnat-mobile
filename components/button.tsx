@@ -36,7 +36,7 @@ const CourseButton = ({image_url, onPress, name, progress}) => {
   );
 };
 
-const BundleButton = ({onPress, image_url, name}) => {
+const BundleButton = ({onPress, image_url, name, price}) => {
   const deck = {
     position: 'absolute',
     width: 120,
@@ -76,7 +76,8 @@ const BundleButton = ({onPress, image_url, name}) => {
           />
         ))}
       </View>
-      <Label label={name} />
+      <Label bold label={name} />
+      <SmallLabel label={price} />
     </Pressable>
   );
 };
@@ -109,7 +110,7 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   bundleContainer: {
-    height: 175,
+    height: 200,
     width: 150,
     margin: 12,
   },

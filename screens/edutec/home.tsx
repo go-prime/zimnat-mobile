@@ -48,7 +48,7 @@ export default function CoursesHomeScreen({navigation}): JSX.Element {
   }
 
   return (
-    <ScrollView>
+    <ScrollView style={{padding: 12}}>
       <SearchBar />
       <View style={styles.carouselContainer}>
         <Carousel
@@ -100,7 +100,7 @@ export default function CoursesHomeScreen({navigation}): JSX.Element {
         </ScrollView>
       </View>
 
-      <Heading heading="Subjects" />
+      <Heading>Subjects</Heading>
       <ScrollView horizontal>
         {data.categories.map(cat => (
           <CategoryButton
@@ -144,9 +144,8 @@ const styles = StyleSheet.create({
     ...shadow,
     elevation: 5,
     borderRadius: 12,
-    padding: 12,
     height: 200,
-    margin: 12,
+    marginVertical: 12,
     overflow: 'hidden'
   },
   carouselItemContainer: {

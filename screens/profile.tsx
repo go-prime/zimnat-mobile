@@ -23,7 +23,7 @@ import {
 import Centered, {Row} from '../components/layout';
 import {useIsFocused} from '@react-navigation/native';
 import ImageIcon from '../components/image';
-import { Heading } from '../components/text';
+import {Heading} from '../components/text';
 
 const onSave = (fullname, phone, address, email) => {
   axios
@@ -82,9 +82,35 @@ export default function ProfileScreen({navigation}) {
     <ScrollView>
       <Centered>
         <View style={styles.round}>
-          {data.photo ? <ImageIcon url={`${constants.server_url}${data.photo}`} width={175} height={175} /> :<FontAwesomeIcon icon={faUser} size={72} color={colors.primary} />}
+          {data.photo ? (
+            <ImageIcon
+              url={`${constants.server_url}${data.photo}`}
+              width={175}
+              height={175}
+            />
+          ) : (
+            <FontAwesomeIcon icon={faUser} size={72} color={colors.primary} />
+          )}
         </View>
       </Centered>
+      <Heading heading="My Subscriptions" />
+      <View style={styles.tier}>
+        <Text style={styles.tierText}>
+          {data.subscription
+            ? data.subscription.subscription_type
+            : 'Hustle Shopper'}
+        </Text>
+      </View>
+      <Centered>
+        <Pressable
+          style={styles.upgrade}
+          onPress={() => {
+            navigation.navigate('Subscriptions');
+          }}>
+          <Text style={[styles.tierText, {marginLeft: 8}]}>Browse Options</Text>
+        </Pressable>
+      </Centered>
+
       <Heading heading="User Details" />
       <View style={styles.inputContainer}>
         <TextInput
@@ -134,15 +160,6 @@ export default function ProfileScreen({navigation}) {
         />
         <Text style={styles.tierText}>Save Changes</Text>
       </Pressable>
-      <Heading heading="My Subscriptions" />
-        <View style={styles.tier}>
-          <Text style={styles.tierText}>{data.subscription ? data.subscription.subscription_type : "Hustle Shopper"}</Text>
-        </View>
-        <Pressable style={styles.upgrade} onPress={() => { navigation.navigate("Subscriptions")}}>
-          <FontAwesomeIcon icon={faArrowUp} color={'white'} />
-          <Text style={[styles.tierText, {marginLeft: 8}]}>Upgrade</Text>
-        </Pressable>
-      
     </ScrollView>
   );
 }
@@ -159,7 +176,7 @@ const styles = StyleSheet.create({
   upgrade: {
     padding: 8,
     backgroundColor: colors.secondary,
-    width: 120,
+    width: 150,
     margin: 8,
     borderRadius: 8,
     justifyContent: 'center',
@@ -199,8 +216,8 @@ const styles = StyleSheet.create({
     height: 175,
     width: 175,
     borderRadius: 87.5,
-    overflow: "hidden",
-    padding: 0
+    overflow: 'hidden',
+    padding: 0,
   },
   container: {
     height: 150,
@@ -225,5 +242,5 @@ const styles = StyleSheet.create({
   tagLine: {
     fontSize: 18,
     ...text,
-  }
+  },
 });
