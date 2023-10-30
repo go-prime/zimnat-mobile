@@ -29,6 +29,7 @@ import Loading from '../../components/loading';
 import {Heading, Paragraph, SubTitle, Title} from '../../components/text';
 import {BundleButton, CourseButton, ItemButton} from '../../components/button';
 import {useNavigation} from '@react-navigation/native';
+import CartCounter from '../../components/cart';
 
 export default function ProductScreen(props) {
   const [data, setData] = React.useState(null);
@@ -45,7 +46,6 @@ export default function ProductScreen(props) {
         {params: {product_id: props.route.params.product}},
       )
       .then(res => {
-        console.log(res.data.message);
         setData(res.data.message);
         if (res.data.message.cover_image) {
           setImg(`${constants.server_url}/${res.data.message.cover_image}`);
@@ -117,35 +117,14 @@ export default function ProductScreen(props) {
           <Heading heading="Description" />
           <Paragraph text={data.description} />
           <View>
-            <View style={styles.row}>
-              <Text style={styles.heading}>
-                {`${data.currency} ${parseFloat(data.price).toFixed(2)}`}
-              </Text>
-            </View>
-            <View style={[styles.row, {gap: 4}]}>
-              <View style={styles.row}>
-                <Pressable onPress={() => setQty(qty > 1 ? qty - 1 : 0)}>
-                  <View style={styles.button}>
-                    <FontAwesomeIcon icon={faMinus} size={24} color={'white'} />
-                  </View>
-                </Pressable>
-                <View>
-                  <Text style={styles.heading}>{qty}</Text>
-                </View>
-                <Pressable onPress={() => setQty(qty + 1)}>
-                  <View style={styles.button}>
-                    <FontAwesomeIcon icon={faPlus} size={24} color={'white'} />
-                  </View>
-                </Pressable>
-              </View>
-              <AddToCartButton
+            <CartCounter qty={qty} setQty={setQty} />
+            <AddToCartButton
                 qty={qty}
                 product_id={data.billable_id}
                 product_name={data.name}
                 label={true}
-                styles={{padding: 12, width: width * 0.6}}
+                styles={{padding: 12}}
               />
-            </View>
             {data.related_products.length > 0 && (
               <Heading heading="Related Products" />
             )}

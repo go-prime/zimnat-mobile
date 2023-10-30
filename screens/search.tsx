@@ -1,6 +1,10 @@
 import React from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {faSearch, faTimes} from '@fortawesome/free-solid-svg-icons';
+import {
+  faSearch,
+  faTimes,
+  faRectangleXmark,
+} from '@fortawesome/free-solid-svg-icons';
 import {
   Alert,
   View,
@@ -16,11 +20,12 @@ import {card, shadow} from '../styles/inputs';
 import axios from 'axios';
 import constants from '../constants';
 import ImageIcon from '../components/image';
-import { Row } from '../components/layout';
+import {Row} from '../components/layout';
 import {subTitle, paragraph} from '../styles/text';
 import {useNavigation} from '@react-navigation/native';
 import colors from '../styles/colors';
 import Centered from '../components/layout';
+import {SubTitle} from '../components/text';
 
 const SearchItem = props => {
   const navigation = useNavigation();
@@ -95,14 +100,17 @@ export default SearchScreen = props => {
         <Centered>
           <ActivityIndicator color={colors.primary} size={48} />
         </Centered>
-      ) : (
+      ) : results.length > 0 ? (
         <FlatList
           data={results}
-          renderItem={item => (
-            <SearchItem {...item.item} />
-          )}
+          renderItem={item => <SearchItem {...item.item} />}
           keyExtractor={item => item.id}
         />
+      ) : (
+        <Row styles={{padding: 12, alignItems: 'center'}}>
+            <FontAwesomeIcon color={'white'} size={28} icon={faRectangleXmark} />
+            <SubTitle>No Results Found</SubTitle>
+          </Row>
       )}
     </View>
   );

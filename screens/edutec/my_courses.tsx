@@ -15,8 +15,6 @@ import axios from 'axios';
 import constants from '../../constants';
 import {faVideo, faFilm} from '@fortawesome/free-solid-svg-icons';
 import Centered, {Row} from '../../components/layout';
-import SearchBar from '../../components/search';
-import {RoundedRectButton} from '../../components/partner_store/buttons';
 import ImageIcon from '../../components/image';
 import Loading from '../../components/loading';
 import {useIsFocused, useNavigation} from '@react-navigation/native';

@@ -17,7 +17,6 @@ import {card, shadow, text} from '../../styles/inputs';
 import axios from 'axios';
 import constants from '../../constants';
 import {
-  RoundButton,
   RoundedSquareButton,
 } from '../../components/partner_store/buttons';
 import SearchBar from '../../components/search';

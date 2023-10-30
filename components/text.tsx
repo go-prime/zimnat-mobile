@@ -2,11 +2,17 @@ import React from 'react';
 import {text} from '../styles/text';
 import colors from '../styles/colors';
 import {View, Text, StyleSheet} from 'react-native';
+import getColors from '../hooks/colors';
+import { useNavigation } from '@react-navigation/native';
+
+
 
 
 const Pill = (props) => {
+  const navigation = useNavigation()
+  const colorScheme = getColors(navigation)
   const inlineContainerStyle = {
-    backgroundColor: props.color ? props.color : colors.primary ,
+    backgroundColor: props.color ? props.color : colorScheme.primary ,
     borderRadius: props.lg ? 20 : 14,
     padding: props.lg ? 8 :  4,
     margin: props.lg ? 4 : 2,
@@ -27,9 +33,11 @@ const Pill = (props) => {
 };
 
 const Heading = (props) => {
+  const navigation = useNavigation()
+  const colorScheme = getColors(navigation)
   return (
     <View style={styles.container}>
-      <Text style={styles.heading}>{props.heading || props.children}</Text>
+      <Text style={[styles.heading, {borderBottomColor: colorScheme.primary}]}>{props.heading || props.children}</Text>
     </View>
   );
 };
@@ -126,12 +134,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: 'bold'
   },
-  pillContainer: {
-    
-  },
-  pillText: {
-    
-  }
 });
 
 export {Heading, Title, SubTitle, Paragraph, Label, SmallLabel, Pill};

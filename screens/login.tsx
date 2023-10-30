@@ -8,7 +8,7 @@ import {
   Alert,
   Dimensions,
   ScrollView,
-  TextInput
+  TextInput,
 } from 'react-native';
 import {card, shadow} from '../styles/inputs';
 import axios from 'axios';
@@ -18,7 +18,7 @@ import colors from '../styles/colors';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Centered, {Row} from '../components/layout';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {faLock} from '@fortawesome/free-solid-svg-icons';
+import {faEye, faEyeSlash, faLock} from '@fortawesome/free-solid-svg-icons';
 
 import {useNavigation} from '@react-navigation/native';
 
@@ -31,24 +31,23 @@ const toCookieObj = (cookie: string) => {
   return resp;
 };
 
-const LoginCard = (props) => {
-  
+const LoginCard = props => {
   return (
     <Pressable
       onPress={() => {
         props.handler();
       }}>
       <View style={[styles.container]}>
-      <Centered>
-      <Image
-          source={props.source}
-          style={{ width: props.width  , height: props.height,marginBottom: 18 }}
-        />
-      </Centered>
-      <View style={styles.loginText}>
-        <Text style={styles.title}>{props.title}</Text>
-        <Text style={styles.subtitle}>{props.message}</Text>
-      </View>
+        <Centered>
+          <Image
+            source={props.source}
+            style={{width: props.width, height: props.height, marginBottom: 18}}
+          />
+        </Centered>
+        <View style={styles.loginText}>
+          <Text style={styles.title}>{props.title}</Text>
+          <Text style={styles.subtitle}>{props.message}</Text>
+        </View>
       </View>
     </Pressable>
   );
@@ -88,6 +87,7 @@ const SignInView = props => {
   const navigator = useNavigation();
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
+  const [showPassword, setShowPassword] = React.useState(false);
 
   const onLogin = () => {
     axios
@@ -117,14 +117,20 @@ const SignInView = props => {
           placeholderTextColor={'black'}
         />
       </View>
-      <View style={styles.inputContainer}>
+      <View style={[styles.inputContainer, {flexDirection: 'row'}]}>
         <TextInput
           value={password}
           placeholder="Password"
           onChangeText={setPassword}
           placeholderTextColor={'black'}
           style={styles.inputText}
+          secureTextEntry={!showPassword}
         />
+        <Pressable
+          onPress={() => setShowPassword(!showPassword)}
+          style={{padding: 12}}>
+          <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} size={24} />
+        </Pressable>
       </View>
       <Row styles={styles.buttonRow}>
         <Pressable style={styles.primaryButton} onPress={onLogin}>
@@ -188,22 +194,22 @@ export default function LoginScreen({navigation}) {
           <SignInView />
         ) : (
           <View>
-            <Row >
+            <Row>
               <LoginCard
                 title="Marketplace"
                 message="Shop with our hustlers."
                 source={require('../assets/images/marketplace.png')}
                 handler={() => login(navigation, 'Marketplace Home')}
-                width={(width / 2) - 48}
-                height={(height / 5) - 12}
+                width={width / 2 - 48}
+                height={height / 5 - 12}
               />
               <LoginCard
                 title="Partners"
                 message="Equip your next hustle."
                 source={require('../assets/images/partner_store.png')}
                 handler={() => login(navigation)}
-                width={(width / 2) - 48}
-                height={(height / 5) - 12}
+                width={width / 2 - 48}
+                height={height / 5 - 12}
               />
             </Row>
             <Row>
@@ -212,16 +218,16 @@ export default function LoginScreen({navigation}) {
                 source={require('../assets/images/edutec.png')}
                 message="Get the skills needed for your next hustle."
                 handler={() => login(navigation, 'Courses Home')}
-                width={(width / 2) - 48}
-                height={(height / 5) - 12}
+                width={width / 2 - 48}
+                height={height / 5 - 12}
               />
               <LoginCard
                 title="Business Books"
                 source={require('../assets/images/books.png')}
                 message="Stay on top of your hustle."
                 handler={() => login(navigation, 'Books')}
-                width={(width / 2) - 48}
-                height={(height / 5) - 12}
+                width={width / 2 - 48}
+                height={height / 5 - 12}
               />
             </Row>
           </View>
@@ -256,7 +262,7 @@ const styles = StyleSheet.create({
   loginText: {
     position: 'absolute',
     bottom: 12,
-    left: 12
+    left: 12,
   },
   welcome: {
     fontSize: 36,
@@ -327,6 +333,7 @@ const styles = StyleSheet.create({
     marginTop: 48,
   },
   inputText: {
-    color: 'black'
-  }
+    color: 'black',
+    flex: 1,
+  },
 });

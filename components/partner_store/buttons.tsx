@@ -10,23 +10,8 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import constants from '../../constants';
-
-const RoundButton = function (props) {
-  return (
-    <Pressable onPress={props.handler}>
-      <View style={styles.round}>
-        {props.url ? (
-          <Image source={{uri: props.url, width: 75, height: 75}} />
-        ) : (
-          <FontAwesomeIcon icon={faImage} size={30} color={colors.primary} />
-        )}
-      </View>
-      {props.title && (
-        <Text style={[styles.text, styles.label]}>{props.title}</Text>
-      )}
-    </Pressable>
-  );
-};
+import { useNavigation } from '@react-navigation/native';
+import getColors from '../../hooks/colors';
 
 const RoundedSquareButton = function (props) {
   return (
@@ -45,27 +30,7 @@ const RoundedSquareButton = function (props) {
   );
 };
 
-const RoundedRectButton = function (props) {
-  return (
-    <Pressable onPress={props.handler}>
-      <View style={styles.rectangle}>
-        {props.url ? (
-          <Image source={{uri: props.url, width: 100, height: 100}} />
-        ) : (
-          <FontAwesomeIcon icon={faImage} size={30} color={colors.primary} />
-        )}
-      </View>
-      {props.title && (
-        <Text style={[styles.text, styles.wide_label]}>{props.title}</Text>
-      )}
-      {props.subtitle && (
-        <Text style={[styles.subtitle, styles.wide_label]}>
-          {props.subtitle}
-        </Text>
-      )}
-    </Pressable>
-  );
-};
+
 
 type WishListButtonProps = {
   product_id: string;
@@ -85,8 +50,8 @@ type CartButtonProps = {
 };
 
 const WishListButton = function (props: WishListButtonProps) {
+
   const defaultHandler = () => {
-    console.log('Add to wishlist button pressed');
     axios
       .post(
         `${constants.server_url}/api/method/billing_engine.billing_engine.api.add_to_wishlist`,
@@ -129,6 +94,8 @@ const WishListButton = function (props: WishListButtonProps) {
 };
 
 const AddToCartButton = function (props: CartButtonProps) {
+  const navigation = useNavigation()
+  const colorScheme = getColors(navigation)
   const defaultHandler = () => {
     axios
       .post(
@@ -154,7 +121,7 @@ const AddToCartButton = function (props: CartButtonProps) {
   };
   return (
     <Pressable onPress={props.handler ? props.handler : defaultHandler}>
-      <View style={[styles.addToCart, props.styles]}>
+      <View style={[styles.addToCart, {backgroundColor: colorScheme.secondary}, props.styles]}>
         <FontAwesomeIcon
           icon={faShoppingCart}
           size={props.size || 24}
@@ -209,7 +176,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderColor: 'crimson',
-    ...card,
+    backgroundColor: 'white',
     borderWidth: 2,
     padding: 4,
     borderRadius: 4,
@@ -217,13 +184,12 @@ const styles = StyleSheet.create({
   },
   addToCart: {
     justifyContent: 'center',
-    backgroundColor: colors.primary,
-    borderColor: colors.primary,
     alignItems: 'center',
     borderRadius: 4,
     flexDirection: 'row',
     padding: 4,
-    borderWidth: 2,
+    margin: 4,
+
   },
   text: {
     fontSize: 18,
@@ -250,9 +216,7 @@ const styles = StyleSheet.create({
 });
 
 export {
-  RoundButton,
   RoundedSquareButton,
-  RoundedRectButton,
   WishListButton,
   AddToCartButton,
 };

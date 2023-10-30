@@ -1,6 +1,6 @@
 import React from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {faSearch, faTimes} from '@fortawesome/free-solid-svg-icons';
+import {faSearch, faRectangleXmark, faTimes} from '@fortawesome/free-solid-svg-icons';
 import {
   Alert,
   View,
@@ -21,6 +21,8 @@ import {subTitle, paragraph} from '../styles/text';
 import {useNavigation} from '@react-navigation/native';
 import colors from '../styles/colors';
 import Centered from './layout';
+import { SubTitle } from './text';
+import getColors from '../hooks/colors';
 
 const SearchItem = (props) => {
   const navigation = useNavigation();
@@ -96,12 +98,17 @@ const SearchModal = props => {
           <Centered>
             <ActivityIndicator color={colors.primary} size={48} />
           </Centered>
-        ) : (
+        ) :  results.length > 0 ? (
           <FlatList
             data={results}
             renderItem={item => <SearchItem hideModal={props.toggleVisible} {...item.item} />}
             keyExtractor={item => item.id}
           />
+        ) : (
+          <Row styles={{padding: 12, alignItems: 'center'}}>
+            <FontAwesomeIcon color={'white'} size={28} icon={faRectangleXmark} />
+            <SubTitle>No Results Found</SubTitle>
+          </Row>
         )}
       </View>
     </Modal>
@@ -111,9 +118,12 @@ const SearchModal = props => {
 export default function SearchBar(props) {
   const [showModal, setShowModal] = React.useState(false);
   const inputRef = React.useRef();
+  const navigation = useNavigation()
+  const colorScheme = getColors(navigation)
+
   return (
-    <View style={styles.searchInput}>
-      <FontAwesomeIcon style={{width: 50}} size={28} color={colors.primary} icon={faSearch} />
+    <View style={[styles.searchInput, {borderColor: colorScheme.primary}]}>
+      <FontAwesomeIcon style={{width: 50}} size={28} color={colorScheme.primary} icon={faSearch} />
       <TextInput
         style={styles.input}
         placeholder="Search"

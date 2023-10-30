@@ -24,6 +24,7 @@ import {Appearance} from 'react-native';
 import {Heading, Paragraph, SubTitle, Title} from '../../components/text';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
 import {BundleButton, ItemButton} from '../../components/button';
+import getColors from '../../hooks/colors';
 
 const onSubscribe = course_id => {
   axios
@@ -42,6 +43,9 @@ const onSubscribe = course_id => {
 export default function CourseScreen(props) {
   const [data, setData] = React.useState(null);
   const isFocused = useIsFocused();
+  const navigation = useNavigation()
+  const colorScheme = getColors(navigation)
+
   React.useEffect(() => {
     axios
       .get(
@@ -49,7 +53,6 @@ export default function CourseScreen(props) {
         {params: {course_id: props.route.params.course_id}},
       )
       .then(res => {
-        console.log(res.data.message);
         setData(res.data.message);
       })
       .catch(err => {
@@ -62,7 +65,7 @@ export default function CourseScreen(props) {
   }
 
   const {width, height} = Dimensions.get('window');
-  const navigation = useNavigation();
+  
 
   return (
     <View style={styles.container}>
@@ -74,16 +77,19 @@ export default function CourseScreen(props) {
       <Pressable
         style={[
           data.is_subscribed ? styles.subscribedBtn : styles.subscribeBtn,
-          {left: width / 2 - 100, top: height / 3 - 76},
+          {
+            left: width / 2 - 100,
+            top: height / 3 - 76,
+            borderColor: data.is_subscribed ? colorScheme.primary: 'transparent',
+            backgroundColor: data.is_subscribed ? colorScheme.quarternary: colorScheme.primary
+          },
         ]}
         onPress={() =>
           data.is_subscribed ? null : onSubscribe(props.route.params.course_id)
         }>
-        {data.is_subscribed ? (
-          <Text style={styles.subscribedBtnText}>SUBSCRIBED</Text>
-        ) : (
-          <Text style={styles.subscribeBtnText}>SUBSCRIBE</Text>
-        )}
+        <Text style={[styles.subscribedBtnText, {color: data.is_subscribed ? colorScheme.primary : colorScheme.secondary}]}>
+          SUBSCRIBE{data.is_subscribed ? 'D' : null}
+        </Text>
       </Pressable>
       <View style={styles.content}>
         <ScrollView>
@@ -123,6 +129,7 @@ export default function CourseScreen(props) {
                 key={item.id}
                 index={index + 1}
                 video={item.type == 'Video'}
+                colorScheme={colorScheme}
                 handler={() => {
                   if (item.type == 'Video') {
                     return props.navigation.navigate('Video', {
@@ -224,12 +231,6 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     top: -24,
     zIndex: 100,
-  },
-  subscribeBtnText: {
-    fontSize: 18,
-    fontWeight: '400',
-    textAlign: 'center',
-    color: '#fff',
   },
   subscribedBtnText: {
     fontSize: 18,

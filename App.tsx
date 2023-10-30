@@ -33,6 +33,7 @@ const NightTheme = {
 
 function App(): JSX.Element {
   const [chatVisible, setChatVisible] = React.useState(false);
+  const [currentRoute, setCurrentRoute] = React.useState('');
   const navContainerRef = useNavigationContainerRef();
 
   React.useEffect(() => {
@@ -47,6 +48,7 @@ function App(): JSX.Element {
         }
 
         setChatVisible(route_name != 'Login');
+        setCurrentRoute(route_name);
       }
     });
   }, []);
@@ -56,7 +58,7 @@ function App(): JSX.Element {
       ref={navContainerRef}
       theme={Appearance.getColorScheme() === 'dark' ? NightTheme : LightTheme}>
       <HomeScreenNavigator />
-      <ChatButton visible={chatVisible} />
+      <ChatButton visible={chatVisible} route={currentRoute} />
     </NavigationContainer>
   );
 }

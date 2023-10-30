@@ -24,10 +24,11 @@ import constants from '../constants';
 import {Row} from './layout';
 import {useNavigation} from '@react-navigation/native';
 import colors from '../styles/colors';
+import getColors from '../hooks/colors';
 
 const ChatBubble = props => {
   return (
-    <View style={props.bot ? styles.botBubble : styles.chatBubble}>
+    <View style={[props.bot ? styles.botBubble : styles.chatBubble, {backgroundColor: props.bot ? props.colors.primary : props.colors.secondary}]}>
       <Text style={styles.bubbleText}>{props.text}</Text>
     </View>
   );
@@ -105,7 +106,7 @@ const ChatModal = props => {
             style={styles.messageContainer}
             onContentSizeChange={() => scrollRef.current?.scrollToEnd()}>
             {chat.map((c, i) => (
-              <ChatBubble {...c} key={i} />
+              <ChatBubble colors={props.colorScheme} {...c} key={i} />
             ))}
             {isSending && <SendingBubble />}
           </ScrollView>
@@ -128,7 +129,7 @@ const ChatModal = props => {
                 onBlur={() => setCustomMargin(12)}
               />
             </Row>
-            <Pressable onPress={sendMessage} style={styles.sendButton}>
+            <Pressable onPress={sendMessage} style={[styles.sendButton, {backgroundColor: props.colorScheme.primary}]}>
               <FontAwesomeIcon icon={faPaperPlane} size={20} color={'white'} />
             </Pressable>
           </Row>
@@ -140,17 +141,24 @@ const ChatModal = props => {
 
 export default function ChatButton(props) {
   const [showModal, setShowModal] = React.useState(false);
+  const [themeColors, setThemeColors] = React.useState(colors)
+  const navigation = useNavigation()
+
+  React.useEffect(() => {
+    setThemeColors(getColors(navigation))
+  }, [props.route])
+
   return (
     <>
       <Pressable
         onPress={() => setShowModal(true)}
         android_ripple={{color: 'rgba(0,0,0,0.1)'}}
         activeOpacity={0.7}
-        style={[styles.chatButton, {display: props.visible ? 'block': "none"}]}>
+        style={[styles.chatButton, {backgroundColor: themeColors.primary, display: props.visible ? 'block': "none"}]}>
         <FontAwesomeIcon color={'white'} size={36} icon={faComments} />
       </Pressable>
       {showModal && (
-        <ChatModal toggleVisible={() => setShowModal(!showModal)} />
+        <ChatModal colorScheme={themeColors} toggleVisible={() => setShowModal(!showModal)} />
       )}
     </>
   );
@@ -163,7 +171,6 @@ const styles = StyleSheet.create({
     ...shadow,
     elevation: 5,
     position: 'absolute',
-    backgroundColor: colors.primary,
     bottom: 20,
     right: 20,
   },
@@ -204,7 +211,6 @@ const styles = StyleSheet.create({
     marginLeft: 0,
   },
   botBubble: {
-    backgroundColor: colors.primary,
     padding: 8,
     borderRadius: 12,
     borderTopLeftRadius: 0,
@@ -212,7 +218,6 @@ const styles = StyleSheet.create({
     marginRight: 50,
   },
   chatBubble: {
-    backgroundColor: colors.secondary,
     padding: 8,
     borderRadius: 12,
     borderBottomRightRadius: 0,

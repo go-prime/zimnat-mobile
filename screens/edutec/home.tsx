@@ -18,15 +18,17 @@ import constants from '../../constants';
 import Loading from '../../components/loading';
 import SearchBar from '../../components/search';
 import ImageIcon from '../../components/image';
-import {RoundButton} from '../../components/partner_store/buttons';
+
 import {Heading} from '../../components/text';
 import colors from '../../styles/colors';
 import {CategoryButton, CourseButton} from '../../components/button';
+import getColors from '../../hooks/colors';
 
 export default function CoursesHomeScreen({navigation}): JSX.Element {
   const width = Dimensions.get('window').width;
   const [search, setSearch] = React.useState('');
   const [data, setData] = React.useState(null);
+  const colorScheme = getColors(navigation)
 
   React.useEffect(() => {
     axios
@@ -75,10 +77,9 @@ export default function CoursesHomeScreen({navigation}): JSX.Element {
           }}
         />
       </View>
-
       <View>
         <Pressable
-          style={styles.myCourseCard}
+          style={[styles.myCourseCard, {backgroundColor: colorScheme.primary}]}
           onPress={() => navigation.navigate('My Course Subscriptions')}>
           <FontAwesomeIcon icon={faUserGraduate} size={36} color={'white'} />
           <Text style={styles.myCourseCardText}>My Courses</Text>

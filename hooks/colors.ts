@@ -32,11 +32,10 @@ const screens = {
   Books: colors,
 };
 
-export default useColors = navigation => {
-  const [colorScheme, setColorScheme] = React.useState(colors);
-  React.useEffect(() => {
+export default getColors = (navigation) => {
+
     const state = navigation.getState();
-    if (state.history.length) {
+    if (state && state.history && state.history.length) {
       const length = state.history.length;
       const index = length - 1;
       const route = state.history[state.history.length - 1];
@@ -46,9 +45,7 @@ export default useColors = navigation => {
           route.key && route.key.split ? route.key.split('-')[0] : '';
       }
 
-      setColorScheme(screens[route_name] || colors);
-    }
-  }, []);
-
-  return colorScheme;
-};
+      return(screens[route_name] || colors);
+    } 
+    return colors
+}

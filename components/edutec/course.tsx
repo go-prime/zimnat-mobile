@@ -58,9 +58,9 @@ export default function CourseItem(props) {
               <Text style={styles.cardTitle}>{props.title}</Text>
             </View>
             <Centered>
-                <View style={styles.componentBtn}>
+                <View style={[styles.componentBtn, {borderColor: props.colorScheme.secondary}]}>
                   <FontAwesomeIcon
-                  color={colors.primary}
+                  color={props.colorScheme.secondary}
                   size={28}
                   icon={props.video ? faPlay : faFileAlt}
                 />
