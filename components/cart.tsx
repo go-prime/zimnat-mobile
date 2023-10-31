@@ -13,20 +13,21 @@ export default CartCounter = ({qty, setQty}) => {
   const navigation = useNavigation();
   const colorScheme = getColors(navigation);
 
+
   return (
     <Centered>
       <Row styles={{alignItems: 'center'}}>
         <Pressable onPress={() => setQty(qty > 1 ? qty - 1 : 0)}>
           <View style={[styles.button, {borderColor: colorScheme.primary}]}>
-            <FontAwesomeIcon icon={faMinus} size={28} color={colorScheme.quarternary} />
+            <FontAwesomeIcon icon={faMinus} size={28} color={colorScheme.primary} />
           </View>
         </Pressable>
         <View>
-          <Text style={[styles.count, {color: colorScheme.quarternary}]}>{qty}</Text>
+          <Text style={[styles.count, {color: colorScheme.primary}]}>{qty}</Text>
         </View>
         <Pressable onPress={() => setQty(qty + 1)}>
           <View style={[styles.button, {borderColor: colorScheme.primary}]}>
-            <FontAwesomeIcon icon={faPlus} size={28} color={colorScheme.quarternary} />
+            <FontAwesomeIcon icon={faPlus} size={28} color={colorScheme.primary} />
           </View>
         </Pressable>
       </Row>

@@ -50,17 +50,23 @@ import Subscriptions from './edutec/my_courses';
 import InAppWebViewScreen from './web';
 import BooksHomeScreen from './books/home';
 import Centered from '../components/layout';
-import SearchScreen from './search'
+import SearchScreen from './search';
 import SubscriptionScreen from './billing/subscription';
 import SubscriptionListScreen from './billing/subscriptions';
+import AddInventoryScreen from './marketplace/merchant/add_inventory';
+import ManageStorefrontScreen from './marketplace/merchant/manage_storefront';
+import SalesSummaryScreen from './marketplace/merchant/sales_summary';
+import ConfirmSaleScreen from './marketplace/merchant/confirm_sale';
+import ManageInventoryScreen from './marketplace/merchant/manage_inventory';
+import ManageSalesScreen from './marketplace/merchant/manage_sales';
 
 const Drawer = createDrawerNavigator();
 
 const DrawerItem = props => {
   let source = props.source;
-  const dark_mode = Appearance.getColorScheme() === "dark"
-  if(dark_mode && props.dark_source) {
-    source = props.dark_source
+  const dark_mode = Appearance.getColorScheme() === 'dark';
+  if (dark_mode && props.dark_source) {
+    source = props.dark_source;
   }
 
   return (
@@ -152,7 +158,6 @@ const NavOptions = props => {
   );
 };
 
-
 export default function HomeScreenNavigator({navigation}): JSX.Element {
   return (
     <Drawer.Navigator
@@ -170,7 +175,6 @@ export default function HomeScreenNavigator({navigation}): JSX.Element {
         headerShadowVisible: false,
       }}
       drawerContent={props => <DrawerContent {...props} />}>
-      
       {/* Basic Screens */}
       <Drawer.Screen
         component={LoginScreen}
@@ -204,7 +208,12 @@ export default function HomeScreenNavigator({navigation}): JSX.Element {
       <Drawer.Screen component={CoursesHomeScreen} name="Courses Home" />
       <Drawer.Screen component={CourseCategoryScreen} name="Course Category" />
       <Drawer.Screen component={CourseScreen} name="Course" />
-      <Drawer.Screen component={VideoPlayer} name="Video" gestureEnabled={false} swipeEnabled={false} />
+      <Drawer.Screen
+        component={VideoPlayer}
+        name="Video"
+        gestureEnabled={false}
+        swipeEnabled={false}
+      />
       <Drawer.Screen component={ArticleViewer} name="Article" />
       <Drawer.Screen component={Subscriptions} name="My Course Subscriptions" />
 
@@ -212,6 +221,15 @@ export default function HomeScreenNavigator({navigation}): JSX.Element {
       <Drawer.Screen component={MarketplaceHome} name="Marketplace Home" />
       <Drawer.Screen component={ProduceScreen} name="Produce" />
       <Drawer.Screen component={StorefrontScreen} name="Storefront" />
+      <Drawer.Screen component={AddInventoryScreen} name="Add Inventory" />
+      <Drawer.Screen
+        component={ManageStorefrontScreen}
+        name="Manage Storefront"
+      />
+      <Drawer.Screen component={SalesSummaryScreen} name="Sales Summary" />
+      <Drawer.Screen component={ConfirmSaleScreen} name="Confirm Sale" />
+      <Drawer.Screen component={ManageInventoryScreen} name="Manage Inventory" />
+      <Drawer.Screen component={ManageSalesScreen} name="Manage Sales" />
 
       {/* Books */}
       <Drawer.Screen component={BooksHomeScreen} name="Books" />

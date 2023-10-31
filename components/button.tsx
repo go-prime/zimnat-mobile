@@ -1,12 +1,15 @@
 import React from 'react';
 
 import {View, Text, Pressable, StyleSheet} from 'react-native';
-import {Circle} from './layout';
+import {Circle, Row} from './layout';
 import ImageIcon from './image';
 import {card} from '../styles/inputs';
 import {Label, SmallLabel} from './text';
 import {getAbsoluteURL} from '../utils';
 import ProgressBar from './edutec/progress';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { faAngleRight } from '@fortawesome/free-solid-svg-icons';
+
 
 const CategoryButton = ({onPress, name, image_url}) => {
   return (
@@ -20,17 +23,15 @@ const CategoryButton = ({onPress, name, image_url}) => {
 };
 
 const CourseButton = ({image_url, onPress, name, progress}) => {
-  console.log(name)
   return (
     <Pressable style={{width: 150, marginRight: 12}} onPress={onPress}>
-      <View style={styles.courseButton} >
-      <ImageIcon width={150} height={100} url={getAbsoluteURL(image_url)} />
-      {progress != undefined && <ProgressBar
-            progress={progress}
-            styles={styles.progressStyle}
-          />}
+      <View style={styles.courseButton}>
+        <ImageIcon width={150} height={100} url={getAbsoluteURL(image_url)} />
+        {progress != undefined && (
+          <ProgressBar progress={progress} styles={styles.progressStyle} />
+        )}
       </View>
-      
+
       <Label bold label={name} />
     </Pressable>
   );
@@ -94,6 +95,30 @@ const ItemButton = ({onPress, title, subtitle, image_url, bold}) => {
   );
 };
 
+const ProfileButton = ({label, action}) => {
+  return (
+    <Pressable style={buttonStyle} onPress={action}>
+      <Row styles={{justifyContent: 'space-between', alignItems: 'center'}}>
+        <Text style={buttonTextStyle}>{label}</Text>
+        <FontAwesomeIcon icon={faAngleRight} size={24} />
+      </Row>
+    </Pressable>
+  );
+};
+
+const buttonTextStyle = {
+  fontSize: 20,
+  color: 'black',
+};
+
+const buttonStyle = {
+  backgroundColor: 'white',
+  padding: 12,
+  borderRadius: 12,
+  margin: 12,
+  elevation: 5,
+};
+
 const styles = StyleSheet.create({
   categoryContainer: {
     width: 100,
@@ -126,7 +151,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     overflow: 'hidden',
     position: 'relative',
-    
   },
   progressStyle: {
     position: 'absolute',
@@ -139,4 +163,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export {CategoryButton, CourseButton, BundleButton, ItemButton};
+export {CategoryButton, ProfileButton, CourseButton, BundleButton, ItemButton};

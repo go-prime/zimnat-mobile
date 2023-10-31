@@ -71,6 +71,7 @@ export default function MarketplaceCategoryScreen(props) {
       <View style={styles.content}>
           <Title title={data.name} />
           <Paragraph text={data.description} />
+          <Heading>Produce</Heading>
           <FlatList 
             data={data.produce}
             renderItem={({item}) => (renderProduce(item))}

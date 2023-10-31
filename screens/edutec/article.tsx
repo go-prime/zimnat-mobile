@@ -19,6 +19,9 @@ import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faCheck} from '@fortawesome/free-solid-svg-icons';
 import colors from '../../styles/colors';
 import { SubTitle, Title } from '../../components/text';
+import { useNavigation } from '@react-navigation/native';
+import getColors from '../../hooks/colors'
+
 
 const markAsRead = (article_id, course_id) => {
   axios
@@ -41,6 +44,8 @@ const markAsRead = (article_id, course_id) => {
 
 export default function ArticleViewer(props) {
   const [data, setData] = React.useState(null);
+  const navigation = useNavigation()
+  const colorScheme = getColors(navigation)
   React.useEffect(() => {
     axios
       .get(
@@ -50,7 +55,6 @@ export default function ArticleViewer(props) {
         },
       )
       .then(res => {
-        console.log(res.data.message);
         setData(res.data.message);
       })
       .catch(err => {
@@ -80,7 +84,7 @@ export default function ArticleViewer(props) {
       <Row styles={{marginTop: 12, justifyContent: 'center'}}>
         <Pressable
           onPress={() => markAsRead(props.route.params.article_id, data.course)}
-          style={styles.markAsReadBtn}>
+          style={[styles.markAsReadBtn, {backgroundColor: colorScheme.primary}]}>
           <Row styles={{gap: 8, justifyContent: 'center'}}>
             <Text style={styles.subTitle}>Mark as Read</Text>
             <FontAwesomeIcon size={24} icon={faCheck} color={'white'} />
@@ -110,6 +114,7 @@ const styles = StyleSheet.create({
   subTitle: {
     fontSize: 18,
     fontWeight: 'bold',
+    color: 'white'
   },
 
   description: {

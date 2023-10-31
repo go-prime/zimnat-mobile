@@ -19,11 +19,15 @@ import {
   faHouse,
   faSave,
   faArrowUp,
+  faAngleRight,
 } from '@fortawesome/free-solid-svg-icons';
 import Centered, {Row} from '../components/layout';
 import {useIsFocused} from '@react-navigation/native';
 import ImageIcon from '../components/image';
 import {Heading} from '../components/text';
+import Field from '../components/form'
+import { ProfileButton } from '../components/button';
+
 
 const onSave = (fullname, phone, address, email) => {
   axios
@@ -49,6 +53,7 @@ const onSave = (fullname, phone, address, email) => {
     });
 };
 
+
 export default function ProfileScreen({navigation}) {
   const isFocused = useIsFocused();
   const [data, setData] = React.useState('');
@@ -63,7 +68,6 @@ export default function ProfileScreen({navigation}) {
         `${constants.server_url}/api/method/billing_engine.billing_engine.api.client_detail`,
       )
       .then(res => {
-        console.log(res.data.message);
         setData(res.data.message);
         setFullName(res.data.message.full_name);
         setPhone(res.data.message.phone);
@@ -93,7 +97,6 @@ export default function ProfileScreen({navigation}) {
           )}
         </View>
       </Centered>
-      <Heading heading="My Subscriptions" />
       <View style={styles.tier}>
         <Text style={styles.tierText}>
           {data.subscription
@@ -101,54 +104,20 @@ export default function ProfileScreen({navigation}) {
             : 'Hustle Shopper'}
         </Text>
       </View>
-      <Centered>
-        <Pressable
-          style={styles.upgrade}
-          onPress={() => {
+      <Heading heading="Actions" />
+      <ProfileButton action={() => {
+            navigation.navigate('Manage Storefront');
+          }} label={"Manage Storefront"} />
+      <ProfileButton action={() => {
             navigation.navigate('Subscriptions');
-          }}>
-          <Text style={[styles.tierText, {marginLeft: 8}]}>Browse Options</Text>
-        </Pressable>
-      </Centered>
+          }} label={"Browse Subscriptions"} />
 
       <Heading heading="User Details" />
-      <View style={styles.inputContainer}>
-        <TextInput
-          value={fullname}
-          onChangeText={setFullName}
-          style={styles.input}
-          placeholder="Full Name"
-          placeholderTextColor={'black'}
-        />
-      </View>
-      <View style={styles.inputContainer}>
-        <TextInput
-          value={phone}
-          onChangeText={setPhone}
-          style={styles.input}
-          placeholder="Phone"
-          placeholderTextColor={'black'}
-        />
-      </View>
-      <View style={styles.inputContainer}>
-        <TextInput
-          value={email}
-          onChangeText={setEmail}
-          style={styles.input}
-          placeholder="Email"
-          placeholderTextColor={'black'}
-        />
-      </View>
-      <View style={styles.inputContainer}>
-        <TextInput
-          value={address}
-          onChangeText={setAddress}
-          style={styles.input}
-          placeholder="Address"
-          numberOfLines={4}
-          placeholderTextColor={'black'}
-        />
-      </View>
+      <Field value={fullname} onTextChange={setFullName} label={"Full Name"} />
+      <Field value={phone} onTextChange={setPhone} label={"Phone"} />
+      <Field value={email} onTextChange={setEmail} label={"Email"} />
+      <Field value={address} multiline onTextChange={setAddress} label={"Address"} />
+  
       <Pressable
         onPress={() => onSave(fullname, phone, address, email)}
         style={styles.save}>
@@ -191,22 +160,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row',
+    marginBottom: 24
   },
   tierText: {
     fontSize: 16,
     fontWeight: 'bold',
     color: 'white',
-  },
-  inputContainer: {
-    padding: 4,
-    ...card,
-    margin: 8,
-    borderRadius: 8,
-  },
-  input: {
-    ...text,
-    fontSize: 18,
-    textAlignVertical: 'top',
   },
   round: {
     margin: 24,

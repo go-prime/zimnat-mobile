@@ -16,13 +16,15 @@ const Pill = (props) => {
     borderRadius: props.lg ? 20 : 14,
     padding: props.lg ? 8 :  4,
     margin: props.lg ? 4 : 2,
+    ...props.containerStyles || {}
   }
 
   const inlineTextStyle = {
     color: 'white',
     fontWeight: 'bold',
     textAlign: 'center',
-    fontSize: props.lg ? 18 : 14
+    fontSize: props.lg ? 18 : 14,
+    ...props.textStyles || {}
   }
 
   return (

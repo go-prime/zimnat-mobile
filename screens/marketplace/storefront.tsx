@@ -1,16 +1,16 @@
 import React from 'react';
-import {View, Text, StyleSheet, ScrollView} from 'react-native';
+import {View, Text, StyleSheet, ScrollView, Pressable} from 'react-native';
 import {Row} from '../../components/layout';
 import ImageIcon from '../../components/image';
-import {Heading, SubTitle, Title} from '../../components/text';
+import {Heading, Pill, SubTitle, Title} from '../../components/text';
 import axios from 'axios';
 import {useIsFocused} from '@react-navigation/native';
 import constants from '../../constants';
 import {err} from 'react-native-svg/lib/typescript/xml';
 import Loading from '../../components/loading';
 import ProduceCard from '../../components/marketplace/produce';
-
-
+import {ItemButton} from '../../components/button';
+import { Paragraph } from '../../components/text';
 export default function StorefrontScreen(props) {
   const [data, setData] = React.useState(null);
   const isFocused = useIsFocused();
@@ -45,22 +45,37 @@ export default function StorefrontScreen(props) {
     <ScrollView>
       <Row>
         <View style={styles.circle}>
-          <ImageIcon width={75} height={75} url={`${constants.server_url}${data.image}`} />
+          <ImageIcon
+            width={75}
+            height={75}
+            url={`${constants.server_url}${data.image}`}
+          />
         </View>
         <View>
           <Title title={data.name} />
-          <SubTitle subtitle={data.merchant || "Merchant"} />
+          <SubTitle subtitle={data.merchant || 'Merchant'} />
         </View>
       </Row>
+      <Paragraph>{data.description}</Paragraph>
       <Heading heading="Tags" />
+      {data.tags.map(t => (
+        <Pressable
+          onPress={() => {
+            navigation.navigate('Produce Category', {category: t.name});
+          }}>
+          <Pill lg containerStyles={{alignSelf: 'flex-start'}}>
+            {t.name}
+          </Pill>
+        </Pressable>
+      ))}
       <Heading heading="Featured Produce" />
       <Row styles={{flexWrap: 'wrap', gap: 16, margin: 12}}>
         {data.featured_produce.map(p => (
-          <ProduceCard
-            {...p}
-            image={p.image}
-            category={null}
-            key={p.index}
+          <ItemButton
+            image_url={p.image}
+            key={p.name}
+            title={p.name}
+            subtitle={p.formatted}
             onPress={() => {
               navigation.navigate('Produce', {produce: p.name});
             }}
@@ -71,10 +86,11 @@ export default function StorefrontScreen(props) {
       <Heading heading="All Produce" />
       <Row styles={{flexWrap: 'wrap', gap: 16, margin: 12}}>
         {data.all_produce.map(p => (
-          <ProduceCard
-            {...p}
-            image={p.cover_image}
-            key={p.index}
+          <ItemButton
+            image_url={p.cover_image}
+            title={p.name}
+            subtitle={p.formatted}
+            key={p.name}
             onPress={() => {
               navigation.navigate('Produce', {produce: p.name});
             }}
@@ -85,13 +101,12 @@ export default function StorefrontScreen(props) {
   );
 }
 
-
 const styles = StyleSheet.create({
-    circle: {
-        width: 75,
-        height: 75,
-        borderRadius: 37.5,
-        overflow: 'hidden',
-        margin: 12
-    }
-})
+  circle: {
+    width: 75,
+    height: 75,
+    borderRadius: 37.5,
+    overflow: 'hidden',
+    margin: 12,
+  },
+});

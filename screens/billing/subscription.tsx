@@ -46,7 +46,7 @@ export default function SubscriptionListScreen(props) {
       .catch(err => {
         console.log(err.response.data);
       });
-  }, []);
+  }, [props.route.params.subscription_id]);
 
   if (!data) {
     return <Loading />;

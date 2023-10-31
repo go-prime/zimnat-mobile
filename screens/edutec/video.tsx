@@ -28,6 +28,8 @@ import colors from '../../styles/colors';
 import {useNavigation} from '@react-navigation/native';
 import VideoOverlay from './video/overlay';
 import { Heading, Paragraph, SubTitle, Title } from '../../components/text';
+import getColors from '../../hooks/colors'
+
 
 const OptionsModal = props => {
   return (
@@ -71,6 +73,9 @@ export default function VideoPlayer(props) {
   const [quality, setQuality] = React.useState('url_360p');
   const [paused, setPaused] = React.useState(true);
   const [showDescription, setShowDescription] = React.useState(false);
+
+  const navigation = useNavigation()
+  const colorScheme = getColors(navigation)
 
   React.useEffect(() => {
     if (!(playerRef && playerRef.current)) {
@@ -191,6 +196,7 @@ export default function VideoPlayer(props) {
             {data.videos.map((video, index) => {
               return (
                 <CourseItem
+                  colorScheme={colorScheme}
                   key={index}
                   handler={() => {
                     if (video.item_type == 'Video') {
