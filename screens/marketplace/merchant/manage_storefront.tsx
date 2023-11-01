@@ -20,7 +20,7 @@ import colors from '../../../styles/colors';
 import axios from 'axios';
 import Loading from '../../../components/loading';
 import {getAbsoluteURL} from '../../../utils';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 
 export default ManageStorefrontScreen = props => {
   const [data, setData] = React.useState(null);
@@ -32,7 +32,7 @@ export default ManageStorefrontScreen = props => {
   const [logo, setLogo] = React.useState('');
   const [tags, setTags] = React.useState([]);
   const [featuredProduce, setFeaturedProduce] = React.useState([]);
-  const navigation = useNavigation()
+  const navigation = useNavigation();
 
   React.useEffect(() => {
     axios
@@ -61,13 +61,15 @@ export default ManageStorefrontScreen = props => {
         getAbsoluteURL(
           '/api/method/open_marketplace.open_marketplace.api.update_storefront',
         ),
-        {data: {
-          storefront_name: storeName,
-          email: email,
-          phone: phone,
-          address: address,
-          description: description,
-        }},
+        {
+          data: {
+            storefront_name: storeName,
+            email: email,
+            phone: phone,
+            address: address,
+            description: description,
+          },
+        },
       )
       .then(res => {
         Alert.alert('Success', 'Updated storefront details successfully');
@@ -93,10 +95,18 @@ export default ManageStorefrontScreen = props => {
         </View>
       </Row>
       <Heading>Actions</Heading>
-      <ProfileButton action={() => {
-        navigation.navigate("Manage Inventory")
-      }} label={'Manage Inventory'} />
-      {/* <ProfileButton label={'Manage Sales'} /> */}
+      <ProfileButton
+        action={() => {
+          navigation.navigate('Manage Inventory');
+        }}
+        label={'Manage Inventory'}
+      />
+      <ProfileButton
+        action={() => {
+          navigation.navigate('Manage Sales');
+        }}
+        label={'Manage Sales'}
+      />
       <Heading>Storefront Properties</Heading>
       <Field
         label={'Storefront Name'}
@@ -111,7 +121,12 @@ export default ManageStorefrontScreen = props => {
         value={address}
         onTextChange={setAddress}
       />
-      <Field multiline label={'Description'} value={description} onTextChange={setDescription} />
+      <Field
+        multiline
+        label={'Description'}
+        value={description}
+        onTextChange={setDescription}
+      />
 
       <Pressable onPress={updateStorefrontDetails} style={styles.save}>
         <Row>

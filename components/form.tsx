@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, TextInput, StyleSheet} from 'react-native';
+import {View, Text, TextInput, StyleSheet, Appearance} from 'react-native';
 import { card, text } from '../styles/inputs';
 import { getAbsoluteURL } from '../utils';
 import { Label } from './text';
@@ -24,10 +24,12 @@ const LinkField = ({value, onChange, label, doctype, filters, label_field}) => {
   }, [])
 
   return (<View>
-    <Label>{label}</Label>
+    <View style={{paddingLeft: 8}}><Label>{label}</Label></View>
+    <View style={styles.inputContainer}>
     <Picker selectedValue={value} onValueChange={(val, idx) => onChange(val)}>
       {options && options.map(opt => (<Picker.Item label={opt[label_field]} value={opt.name} />))}
     </Picker>
+    </View>
   </View>)
 
 }
@@ -43,7 +45,7 @@ export default Field = ({value, onTextChange, label, multiline}) => {
         style={styles.input}
         placeholder={label}
         numberOfLines={multiline ? 4 : 1}
-        placeholderTextColor={'black'}
+        placeholderTextColor={Appearance.getColorScheme() == "dark" ?  "white" : 'black'}
       />
     </View>
   );

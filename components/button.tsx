@@ -3,13 +3,14 @@ import React from 'react';
 import {View, Text, Pressable, StyleSheet} from 'react-native';
 import {Circle, Row} from './layout';
 import ImageIcon from './image';
-import {card} from '../styles/inputs';
+import {card, text} from '../styles/inputs';
 import {Label, SmallLabel} from './text';
 import {getAbsoluteURL} from '../utils';
 import ProgressBar from './edutec/progress';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faAngleRight } from '@fortawesome/free-solid-svg-icons';
-
+import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
+import {faAngleRight, faSave} from '@fortawesome/free-solid-svg-icons';
+import { useNavigation } from '@react-navigation/native';
+import getColors from '../hooks/colors'
 
 const CategoryButton = ({onPress, name, image_url}) => {
   return (
@@ -100,19 +101,39 @@ const ProfileButton = ({label, action}) => {
     <Pressable style={buttonStyle} onPress={action}>
       <Row styles={{justifyContent: 'space-between', alignItems: 'center'}}>
         <Text style={buttonTextStyle}>{label}</Text>
-        <FontAwesomeIcon icon={faAngleRight} size={24} />
+        <FontAwesomeIcon
+          icon={faAngleRight}
+          size={24}
+          color={buttonTextStyle.color}
+        />
       </Row>
+    </Pressable>
+  );
+};
+
+const SubmitButton = ({label, action}) => {
+  const navigation = useNavigation()
+  const colorScheme = getColors(navigation)
+  return (
+    <Pressable
+      onPress={action}
+      style={[styles.submitButtonContainer, { backgroundColor: colorScheme.primary,}]}>
+      <FontAwesomeIcon icon={faSave} size={24} color={'white'} />
+      <Text
+        style={styles.submitButtonText}>
+        {label || 'Submit'}
+      </Text>
     </Pressable>
   );
 };
 
 const buttonTextStyle = {
   fontSize: 20,
-  color: 'black',
+  ...text,
 };
 
 const buttonStyle = {
-  backgroundColor: 'white',
+  ...card,
   padding: 12,
   borderRadius: 12,
   margin: 12,
@@ -120,6 +141,25 @@ const buttonStyle = {
 };
 
 const styles = StyleSheet.create({
+  submitButtonContainer: {
+    padding: 12,
+    borderRadius: 12,
+    margin: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',padding: 12,
+    borderRadius: 12,
+    margin: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row'
+  },
+  submitButtonText: {
+    marginLeft: 12,
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 20,
+  },
   categoryContainer: {
     width: 100,
     height: 140,
@@ -163,4 +203,11 @@ const styles = StyleSheet.create({
   },
 });
 
-export {CategoryButton, ProfileButton, CourseButton, BundleButton, ItemButton};
+export {
+  CategoryButton,
+  SubmitButton,
+  ProfileButton,
+  CourseButton,
+  BundleButton,
+  ItemButton,
+};

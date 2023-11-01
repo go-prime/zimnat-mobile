@@ -8,6 +8,7 @@ import {
   Image,
   ScrollView,
   Dimensions,
+  Appearance,
 } from 'react-native';
 import colors from '../../styles/colors';
 import {card, shadow, text} from '../../styles/inputs';
@@ -48,7 +49,7 @@ const BundleProduct = props => {
         <SubTitle>{props.id}</SubTitle>
         <Paragraph>{props.description}</Paragraph>
         <Label>
-          {props.formatted} <FontAwesomeIcon icon={faTimes} /> {props.qty}
+          {props.formatted} <FontAwesomeIcon color={Appearance.getColorScheme() == "dark" ? "white": "black"} icon={faTimes} /> {props.qty}
         </Label>
       </View>
     </Pressable>

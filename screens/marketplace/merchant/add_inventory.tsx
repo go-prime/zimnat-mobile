@@ -6,6 +6,7 @@ import {useNavigation} from '@react-navigation/native';
 import axios from 'axios';
 import {getAbsoluteURL} from '../../../utils';
 import colors from '../../../styles/colors';
+import {SubmitButton} from '../../../components/button';
 
 export default AddInventoryScreen = props => {
   const [produce, setProduce] = React.useState('');
@@ -44,18 +45,7 @@ export default AddInventoryScreen = props => {
       />
       <Field label="New Quantity" value={qty} onTextChange={setQty} />
       <Field label="New Price" value={price} onTextChange={setPrice} />
-      <Pressable
-        onPress={submitInventory}
-        style={{
-          padding: 12,
-          borderRadius: 12,
-          margin: 12,
-          backgroundColor: colors.primary,
-        }}>
-        <Text style={{color: 'white'}}>Submit</Text>
-      </Pressable>
+      <SubmitButton action={submitInventory} />
     </ScrollView>
   );
 };
-
-// "data": {"produce":"CK-0001", "new_price": "22", "new_quantity": "7"}

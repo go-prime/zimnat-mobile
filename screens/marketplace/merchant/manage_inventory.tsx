@@ -7,19 +7,24 @@ import axios from 'axios';
 import {getAbsoluteURL} from '../../../utils';
 import Loading from '../../../components/loading';
 import {Row} from '../../../components/layout';
-import { Alert } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import getColors from '../../../hooks/colors'
-import { card, text } from '../../../styles/inputs';
+import {Alert} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
+import getColors from '../../../hooks/colors';
+import {card, text} from '../../../styles/inputs';
+import Table from '../../../components/table';
 
 
 export default ManageInventoryScreen = props => {
   const [data, setData] = React.useState(null);
-  const navigation = useNavigation()
-  const colorScheme = getColors(navigation)
+  const navigation = useNavigation();
+  const colorScheme = getColors(navigation);
   React.useEffect(() => {
     axios
-      .get(getAbsoluteURL('/api/method/open_marketplace.open_marketplace.api.inventory_summary'))
+      .get(
+        getAbsoluteURL(
+          '/api/method/open_marketplace.open_marketplace.api.inventory_summary',
+        ),
+      )
       .then(res => {
         console.log(res.data.message);
         setData(res.data.message);
@@ -37,23 +42,28 @@ export default ManageInventoryScreen = props => {
   return (
     <ScrollView>
       <Heading>Actions</Heading>
-      <ProfileButton label="Create Inventory Entry" action={() => {
-        navigation.navigate("Add Inventory")
-      }} />
-      {/* <ProfileButton label="Add Produce" /> */}
+      <ProfileButton
+        label="Create Inventory Entry"
+        action={() => {
+          navigation.navigate('Add Inventory');
+        }}
+      />
+      <ProfileButton
+        action={() => {
+          navigation.navigate('Add Produce');
+        }}
+        label="Add Produce"
+      />
       <Heading>Inventory Summary</Heading>
-      <Row styles={{backgroundColor: colorScheme.primary, padding: 12}}>
-        <Text style={{flex: 3, color: 'white', fontWeight: "bold", fontSize: 20}}>Item</Text>
-        <Text style={{flex: 1, color: 'white', fontWeight: "bold", fontSize: 20}}>Price</Text>
-        <Text style={{flex: 1, color: 'white', fontWeight: "bold", fontSize: 20}}>Qty</Text>
-      </Row>
-      {data.map(item => (
-        <Row styles={{...card, padding: 12}}>
-          <Text style={{flex: 3, ...text, fontSize: 20}}>{item.produce_name}</Text>
-          <Text style={{flex: 1, ...text, fontSize: 20}}>{item.formatted}</Text>
-          <Text style={{flex: 1, ...text, fontSize: 20}}>{item.rate}</Text>
-        </Row>
-      ))}
+      <Table
+        columns={[
+          {label: 'Produce', fieldname: 'produce_name', ratio: 3},
+          {label: 'Price', fieldname: 'formatted', ratio: 1},
+          {label: 'Qty', fieldname: 'rate', ratio: 1},
+        ]}
+        data={data}
+        key_field={'produce_name'}
+      />
     </ScrollView>
   );
 };

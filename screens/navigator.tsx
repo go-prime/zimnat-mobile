@@ -55,10 +55,11 @@ import SubscriptionScreen from './billing/subscription';
 import SubscriptionListScreen from './billing/subscriptions';
 import AddInventoryScreen from './marketplace/merchant/add_inventory';
 import ManageStorefrontScreen from './marketplace/merchant/manage_storefront';
-import SalesSummaryScreen from './marketplace/merchant/sales_summary';
+import SaleDetailScreen from './marketplace/merchant/sale_detail';
 import ConfirmSaleScreen from './marketplace/merchant/confirm_sale';
 import ManageInventoryScreen from './marketplace/merchant/manage_inventory';
 import ManageSalesScreen from './marketplace/merchant/manage_sales';
+import AddProduceScreen from './marketplace/merchant/add_produce';
 
 const Drawer = createDrawerNavigator();
 
@@ -175,6 +176,7 @@ export default function HomeScreenNavigator({navigation}): JSX.Element {
         headerShadowVisible: false,
       }}
       drawerContent={props => <DrawerContent {...props} />}>
+        <Drawer.Screen component={AddProduceScreen} name="Add Produce" />
       {/* Basic Screens */}
       <Drawer.Screen
         component={LoginScreen}
@@ -221,16 +223,20 @@ export default function HomeScreenNavigator({navigation}): JSX.Element {
       <Drawer.Screen component={MarketplaceHome} name="Marketplace Home" />
       <Drawer.Screen component={ProduceScreen} name="Produce" />
       <Drawer.Screen component={StorefrontScreen} name="Storefront" />
-      <Drawer.Screen component={AddInventoryScreen} name="Add Inventory" />
+      
       <Drawer.Screen
         component={ManageStorefrontScreen}
         name="Manage Storefront"
       />
-      <Drawer.Screen component={SalesSummaryScreen} name="Sales Summary" />
+      <Drawer.Screen component={SaleDetailScreen} name="Sale Detail" />
       <Drawer.Screen component={ConfirmSaleScreen} name="Confirm Sale" />
-      <Drawer.Screen component={ManageInventoryScreen} name="Manage Inventory" />
+      <Drawer.Screen
+        component={ManageInventoryScreen}
+        name="Manage Inventory"
+      />
       <Drawer.Screen component={ManageSalesScreen} name="Manage Sales" />
-
+      
+      
       {/* Books */}
       <Drawer.Screen component={BooksHomeScreen} name="Books" />
     </Drawer.Navigator>
