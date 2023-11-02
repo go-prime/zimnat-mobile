@@ -23,6 +23,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faShoppingBasket, faTimes} from '@fortawesome/free-solid-svg-icons';
 import colors from '../../styles/colors';
 import {removeBtn} from '../../styles/buttons';
+import { SubTitle } from '../../components/text';
 
 const removeFromWishlist = (product_id, product_name, onSuccess) => {
   axios
@@ -45,7 +46,6 @@ const removeFromWishlist = (product_id, product_name, onSuccess) => {
 
 const WishlistItem = props => {
   navigator = useNavigation();
-  const [qty, setQty] = React.useState(props.qty);
 
   return (
     <View style={[styles.card, {flexDirection: 'row', padding: 16}]}>
@@ -66,18 +66,11 @@ const WishlistItem = props => {
       <View style={{flex: 2}}>
         <Pressable
           onPress={() => {
-            const params =
-              props.doctype === 'Product'
-                ? {product: props.name}
-                : {bundle: props.name};
-            navigator.navigate(props.doctype, params);
+            // TODO implement routing to cart item
           }}>
-          <Text style={styles.heading}>{props.label}</Text>
+          <SubTitle>{props.label}</SubTitle>
         </Pressable>
-        <Text>{props.description}</Text>
-        <Text style={styles.heading}>
-          {props.currency} {parseFloat(props.price).toFixed(2)}
-        </Text>
+        <SubTitle>{props.formatted}</SubTitle>
         <AddToCartButton
           label
           qty={1}

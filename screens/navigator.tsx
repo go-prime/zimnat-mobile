@@ -176,7 +176,6 @@ export default function HomeScreenNavigator({navigation}): JSX.Element {
         headerShadowVisible: false,
       }}
       drawerContent={props => <DrawerContent {...props} />}>
-        <Drawer.Screen component={AddProduceScreen} name="Add Produce" />
       {/* Basic Screens */}
       <Drawer.Screen
         component={LoginScreen}
@@ -223,7 +222,6 @@ export default function HomeScreenNavigator({navigation}): JSX.Element {
       <Drawer.Screen component={MarketplaceHome} name="Marketplace Home" />
       <Drawer.Screen component={ProduceScreen} name="Produce" />
       <Drawer.Screen component={StorefrontScreen} name="Storefront" />
-      
       <Drawer.Screen
         component={ManageStorefrontScreen}
         name="Manage Storefront"
@@ -235,8 +233,8 @@ export default function HomeScreenNavigator({navigation}): JSX.Element {
         name="Manage Inventory"
       />
       <Drawer.Screen component={ManageSalesScreen} name="Manage Sales" />
-      
-      
+      <Drawer.Screen component={AddInventoryScreen} name="Add Inventory" />
+      <Drawer.Screen component={AddProduceScreen} name="Add Produce" />
       {/* Books */}
       <Drawer.Screen component={BooksHomeScreen} name="Books" />
     </Drawer.Navigator>

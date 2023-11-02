@@ -3,14 +3,12 @@ import React from 'react';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
 import {faCamera, faImage, faTimes} from '@fortawesome/free-solid-svg-icons';
 import {Label} from './text';
-import {
-  launchCamera,
-  launchImageLibrary,
-} from 'react-native-image-picker';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import {Image} from 'react-native';
 
 export default HHImagePicker = props => {
   const [img, setImg] = React.useState(null);
+  const [name, setName] = React.useState(null);
 
   const selectGalleryImg = () => {
     launchImageLibrary(
@@ -25,7 +23,9 @@ export default HHImagePicker = props => {
           return;
         }
         setImg(response.assets[0].base64);
+        setName(response.assets[0].fileName);
         props.onImageChange(response.assets[0].base64);
+        props.onNameChange(response.assets[0].fileName);
       },
     );
   };
@@ -42,8 +42,11 @@ export default HHImagePicker = props => {
         if (response.didCancel) {
           return;
         }
+        console.log(response.assets[0])
         setImg(response.assets[0].base64);
+        setName(response.assets[0].fileName);
         props.onImageChange(response.assets[0].base64);
+        props.onNameChange(response.assets[0].fileName);
       },
     );
   };
@@ -55,19 +58,20 @@ export default HHImagePicker = props => {
       </View>
       {img ? (
         <View>
-            <View style={styles.imgContainer}>
-          <Image
-            source={{
-              uri: `data:image/jpg;base64,${img}`,
-              width: 200,
-              height: 100,
-            }}
-          />
-        </View>
-        <Pressable onPress={() => setImg(null)} style={styles.clearBtn}>
-            <FontAwesomeIcon icon={faTimes} size={24} color={'white'}/>
+          <View style={styles.imgContainer}>
+            <Image
+              source={{
+                uri: `data:image/jpg;base64,${img}`,
+                width: 200,
+                height: 100,
+              }}
+            />
+          </View>
+          <Label>{name}</Label>
+          <Pressable onPress={() => setImg(null)} style={styles.clearBtn}>
+            <FontAwesomeIcon icon={faTimes} size={24} color={'white'} />
             <Text style={styles.clearBtnText}>Clear</Text>
-        </Pressable>
+          </Pressable>
         </View>
       ) : (
         <View style={styles.container}>
@@ -130,10 +134,10 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginLeft: 12,
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   clearBtnText: {
     color: 'white',
-    fontSize: 20
-  }
+    fontSize: 20,
+  },
 });

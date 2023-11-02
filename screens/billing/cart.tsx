@@ -30,6 +30,8 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import Loading from '../../components/loading';
 import {removeBtn} from '../../styles/buttons';
+import { ProfileButton } from '../../components/button';
+import { Heading, SubTitle, Title } from '../../components/text';
 
 const removeFromCart = (product_id, product_name, qty, onChange) => {
   axios
@@ -102,21 +104,12 @@ const CartItem = props => {
       <View style={{flex: 2}}>
         <Pressable
           onPress={() => {
-            const params =
-              props.doctype === 'Product'
-                ? {product: props.name}
-                : {bundle: props.name};
-            console.log(params);
-            navigator.navigate(props.doctype, params);
+          //  TODO implement routing to cart item
           }}>
-          <Text style={styles.heading}>{props.label}</Text>
+          <SubTitle style={styles.heading}>{props.label}</SubTitle>
+          <SubTitle style={styles.heading}>{props.formatted}</SubTitle>
         </Pressable>
-        <Text>{props.description}</Text>
-
         <Row styles={{marginTop: 8, alignItems: 'center'}}>
-          <Text style={[styles.heading, {flex: 1}]}>
-            {props.currency} {parseFloat(props.price).toFixed(2)}
-          </Text>
           <Row>
             <Pressable onPress={decrement}>
               <View style={styles.button}>
@@ -194,6 +187,9 @@ export default function CartScreen(props) {
 
   return (
     <View style={{flex: 1, position: 'relative'}}>
+      
+      <ProfileButton label="Your Orders" />
+
       <ScrollView>
         {data.items.map(item => (
           <CartItem

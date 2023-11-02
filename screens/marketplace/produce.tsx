@@ -145,19 +145,21 @@ export default function ProductScreen(props) {
             <View>
               <Heading heading="Related Produce" />
               <ScrollView horizontal={true} style={styles.horizontalScroll}>
-                {data.related_produce.map(pro => {
-                  return (
-                    <ItemButton
-                      key={pro.name}
-                      title={pro.name}
-                      subtitle={pro.formatted}
-                      onPress={() =>
-                        navigation.navigate('Produce', {produce: pro.name})
-                      }
-                      image_url={pro.cover_image}
-                    />
-                  );
-                })}
+                <Row styles={{gap: 12}}>
+                  {data.related_produce.map(pro => {
+                    return (
+                      <ItemButton
+                        key={pro.name}
+                        title={pro.name}
+                        subtitle={pro.formatted}
+                        onPress={() =>
+                          navigation.navigate('Produce', {produce: pro.name})
+                        }
+                        image_url={pro.cover_image}
+                      />
+                    );
+                  })}
+                </Row>
               </ScrollView>
             </View>
           </View>
