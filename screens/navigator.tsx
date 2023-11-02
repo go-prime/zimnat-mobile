@@ -60,6 +60,8 @@ import ConfirmSaleScreen from './marketplace/merchant/confirm_sale';
 import ManageInventoryScreen from './marketplace/merchant/manage_inventory';
 import ManageSalesScreen from './marketplace/merchant/manage_sales';
 import AddProduceScreen from './marketplace/merchant/add_produce';
+import MyOrdersScreen from './billing/orders';
+import OrderDetailScreen from './billing/order_detail';
 
 const Drawer = createDrawerNavigator();
 
@@ -130,6 +132,11 @@ function DrawerContent(props): JSX.Element {
         label="My Shopping Cart"
         handler={() => props.navigation.navigate('Cart')}
       />
+      <DrawerItem
+        icon={faDoorOpen}
+        label="Log out"
+        handler={() => props.navigation.navigate('Login')}
+      />
     </DrawerContentScrollView>
   );
 }
@@ -147,9 +154,9 @@ const NavOptions = props => {
           style={{marginRight: 16}}
         />
       </Pressable>
-      <Pressable onPress={() => navigation.navigate('Login')}>
+      <Pressable onPress={() => navigation.navigate('Cart')}>
         <FontAwesomeIcon
-          icon={faDoorOpen}
+          icon={faShoppingCart}
           size={28}
           color={colors.primary}
           style={{marginRight: 16}}
@@ -235,6 +242,8 @@ export default function HomeScreenNavigator({navigation}): JSX.Element {
       <Drawer.Screen component={ManageSalesScreen} name="Manage Sales" />
       <Drawer.Screen component={AddInventoryScreen} name="Add Inventory" />
       <Drawer.Screen component={AddProduceScreen} name="Add Produce" />
+      <Drawer.Screen component={MyOrdersScreen} name="My Orders" />
+      <Drawer.Screen component={OrderDetailScreen} name="Order Detail" />
       {/* Books */}
       <Drawer.Screen component={BooksHomeScreen} name="Books" />
     </Drawer.Navigator>

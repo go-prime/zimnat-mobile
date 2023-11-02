@@ -6,14 +6,13 @@ import getColors from '../hooks/colors';
 import { useNavigation } from '@react-navigation/native';
 
 
-
-
 const Pill = (props) => {
   const navigation = useNavigation()
   const colorScheme = getColors(navigation)
   const inlineContainerStyle = {
     backgroundColor: props.color ? props.color : colorScheme.primary ,
     borderRadius: props.lg ? 20 : 14,
+    paddingHorizontal: props.lg ? 24: 12, 
     padding: props.lg ? 8 :  4,
     margin: props.lg ? 4 : 2,
     ...props.containerStyles || {}
@@ -55,7 +54,7 @@ const Title = (props) => {
 const SubTitle = (props) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.subtitle}>{props.subtitle || props.children}</Text>
+      <Text style={[styles.subtitle, {fontWeight: props.light ? 400: 'bold'}]}>{props.subtitle || props.children}</Text>
     </View>
   );
 };

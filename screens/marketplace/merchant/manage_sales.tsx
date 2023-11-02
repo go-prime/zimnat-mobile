@@ -20,7 +20,7 @@ export default ManageSalesScreen = props => {
     axios
       .get(
         getAbsoluteURL(
-          '/api/method/open_marketplace.open_marketplace.api.inventory_summary',
+          '/api/method/open_marketplace.open_marketplace.api.sales_summary',
         ),
       )
       .then(res => {
@@ -44,12 +44,11 @@ export default ManageSalesScreen = props => {
       <Heading>Sales Summary</Heading>
       <Table
         columns={[
-          {label: 'Produce', fieldname: 'produce_name', ratio: 3},
-          {label: 'Price', fieldname: 'formatted', ratio: 1},
-          {label: 'Qty', fieldname: 'rate', ratio: 1},
+          {label: 'Order ID', fieldname: 'name', ratio: 3},
+          {label: 'Total', fieldname: 'total', ratio: 1},
         ]}
         data={data}
-        key_field={'produce_name'}
+        key_field={'name'}
       />
     </ScrollView>
   );

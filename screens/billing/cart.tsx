@@ -30,8 +30,9 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import Loading from '../../components/loading';
 import {removeBtn} from '../../styles/buttons';
-import { ProfileButton } from '../../components/button';
-import { Heading, SubTitle, Title } from '../../components/text';
+import {ProfileButton} from '../../components/button';
+import {Heading, SubTitle, Title} from '../../components/text';
+import {getAbsoluteURL} from '../../utils';
 
 const removeFromCart = (product_id, product_name, qty, onChange) => {
   axios
@@ -104,7 +105,7 @@ const CartItem = props => {
       <View style={{flex: 2}}>
         <Pressable
           onPress={() => {
-          //  TODO implement routing to cart item
+            //  TODO implement routing to cart item
           }}>
           <SubTitle style={styles.heading}>{props.label}</SubTitle>
           <SubTitle style={styles.heading}>{props.formatted}</SubTitle>
@@ -131,7 +132,7 @@ const CartItem = props => {
   );
 };
 
-export default function CartScreen(props) {
+export default function CartScreen({navigation}) {
   const [data, setData] = React.useState(null);
   const width = Dimensions.get('screen').width;
   const isFocused = useIsFocused();
@@ -148,7 +149,20 @@ export default function CartScreen(props) {
   };
 
   const checkout = () => {
-    Alert.alert('Notification', 'Checkout is disabled during testing');
+    axios
+      .post(
+        getAbsoluteURL('api/method/billing_engine.billing_engine.api.checkout'),
+      )
+      .then(res => {
+        Alert.alert(
+          'Success',
+          'Successfully  carried out checkout of your cart.',
+        );
+        navigation.navigate('My Orders');
+      })
+      .catch(err => {
+        Alert.alert('Error', 'Error checking out your cart.');
+      });
   };
 
   React.useEffect(() => {
@@ -171,24 +185,36 @@ export default function CartScreen(props) {
 
   if (data.items.length == 0) {
     return (
-      <Centered style={{flex: 1, flexDirection: 'column', marginTop: 24}}>
-        <Text style={styles.title}>
-          Your shopping cart is empty, start shopping!
-        </Text>
-        <FontAwesomeIcon
-          style={{marginTop: 24}}
-          icon={faShoppingBasket}
-          size={72}
-          color={colors.primary}
+      <View style={{flex: 1}}>
+        <ProfileButton
+          label="My Orders"
+          action={() => {
+            navigation.navigate('My Orders');
+          }}
         />
-      </Centered>
+        <Centered styles={{flex: 1}}>
+          <Text style={styles.title}>
+            Your shopping cart is empty, start shopping!
+          </Text>
+          <FontAwesomeIcon
+            style={{marginTop: 24}}
+            icon={faShoppingBasket}
+            size={72}
+            color={colors.primary}
+          />
+        </Centered>
+      </View>
     );
   }
 
   return (
     <View style={{flex: 1, position: 'relative'}}>
-      
-      <ProfileButton label="Your Orders" />
+      <ProfileButton
+        label="My Orders"
+        action={() => {
+          navigation.navigate('My Orders');
+        }}
+      />
 
       <ScrollView>
         {data.items.map(item => (
