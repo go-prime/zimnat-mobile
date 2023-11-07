@@ -40,7 +40,9 @@ export default ManageSalesScreen = props => {
   return (
     <ScrollView>
       <Heading>Actions</Heading>
-      <ProfileButton label="Confirm Sale" />
+      <ProfileButton action={() => {
+        navigation.navigate("Confirm Sale")
+      }} label="Confirm Sale" />
       <Heading>Sales Summary</Heading>
       <Table
         columns={[

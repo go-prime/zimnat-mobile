@@ -5,12 +5,13 @@ import {getAbsoluteURL} from '../../utils';
 import Loading from '../../components/loading';
 import {Alert} from 'react-native';
 import {card} from '../../styles/inputs';
-import {Label, Money, SubTitle, Title, textStyles} from '../../components/text';
-import {Row} from '../../components/layout';
+import {Label, Money, Paragraph, SubTitle, Title, textStyles} from '../../components/text';
+import Centered, {Row} from '../../components/layout';
 import Table from '../../components/table';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {useNavigation} from '@react-navigation/native';
 import colors from '../../styles/colors';
+import QRCode from 'react-native-qrcode-svg';
 
 const completeSale = (id, navigator) => {
   axios
@@ -30,9 +31,10 @@ const completeSale = (id, navigator) => {
         );
       }
       navigator.navigate('WebView', {url: res.data.message.url});
-    }).catch(err => {
-        Alert.alert("Error", "Failed to complete checkout")
-        console.log(err.response.data)
+    })
+    .catch(err => {
+      Alert.alert('Error', 'Failed to complete checkout');
+      console.log(err.response.data);
     });
 };
 
@@ -107,17 +109,20 @@ export default OrderDetailScreen = ({navigation, route}) => {
               {label: 'Qty', fieldname: 'qty', ratio: 1},
               {label: 'Amt', fieldname: 'amount', ratio: 1, align: 'right'},
             ]}
-            data={data.items.map(i => ({...i, amount: parseFloat(i.amount).toFixed(2)}))}
+            data={data.items.map(i => ({
+              ...i,
+              amount: parseFloat(i.amount).toFixed(2),
+            }))}
             key_field={'product'}
           />
         </View>
-        <View style={{marginBottom: 70}}>
+        <View>
           <Row styles={{justifyContent: 'space-between'}}>
             <View>
               <SubTitle>Subtotal</SubTitle>
             </View>
             <View>
-            <Money style={textStyles.subtitle}>{data.net_amount}</Money>
+              <Money style={textStyles.subtitle}>{data.net_amount}</Money>
             </View>
           </Row>
           <Row styles={{justifyContent: 'space-between'}}>
@@ -133,12 +138,20 @@ export default OrderDetailScreen = ({navigation, route}) => {
               <Title>Total</Title>
             </View>
             <View>
-              <Money style={textStyles.title} symbol={data.currency_symbol}>{data.total}</Money>
+              <Money style={textStyles.title} symbol={data.currency_symbol}>
+                {data.total}
+              </Money>
             </View>
           </Row>
         </View>
+        <Paragraph>Scan to verify your order with the merchant</Paragraph>
+        <Centered>
+        <QRCode
+            value={data.verification_id || "https://google.com"}
+          />
+        </Centered>
       </ScrollView>
-      {data.status == "Order" && <CompleteOrderButton id={data.id} />}
+      {data.status == 'Order' && <CompleteOrderButton id={data.id} />}
     </View>
   );
 };

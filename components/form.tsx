@@ -79,6 +79,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ccc',
     flex: 1,
+    minHeight: 50
   },
   input: {
     ...text,
