@@ -27,9 +27,10 @@ import ImageIcon from '../components/image';
 import {Heading} from '../components/text';
 import Field from '../components/form'
 import { ProfileButton } from '../components/button';
+import ImagePicker from '../components/image_picker'
 
 
-const onSave = (fullname, phone, address, email) => {
+const onSave = (fullname, phone, address, email, imgData, imgName) => {
   axios
     .post(
       `${constants.server_url}/api/method/billing_engine.billing_engine.api.update_client_details`,
@@ -38,6 +39,8 @@ const onSave = (fullname, phone, address, email) => {
         email: email,
         phone: phone,
         address: address,
+        img_data: imgData,
+        img_name: imgName
       },
     )
     .then(res => {
@@ -61,6 +64,9 @@ export default function ProfileScreen({navigation}) {
   const [phone, setPhone] = React.useState('');
   const [email, setEmail] = React.useState('');
   const [address, setAddress] = React.useState('');
+  const [imgData, setImgData] = React.useState(null)
+  const [imgName, setImgName] = React.useState('')
+
 
   React.useEffect(() => {
     axios
@@ -113,13 +119,18 @@ export default function ProfileScreen({navigation}) {
           }} label={"Browse Subscriptions"} />
 
       <Heading heading="User Details" />
+      <ImagePicker 
+        initial={data.photo}
+        label={"Profile Photo"}
+        onImageChange={setImgData}
+        onNameChange={setImgName} />
       <Field value={fullname} onTextChange={setFullName} label={"Full Name"} />
       <Field value={phone} onTextChange={setPhone} label={"Phone"} />
       <Field value={email} onTextChange={setEmail} label={"Email"} />
       <Field value={address} multiline onTextChange={setAddress} label={"Address"} />
   
       <Pressable
-        onPress={() => onSave(fullname, phone, address, email)}
+        onPress={() => onSave(fullname, phone, address, email, imgData, imgName)}
         style={styles.save}>
         <FontAwesomeIcon
           icon={faSave}

@@ -139,9 +139,7 @@ const SignInView = props => {
         <Pressable
           style={styles.secondaryButton}
           onPress={() =>
-            navigator.navigate('WebView', {
-              url: `${constants.server_url}/client-signup`,
-            })
+            navigator.navigate('Sign Up')
           }>
           <Text style={styles.buttonText}>Sign Up</Text>
         </Pressable>
@@ -152,8 +150,7 @@ const SignInView = props => {
 
 export default function LoginScreen({navigation}) {
   const [showLogin, setShowLogin] = React.useState(false);
-  const width = Dimensions.get('screen').width;
-  const height = Dimensions.get('screen').height;
+  const {width, height} = Dimensions.get('screen');
   React.useEffect(() => {
     AsyncStorage.getItem('user').then(value => {
       if (value === 'Guest') {

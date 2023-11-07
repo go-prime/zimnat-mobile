@@ -5,6 +5,8 @@ import {faCamera, faImage, faTimes} from '@fortawesome/free-solid-svg-icons';
 import {Label} from './text';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import {Image} from 'react-native';
+import ImageIcon from './image';
+import Centered from './layout';
 
 export default HHImagePicker = props => {
   const [img, setImg] = React.useState(null);
@@ -42,7 +44,7 @@ export default HHImagePicker = props => {
         if (response.didCancel) {
           return;
         }
-        console.log(response.assets[0])
+        console.log(response.assets[0]);
         setImg(response.assets[0].base64);
         setName(response.assets[0].fileName);
         props.onImageChange(response.assets[0].base64);
@@ -56,6 +58,11 @@ export default HHImagePicker = props => {
       <View style={{paddingLeft: 8}}>
         <Label>{props.label}</Label>
       </View>
+      {props.initial && !img && (
+        <Centered>
+          <ImageIcon url={props.initial} width={200} height={100} />
+        </Centered>
+      )}
       {img ? (
         <View>
           <View style={styles.imgContainer}>

@@ -62,6 +62,7 @@ import ManageSalesScreen from './marketplace/merchant/manage_sales';
 import AddProduceScreen from './marketplace/merchant/add_produce';
 import MyOrdersScreen from './billing/orders';
 import OrderDetailScreen from './billing/order_detail';
+import SignUpScreen from './sign_up';
 
 const Drawer = createDrawerNavigator();
 
@@ -187,6 +188,11 @@ export default function HomeScreenNavigator({navigation}): JSX.Element {
       <Drawer.Screen
         component={LoginScreen}
         name="Login"
+        options={{headerShown: false}}
+      />
+      <Drawer.Screen
+        component={SignUpScreen}
+        name="Sign Up"
         options={{headerShown: false}}
       />
       <Drawer.Screen component={WishlistScreen} name="Wishlist" />

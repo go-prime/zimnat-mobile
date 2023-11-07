@@ -36,7 +36,7 @@ const LinkField = ({value, onChange, label, doctype, filters, label_field}) => {
 
 export {LinkField}
 
-export default Field = ({value, onTextChange, label, multiline}) => {
+export default Field = ({value, onTextChange, label, multiline, password}) => {
   return (
     <View style={styles.inputContainer}>
       <TextInput
@@ -44,6 +44,7 @@ export default Field = ({value, onTextChange, label, multiline}) => {
         onChangeText={onTextChange}
         style={styles.input}
         placeholder={label}
+        secureTextEntry={password || false}
         numberOfLines={multiline ? 4 : 1}
         placeholderTextColor={Appearance.getColorScheme() == "dark" ?  "white" : 'black'}
       />
@@ -57,6 +58,9 @@ const styles = StyleSheet.create({
         ...card,
         margin: 8,
         borderRadius: 8,
+        borderWidth: 1,
+        borderColor: "#ccc",
+        flex: 1
       },
       input: {
         ...text,
