@@ -63,6 +63,9 @@ import AddProduceScreen from './marketplace/merchant/add_produce';
 import MyOrdersScreen from './billing/orders';
 import OrderDetailScreen from './billing/order_detail';
 import SignUpScreen from './sign_up';
+import {getAbsoluteURL} from '../utils';
+import axios from 'axios';
+import {Alert} from 'react-native';
 
 const Drawer = createDrawerNavigator();
 
@@ -136,7 +139,20 @@ function DrawerContent(props): JSX.Element {
       <DrawerItem
         icon={faDoorOpen}
         label="Log out"
-        handler={() => props.navigation.navigate('Login')}
+        handler={() => {
+          axios
+            .post(getAbsoluteURL('/api/method/logout'))
+            .then(res => {
+              Alert.alert(
+                'Success',
+                'Signed out of your account successfully.',
+              );
+            })
+            .catch(err => {
+              Alert.alert('Error', 'Failed to sign out of your account.');
+            });
+          props.navigation.navigate('Login');
+        }}
       />
     </DrawerContentScrollView>
   );

@@ -31,7 +31,13 @@ import {
 import Loading from '../../components/loading';
 import {removeBtn} from '../../styles/buttons';
 import {ProfileButton} from '../../components/button';
-import {Heading, SubTitle, Title} from '../../components/text';
+import {
+  Heading,
+  Money,
+  SubTitle,
+  Title,
+  textStyles,
+} from '../../components/text';
 import {getAbsoluteURL} from '../../utils';
 
 const removeFromCart = (product_id, product_name, qty, onChange) => {
@@ -76,22 +82,19 @@ const addToCart = (product_id, product_name, qty, onChange) => {
 
 const CartItem = props => {
   const navigator = useNavigation();
-
-  const increment = () => {
-    props.beforeChange();
-    addToCart(props.id, props.name, 1, props.onChange);
-  };
-
-  const decrement = () => {
-    if (!(props.qty > 1)) {
+  const setQty = newQty => {
+    if (newQty < 1) {
       return;
     }
     props.beforeChange();
-    removeFromCart(props.id, props.name, 1, props.onChange);
+    if (newQty > props.qty) {
+      addToCart(props.id, props.name, 1, props.onChange);
+    } else {
+      removeFromCart(props.id, props.name, 1, props.onChange);
+    }
   };
-
   return (
-    <View style={[styles.card, {flexDirection: 'row', padding: 16}]}>
+    <View style={[styles.card, {flexDirection: 'row', padding: 4}]}>
       <Centered styles={{flex: 1, position: 'relative'}}>
         <Pressable
           style={removeBtn}
@@ -100,7 +103,7 @@ const CartItem = props => {
           }>
           <FontAwesomeIcon icon={faTimes} size={30} color={'white'} />
         </Pressable>
-        <ImageIcon width={100} height={100} url={props.image} />
+        <ImageIcon width={110} height={110} url={props.image} />
       </Centered>
       <View style={{flex: 2}}>
         <Pressable
@@ -111,21 +114,7 @@ const CartItem = props => {
           <SubTitle style={styles.heading}>{props.formatted}</SubTitle>
         </Pressable>
         <Row styles={{marginTop: 8, alignItems: 'center'}}>
-          <Row>
-            <Pressable onPress={decrement}>
-              <View style={styles.button}>
-                <FontAwesomeIcon icon={faMinus} size={24} color={'white'} />
-              </View>
-            </Pressable>
-            <View>
-              <Text style={styles.qty}>{props.qty}</Text>
-            </View>
-            <Pressable onPress={increment}>
-              <View style={styles.button}>
-                <FontAwesomeIcon icon={faPlus} size={24} color={'white'} />
-              </View>
-            </Pressable>
-          </Row>
+          <CartCounter qty={props.qty} setQty={setQty} />
         </Row>
       </View>
     </View>
@@ -227,20 +216,28 @@ export default function CartScreen({navigation}) {
         ))}
         <View style={[styles.card, {padding: 16}]}>
           <View style={styles.rowBetween}>
-            <Text style={styles.title}>Subtotal</Text>
-            <Text style={styles.title}>
-              {parseFloat(data.subtotal).toFixed(2)}
-            </Text>
+            <SubTitle>Subtotal</SubTitle>
+            <Money
+              currency_symbol={data.currency_symbol}
+              style={textStyles.subtitle}>
+              {data.subtotal}
+            </Money>
           </View>
           <View style={styles.rowBetween}>
-            <Text style={styles.title}>Tax</Text>
-            <Text style={styles.title}>{parseFloat(data.tax).toFixed(2)}</Text>
+            <SubTitle style={styles.title}>Tax</SubTitle>
+            <Money
+              currency_symbol={data.currency_symbol}
+              style={textStyles.subtitle}>
+              {data.tax}
+            </Money>
           </View>
           <View style={styles.rowBetween}>
-            <Text style={styles.title}>Total</Text>
-            <Text style={styles.title}>
-              {data.currency} {parseFloat(data.total).toFixed(2)}
-            </Text>
+            <Title>Total</Title>
+            <Money
+              currency_symbol={data.currency_symbol}
+              style={textStyles.title}>
+              {data.total}
+            </Money>
           </View>
         </View>
 

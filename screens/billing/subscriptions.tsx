@@ -45,16 +45,9 @@ export default function SubscriptionListScreen(props) {
     <ScrollView>
       <View style={styles.content}>
         <Heading heading="Purchase Subscriptions" />
-        <FlatList
-          data={data.subscriptions}
-          scrollEnabled={false}
-          renderItem={({item}) => {
-            return <SubscriptionCard {...item} />;
-          }}
-          numColumns={2}
-          keyExtractor={item => item.name}
-          columnWrapperStyle={{gap: 12, paddingLeft: 12}}
-        />
+        <View style={styles.grid}>
+          {data.subscriptions.map(item => <SubscriptionCard {...item} />)}
+        </View>
         <Heading heading="My Subscription History" />
         {data.subscription_history.map(item => (
           <SubscriptionHistory key={item.subscription_id} {...item} />
@@ -70,4 +63,10 @@ const styles = StyleSheet.create({
     paddingLeft: 12,
     paddingRight: 12,
   },
+  grid: {
+    flexDirection: 'row',
+    gap: 12,
+    justifyContent: 'center',
+    flexWrap: 'wrap'
+  }
 });

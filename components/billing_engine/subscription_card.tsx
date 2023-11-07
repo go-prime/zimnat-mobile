@@ -55,6 +55,8 @@ const styles = StyleSheet.create({
     borderColor: '#eee',
     borderRadius: 12,
     overflow: 'hidden',
+    width: 150,
+    height: 300
   },
   content: {
     padding: 12,

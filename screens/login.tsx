@@ -54,33 +54,9 @@ const LoginCard = props => {
 };
 
 const login = (navigation, route) => {
-  const _guestLogin = () => {
-    axios
-      .post(`${constants.server_url}/api/method/login`, {
-        usr: 'Administrator',
-        pwd: 'admin',
-      })
-      .then(res => {
-        const cookies = toCookieObj(res.headers['set-cookie'][0]);
-        AsyncStorage.setItem('expiry', new Date(cookies.Expires).toISOString());
-        AsyncStorage.setItem('user', 'Guest');
-        navigation.navigate(route || 'Home');
-      });
-  };
-  _guestLogin();
-  try {
-    AsyncStorage.getItem('expiry').then(value => {
-      const expiry = new Date(value);
-      if (new Date() < expiry) {
-        navigation.navigate(route || 'Home');
-      } else {
-        _guestLogin();
-      }
-    });
-  } catch (error) {
-    console.log(error);
-    _guestLogin();
-  }
+  //  TODO check if token exists and navigate else redirect to login
+  
+  navigation.navigate(route || 'Home');
 };
 
 const SignInView = props => {
@@ -138,9 +114,7 @@ const SignInView = props => {
         </Pressable>
         <Pressable
           style={styles.secondaryButton}
-          onPress={() =>
-            navigator.navigate('Sign Up')
-          }>
+          onPress={() => navigator.navigate('Sign Up')}>
           <Text style={styles.buttonText}>Sign Up</Text>
         </Pressable>
       </Row>
@@ -169,24 +143,6 @@ export default function LoginScreen({navigation}) {
           source={require('../assets/images/Logo-01.png')}
           style={{width: width, height: height / 4}}
         />
-        <Centered>
-          <Pressable onPress={() => setShowLogin(!showLogin)}>
-            <Row styles={styles.pill}>
-              {showLogin ? null : (
-                <FontAwesomeIcon
-                  icon={faLock}
-                  color={colors.primary}
-                  size={24}
-                />
-              )}
-              <Text style={styles.signIn}>
-                {' '}
-                {showLogin ? 'Dashboard' : 'Sign In'}
-              </Text>
-            </Row>
-          </Pressable>
-        </Centered>
-
         {showLogin ? (
           <SignInView />
         ) : (
@@ -229,6 +185,23 @@ export default function LoginScreen({navigation}) {
             </Row>
           </View>
         )}
+        <Centered>
+          <Pressable onPress={() => setShowLogin(!showLogin)}>
+            <Row styles={styles.pill}>
+              {showLogin ? null : (
+                <FontAwesomeIcon
+                  icon={faLock}
+                  color={colors.primary}
+                  size={24}
+                />
+              )}
+              <Text style={styles.signIn}>
+                {' '}
+                {showLogin ? 'Dashboard' : 'Sign In'}
+              </Text>
+            </Row>
+          </Pressable>
+        </Centered>
       </ScrollView>
     </ImageBackground>
   );

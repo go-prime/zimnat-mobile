@@ -3,11 +3,12 @@ import {FlatList, View, Pressable, StyleSheet, Alert} from 'react-native';
 import axios from 'axios';
 import Loading from '../../components/loading';
 import {getAbsoluteURL} from '../../utils';
-import {Label, Pill, SubTitle, Title} from '../../components/text';
+import {Label, Pill, SubTitle, Title, textStyles} from '../../components/text';
 import {card} from '../../styles/inputs';
 import {Row} from '../../components/layout';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
 import getColors from '../../hooks/colors';
+import { Money } from '../../components/text';
 
 const OrderItem = props => {
   const navigation = useNavigation();
@@ -28,7 +29,7 @@ const OrderItem = props => {
           </Pill>
         </View>
         <View style={{flex: 2}}>
-          <Title>{parseFloat(props.total).toFixed(2)}</Title>
+          <Money style={textStyles.title} symbol={props.symbol} >{props.total}</Money>
         </View>
       </Row>
     </Pressable>
@@ -61,7 +62,7 @@ export default MyOrdersScreen = ({navigation}) => {
     <View>
       <FlatList
         data={data}
-        renderItem={item => <OrderItem {...item.item} />}
+        renderItem={item => <OrderItem {...item.item} symbol={data.currency_symbol} />}
         keyExtractor={item => item.name}
       />
     </View>

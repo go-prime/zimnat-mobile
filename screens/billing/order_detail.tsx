@@ -5,7 +5,7 @@ import {getAbsoluteURL} from '../../utils';
 import Loading from '../../components/loading';
 import {Alert} from 'react-native';
 import {card} from '../../styles/inputs';
-import {Label, SubTitle, Title} from '../../components/text';
+import {Label, Money, SubTitle, Title, textStyles} from '../../components/text';
 import {Row} from '../../components/layout';
 import Table from '../../components/table';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
@@ -107,7 +107,7 @@ export default OrderDetailScreen = ({navigation, route}) => {
               {label: 'Qty', fieldname: 'qty', ratio: 1},
               {label: 'Amt', fieldname: 'amount', ratio: 1, align: 'right'},
             ]}
-            data={data.items}
+            data={data.items.map(i => ({...i, amount: parseFloat(i.amount).toFixed(2)}))}
             key_field={'product'}
           />
         </View>
@@ -117,7 +117,7 @@ export default OrderDetailScreen = ({navigation, route}) => {
               <SubTitle>Subtotal</SubTitle>
             </View>
             <View>
-              <SubTitle>{data.net_amount}</SubTitle>
+            <Money style={textStyles.subtitle}>{data.net_amount}</Money>
             </View>
           </Row>
           <Row styles={{justifyContent: 'space-between'}}>
@@ -125,7 +125,7 @@ export default OrderDetailScreen = ({navigation, route}) => {
               <SubTitle>Tax</SubTitle>
             </View>
             <View>
-              <SubTitle>{data.tax}</SubTitle>
+              <Money style={textStyles.subtitle}>{data.tax}</Money>
             </View>
           </Row>
           <Row styles={{justifyContent: 'space-between'}}>
@@ -133,7 +133,7 @@ export default OrderDetailScreen = ({navigation, route}) => {
               <Title>Total</Title>
             </View>
             <View>
-              <Title>{data.total}</Title>
+              <Money style={textStyles.title} symbol={data.currency_symbol}>{data.total}</Money>
             </View>
           </Row>
         </View>

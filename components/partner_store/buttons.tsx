@@ -71,10 +71,13 @@ const WishListButton = function (props: WishListButtonProps) {
     <Pressable
         style={props.styles} 
         onPress={props.handler ? props.handler : defaultHandler}>
-      <View style={[styles.wishlist, props.innerStyles]}>
+      <View style={[styles.wishlist, props.innerStyles, {
+        borderWidth: props.borderless ? 0 : styles.wishlist.borderWidth,
+        backgroundColor: props.borderless ? 'transparent' : styles.wishlist.backgroundColor
+      }]}>
         <FontAwesomeIcon
           icon={faHeart}
-          size={props.size || 24}
+          size={props.size || 30}
           color={'crimson'}
         />
         {props.label && (

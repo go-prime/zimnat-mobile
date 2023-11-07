@@ -39,7 +39,6 @@ export default Table = ({data, columns, key_field, sm}) => {
 
 const styles = StyleSheet.create({
   container: {
-    margin: 6,
   },
   header: {
     padding: 12,
