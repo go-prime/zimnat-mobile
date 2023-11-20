@@ -39,6 +39,7 @@ import {
   textStyles,
 } from '../../components/text';
 import {getAbsoluteURL} from '../../utils';
+import CartCounter from '../../components/cart'
 
 const removeFromCart = (product_id, product_name, qty, onChange) => {
   axios
@@ -94,18 +95,22 @@ const CartItem = props => {
     }
   };
   return (
-    <View style={[styles.card, {flexDirection: 'row', padding: 4}]}>
-      <Centered styles={{flex: 1, position: 'relative'}}>
-        <Pressable
-          style={removeBtn}
-          onPress={() =>
-            removeFromCart(props.id, props.name, props.qty, props.onChange)
-          }>
-          <FontAwesomeIcon icon={faTimes} size={30} color={'white'} />
-        </Pressable>
+    <View
+      style={[
+        styles.card,
+        {flexDirection: 'row', padding: 8, position: 'relative'},
+      ]}>
+      <Pressable
+        style={removeBtn}
+        onPress={() =>
+          removeFromCart(props.id, props.name, props.qty, props.onChange)
+        }>
+        <FontAwesomeIcon icon={faTimes} size={24} color={'white'} />
+      </Pressable>
+      <Centered styles={{flex: 1}}>
         <ImageIcon width={110} height={110} url={props.image} />
       </Centered>
-      <View style={{flex: 2}}>
+      <View style={{flex: 2, marginLeft: 12}}>
         <Pressable
           onPress={() => {
             //  TODO implement routing to cart item
@@ -160,7 +165,6 @@ export default function CartScreen({navigation}) {
         `${constants.server_url}api/method/billing_engine.billing_engine.api.get_cart`,
       )
       .then(res => {
-        console.log(res.data.message);
         setData(res.data.message);
       })
       .catch(err => {

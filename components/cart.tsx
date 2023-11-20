@@ -14,12 +14,21 @@ export default CartCounter = ({qty, setQty}) => {
   const colorScheme = getColors(navigation);
 
 
+  const counterStyle = {
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: colorScheme.primary,
+    borderRadius: 24,
+    overflow: 'hidden',
+    marginLeft: 8
+  }
+
   return (
     <Centered>
-      <Row styles={{alignItems: 'center'}}>
+      <Row styles={counterStyle}>
         <Pressable onPress={() => setQty(qty > 1 ? qty - 1 : 0)}>
-          <View style={[styles.button, {borderColor: colorScheme.primary}]}>
-            <FontAwesomeIcon icon={faMinus} size={28} color={colorScheme.primary} />
+          <View style={[styles.button]}>
+            <FontAwesomeIcon icon={faMinus} size={18} color={colorScheme.primary} />
           </View>
         </Pressable>
         <View>
@@ -27,7 +36,7 @@ export default CartCounter = ({qty, setQty}) => {
         </View>
         <Pressable onPress={() => setQty(qty + 1)}>
           <View style={[styles.button, {borderColor: colorScheme.primary}]}>
-            <FontAwesomeIcon icon={faPlus} size={28} color={colorScheme.primary} />
+            <FontAwesomeIcon icon={faPlus} size={18} color={colorScheme.primary} />
           </View>
         </Pressable>
       </Row>
@@ -38,18 +47,16 @@ export default CartCounter = ({qty, setQty}) => {
 const styles = StyleSheet.create({
   button: {
     padding: 6,
-    borderWidth: 2,
-    borderColor: colors.primary,
     ...card,
-    borderRadius: 4,
   },
   buttonText: {
     color: 'white',
   },
   count: {
     fontWeight: 'bold',
-    padding: 6,
-    fontSize: 28,
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    fontSize: 24,
     marginHorizontal: 12,
   },
 });

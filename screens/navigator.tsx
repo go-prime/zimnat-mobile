@@ -66,6 +66,9 @@ import SignUpScreen from './sign_up';
 import {getAbsoluteURL} from '../utils';
 import axios from 'axios';
 import {Alert} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Badge from '../components/badge';
+import { useCartCount, useOrderCount, useSalesCount, useWishlistCount } from '../hooks/counters';
 
 const Drawer = createDrawerNavigator();
 
@@ -76,17 +79,22 @@ const DrawerItem = props => {
     source = props.dark_source;
   }
 
+
   return (
     <Pressable onPress={props.handler}>
       <View style={styles.statusContainer}>
-        {props.icon && (
-          <FontAwesomeIcon icon={props.icon} color={colors.primary} size={24} />
-        )}
-        {source && (
-          <Centered styles={{width: 30, height: 30, overflow: 'hidden'}}>
-            <Image source={source} style={{width: 80, height: 80}} />
-          </Centered>
-        )}
+        <Badge textSize={12} text={props.badgeText}>
+          <View>
+          {props.icon && (
+            <FontAwesomeIcon icon={props.icon} color={colors.primary} size={24} />
+          )}
+          {source && (
+            <Centered styles={{width: 30, height: 30, overflow: 'hidden'}}>
+              <Image source={source} style={{width: 80, height: 80}} />
+            </Centered>
+          )}
+          </View>
+        </Badge>
         <Text style={styles.status}>{props.label}</Text>
       </View>
     </Pressable>
@@ -94,6 +102,8 @@ const DrawerItem = props => {
 };
 
 function DrawerContent(props): JSX.Element {
+  const wishlistedItems = useWishlistCount()
+  const itemsInCart = useCartCount()
   return (
     <DrawerContentScrollView {...props}>
       <DrawerItem
@@ -129,10 +139,12 @@ function DrawerContent(props): JSX.Element {
       <DrawerItem
         icon={faHeart}
         label="My Wishlist"
+        badgeText={`${wishlistedItems}`}
         handler={() => props.navigation.navigate('Wishlist')}
       />
       <DrawerItem
         icon={faShoppingCart}
+        badgeText={`${itemsInCart}`}
         label="My Shopping Cart"
         handler={() => props.navigation.navigate('Cart')}
       />
@@ -143,6 +155,8 @@ function DrawerContent(props): JSX.Element {
           axios
             .post(getAbsoluteURL('/api/method/logout'))
             .then(res => {
+              AsyncStorage.setItem('expiry', '');
+              AsyncStorage.setItem('user', '');
               Alert.alert(
                 'Success',
                 'Signed out of your account successfully.',
@@ -160,18 +174,33 @@ function DrawerContent(props): JSX.Element {
 
 const NavOptions = props => {
   const navigation = useNavigation();
+  const wishlistedItems = useWishlistCount()
+  const itemsInCart = useCartCount()
+  const openOrders = useOrderCount()
+  const openSales = useSalesCount()
 
   return (
     <View style={{flexDirection: 'row', alignItems: 'flex-end'}}>
-      <Pressable onPress={() => navigation.navigate('Search')}>
+        <Pressable onPress={() => navigation.navigate('Search')}>
+          <FontAwesomeIcon
+            icon={faSearch}
+            size={28}
+            color={colors.primary}
+            style={{marginRight: 16}}
+          />
+        </Pressable>
+        <Badge text={`${wishlistedItems}`} textSize={12}>
+        <Pressable onPress={() => navigation.navigate('Wishlist')}>
         <FontAwesomeIcon
-          icon={faSearch}
+          icon={faHeart}
           size={28}
           color={colors.primary}
           style={{marginRight: 16}}
         />
       </Pressable>
-      <Pressable onPress={() => navigation.navigate('Cart')}>
+      </Badge>
+      <Badge text={`${itemsInCart}`} textSize={12}>
+        <Pressable onPress={() => navigation.navigate('Cart')}>
         <FontAwesomeIcon
           icon={faShoppingCart}
           size={28}
@@ -179,6 +208,7 @@ const NavOptions = props => {
           style={{marginRight: 16}}
         />
       </Pressable>
+      </Badge>
     </View>
   );
 };

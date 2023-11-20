@@ -55,7 +55,7 @@ const LoginCard = props => {
 
 const login = (navigation, route) => {
   //  TODO check if token exists and navigate else redirect to login
-  
+
   navigation.navigate(route || 'Home');
 };
 
@@ -91,6 +91,7 @@ const SignInView = props => {
           onChangeText={setUsername}
           style={styles.inputText}
           placeholderTextColor={'black'}
+          autoComplete="username"
         />
       </View>
       <View style={[styles.inputContainer, {flexDirection: 'row'}]}>
@@ -101,6 +102,7 @@ const SignInView = props => {
           placeholderTextColor={'black'}
           style={styles.inputText}
           secureTextEntry={!showPassword}
+          autoComplete="password"
         />
         <Pressable
           onPress={() => setShowPassword(!showPassword)}
@@ -126,10 +128,13 @@ export default function LoginScreen({navigation}) {
   const [showLogin, setShowLogin] = React.useState(false);
   const {width, height} = Dimensions.get('screen');
   React.useEffect(() => {
-    AsyncStorage.getItem('user').then(value => {
-      if (value === 'Guest') {
-        // setShowLogin(false);
-        console.log(value);
+    AsyncStorage.getItem('expiry').then(expiry => {
+      if (expiry && new Date() < new Date(expiry)) {
+        AsyncStorage.getItem('user').then(user => {
+          if (user) {
+            navigation.navigate('Home');
+          }
+        });
       }
     });
   }, []);
