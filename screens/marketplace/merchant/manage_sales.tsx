@@ -51,6 +51,9 @@ export default ManageSalesScreen = props => {
         ]}
         data={data}
         key_field={'name'}
+        onRowPress={row => {
+          navigation.navigate("Sale Detail", {order_id: row.name})
+        }}
       />
     </ScrollView>
   );

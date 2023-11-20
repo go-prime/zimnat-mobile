@@ -116,7 +116,7 @@ export default OrderDetailScreen = ({navigation, route}) => {
             key_field={'product'}
           />
         </View>
-        <View>
+        <View style={{marginBottom: 24}}>
           <Row styles={{justifyContent: 'space-between'}}>
             <View>
               <SubTitle>Subtotal</SubTitle>
@@ -144,11 +144,14 @@ export default OrderDetailScreen = ({navigation, route}) => {
             </View>
           </Row>
         </View>
-        <Paragraph>Scan to verify your order with the merchant</Paragraph>
+        <Centered><Paragraph >Scan to verify your order with the merchant</Paragraph></Centered>
         <Centered>
         <QRCode
             value={data.verification_id || "https://google.com"}
           />
+        </Centered>
+        <Centered>
+          <Paragraph>{data.verification_id}</Paragraph>
         </Centered>
       </ScrollView>
       {data.status == 'Order' && <CompleteOrderButton id={data.id} />}

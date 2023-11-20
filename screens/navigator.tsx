@@ -66,6 +66,7 @@ import SignUpScreen from './sign_up';
 import {getAbsoluteURL} from '../utils';
 import axios from 'axios';
 import {Alert} from 'react-native';
+import getColors from '../hooks/colors';
 
 const Drawer = createDrawerNavigator();
 
@@ -75,19 +76,25 @@ const DrawerItem = props => {
   if (dark_mode && props.dark_source) {
     source = props.dark_source;
   }
-
   return (
     <Pressable onPress={props.handler}>
       <View style={styles.statusContainer}>
         {props.icon && (
-          <FontAwesomeIcon icon={props.icon} color={colors.primary} size={24} />
+          <FontAwesomeIcon icon={props.icon} color={props.color} size={24} />
         )}
         {source && (
-          <Centered styles={{width: 30, height: 30, overflow: 'hidden'}}>
+          <Centered
+            styles={{
+              width: 30,
+              height: 30,
+              overflow: 'hidden',
+              borderRadius: 15,
+              backgroundColor: 'white',
+            }}>
             <Image source={source} style={{width: 80, height: 80}} />
           </Centered>
         )}
-        <Text style={styles.status}>{props.label}</Text>
+        <Text style={[styles.status, {color: props.color}]}>{props.label}</Text>
       </View>
     </Pressable>
   );
@@ -97,12 +104,14 @@ function DrawerContent(props): JSX.Element {
   return (
     <DrawerContentScrollView {...props}>
       <DrawerItem
+        color={props.iconColor}
         source={require('../assets/images/marketplace.png')}
         dark_source={require('../assets/images/marketplace_dark.png')}
         label="Marketplace"
         handler={() => props.navigation.navigate('Marketplace Home')}
       />
       <DrawerItem
+        color={props.iconColor}
         source={require('../assets/images/partner_store.png')}
         dark_source={require('../assets/images/partner_store_dark.png')}
         label="Partner Store"
@@ -110,12 +119,14 @@ function DrawerContent(props): JSX.Element {
       />
 
       <DrawerItem
+        color={props.iconColor}
         source={require('../assets/images/edutec.png')}
         dark_source={require('../assets/images/edutec_dark.png')}
         label="Edutec"
         handler={() => props.navigation.navigate('Courses Home')}
       />
       <DrawerItem
+        color={props.iconColor}
         source={require('../assets/images/books.png')}
         dark_source={require('../assets/images/books_dark.png')}
         label="Business Books"
@@ -123,21 +134,25 @@ function DrawerContent(props): JSX.Element {
       />
       <DrawerItem
         icon={faUser}
+        color={props.iconColor}
         label="My Profile"
         handler={() => props.navigation.navigate('Profile')}
       />
       <DrawerItem
         icon={faHeart}
+        color={props.iconColor}
         label="My Wishlist"
         handler={() => props.navigation.navigate('Wishlist')}
       />
       <DrawerItem
         icon={faShoppingCart}
+        color={props.iconColor}
         label="My Shopping Cart"
         handler={() => props.navigation.navigate('Cart')}
       />
       <DrawerItem
         icon={faDoorOpen}
+        color={props.iconColor}
         label="Log out"
         handler={() => {
           axios
@@ -167,7 +182,7 @@ const NavOptions = props => {
         <FontAwesomeIcon
           icon={faSearch}
           size={28}
-          color={colors.primary}
+          color={props.color}
           style={{marginRight: 16}}
         />
       </Pressable>
@@ -175,7 +190,7 @@ const NavOptions = props => {
         <FontAwesomeIcon
           icon={faShoppingCart}
           size={28}
-          color={colors.primary}
+          color={props.color}
           style={{marginRight: 16}}
         />
       </Pressable>
@@ -183,23 +198,24 @@ const NavOptions = props => {
   );
 };
 
-export default function HomeScreenNavigator({navigation}): JSX.Element {
+export default function HomeScreenNavigator(props): JSX.Element {
+  const {navigation} = props;
+  const defaultScreenOptions = {
+    headerRight: () => <NavOptions color={props.textColor} />,
+    headerStyle: {
+      backgroundColor: 'transparent',
+    },
+    headerTintColor: props.textColor,
+    headerShadowVisible: false,
+    drawerStyle: {
+      backgroundColor: props.accent,
+    },
+  };
   return (
     <Drawer.Navigator
       backBehavior="history"
-      swipeEnabled={false}
-      screenOptions={{
-        headerRight: () => <NavOptions />,
-        headerStyle: {
-          backgroundColor: 'transparent',
-        },
-        headerTitleStyle: {
-          ...text,
-        },
-        headerTintColor: colors.primary,
-        headerShadowVisible: false,
-      }}
-      drawerContent={props => <DrawerContent {...props} />}>
+      screenOptions={defaultScreenOptions}
+      drawerContent={r => <DrawerContent iconColor={props.iconColor} {...r} />}>
       {/* Basic Screens */}
       <Drawer.Screen
         component={LoginScreen}
@@ -238,12 +254,7 @@ export default function HomeScreenNavigator({navigation}): JSX.Element {
       <Drawer.Screen component={CoursesHomeScreen} name="Courses Home" />
       <Drawer.Screen component={CourseCategoryScreen} name="Course Category" />
       <Drawer.Screen component={CourseScreen} name="Course" />
-      <Drawer.Screen
-        component={VideoPlayer}
-        name="Video"
-        gestureEnabled={false}
-        swipeEnabled={false}
-      />
+      <Drawer.Screen component={VideoPlayer} name="Video" />
       <Drawer.Screen component={ArticleViewer} name="Article" />
       <Drawer.Screen component={Subscriptions} name="My Course Subscriptions" />
 

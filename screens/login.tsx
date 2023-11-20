@@ -21,6 +21,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faEye, faEyeSlash, faLock} from '@fortawesome/free-solid-svg-icons';
 
 import {useNavigation} from '@react-navigation/native';
+import NotPermitted from '../components/not_permitted';
 
 const toCookieObj = (cookie: string) => {
   const arr = cookie.split(';').map(item => item.split('='));
@@ -138,6 +139,7 @@ export default function LoginScreen({navigation}) {
     <ImageBackground
       source={require('../assets/images/background_2.png')}
       style={{width: '100%', height: '100%'}}>
+        {/* <NotPermitted visible /> */}
       <ScrollView>
         <Image
           source={require('../assets/images/Logo-01.png')}

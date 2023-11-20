@@ -37,7 +37,8 @@ const Heading = props => {
   const colorScheme = getColors(navigation);
   return (
     <View style={textStyles.container}>
-      <Text style={[textStyles.heading, {borderBottomColor: colorScheme.primary}]}>
+      <Text
+        style={[textStyles.heading, {borderBottomColor: colorScheme.primary}]}>
         {props.heading || props.children}
       </Text>
     </View>
@@ -50,7 +51,13 @@ const Title = props => {
       <Text
         style={[
           textStyles.title,
-          {color: props.light ? 'black' : textStyles.text.color},
+          {
+            color: props.color
+              ? props.color
+              : props.light
+              ? 'black'
+              : textStyles.text.color,
+          },
         ]}>
         {props.title || props.children}
       </Text>
@@ -61,7 +68,14 @@ const Title = props => {
 const SubTitle = props => {
   return (
     <View style={textStyles.container}>
-      <Text style={[textStyles.subtitle, {fontWeight: props.light ? 400 : 'bold'}]}>
+      <Text
+        style={[
+          textStyles.subtitle,
+          {
+            fontWeight: props.light ? 400 : 'bold',
+            color: props.color ? props.color : textStyles.subtitle.color,
+          },
+        ]}>
         {props.subtitle || props.children}
       </Text>
     </View>
@@ -71,7 +85,8 @@ const SubTitle = props => {
 const Label = props => {
   return (
     <View style={textStyles.labelContainer}>
-      <Text style={[textStyles.label, {fontWeight: props.bold ? 'bold' : '400'}]}>
+      <Text
+        style={[textStyles.label, {fontWeight: props.bold ? 'bold' : '400'}]}>
         {props.label || props.children}
       </Text>
     </View>
@@ -89,14 +104,23 @@ const SmallLabel = props => {
 const Paragraph = props => {
   return (
     <View style={textStyles.container}>
-      <Text style={textStyles.paragraph}>{props.text || props.children}</Text>
+      <Text
+        style={[
+          textStyles.paragraph,
+          {color: props.color ? props.color : textStyles.paragraph.color},
+        ]}>
+        {props.text || props.children}
+      </Text>
     </View>
   );
 };
 
 const Money = props => {
   return (
-    <Text style={props.style}>{props.symbol || "$" } {parseFloat(props.value || props.children || 0).toFixed(2)}</Text>
+    <Text style={props.style}>
+      {props.symbol || '$'}{' '}
+      {parseFloat(props.value || props.children || 0).toFixed(2)}
+    </Text>
   );
 };
 
@@ -152,4 +176,14 @@ const textStyles = StyleSheet.create({
   },
 });
 
-export {Heading, Title, SubTitle, Paragraph, Label, SmallLabel, Pill, Money, textStyles};
+export {
+  Heading,
+  Title,
+  SubTitle,
+  Paragraph,
+  Label,
+  SmallLabel,
+  Pill,
+  Money,
+  textStyles,
+};

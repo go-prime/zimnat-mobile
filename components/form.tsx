@@ -29,7 +29,7 @@ const LinkField = ({value, onChange, label, doctype, filters, label_field}) => {
         console.log(err);
         console.log(err.response.data);
       });
-  }, []);
+  }, [filters]);
 
   return (
     <View>
