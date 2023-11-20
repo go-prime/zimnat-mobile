@@ -48,15 +48,16 @@ const WishlistItem = props => {
   navigator = useNavigation();
 
   return (
-    <View style={[styles.card, {flexDirection: 'row', padding: 16}]}>
-      <Centered styles={{flex: 1, position: 'relative'}}>
-        <Pressable
+    <View style={[styles.card, {flexDirection: 'row', padding: 8}]}>
+      <Pressable
           style={removeBtn}
           onPress={() =>
             removeFromWishlist(props.id, props.name, props.onChange)
           }>
-          <FontAwesomeIcon icon={faTimes} size={30} color={'white'} />
+          <FontAwesomeIcon icon={faTimes} size={24} color={'white'} />
         </Pressable>
+      <Centered styles={{flex: 1, position: 'relative'}}>
+        
         <ImageIcon
           width={100}
           height={100}
@@ -98,7 +99,6 @@ export default function WishlistScreen(props) {
         `${constants.server_url}api/method/billing_engine.billing_engine.api.get_wishlist`,
       )
       .then(res => {
-        console.log(res.data.message.items);
         setItems(res.data.message.items);
       })
       .catch(err => {
