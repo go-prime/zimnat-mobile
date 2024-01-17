@@ -59,7 +59,7 @@ const login = (navigation, route) => {
   navigation.navigate(route || 'Home');
 };
 
-const SignInView = props => {
+const SignInView = (props) => {
   const navigator = useNavigation();
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
@@ -75,7 +75,7 @@ const SignInView = props => {
         const cookies = toCookieObj(res.headers['set-cookie'][0]);
         AsyncStorage.setItem('expiry', new Date(cookies.Expires).toISOString());
         AsyncStorage.setItem('user', username);
-        navigator.navigate('Profile');
+        props.toggleLogin(false)
       })
       .catch(err => {
         Alert.alert('Error', 'Could not log in with provided credentials');
@@ -149,7 +149,7 @@ export default function LoginScreen({navigation}) {
           style={{width: width, height: height / 4}}
         />
         {showLogin ? (
-          <SignInView />
+          <SignInView toggleLogin={setShowLogin} />
         ) : (
           <View>
             <Row>
