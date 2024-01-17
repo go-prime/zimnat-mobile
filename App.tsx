@@ -18,12 +18,11 @@ import {StyleSheet} from 'react-native';
 import HomeScreenNavigator from './screens/navigator';
 import {Appearance} from 'react-native';
 import ChatButton from './components/chat';
-
+import {screens} from './hooks/colors'
 const LightTheme = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
-    background: '#DFF6FF',
   },
 };
 
@@ -34,6 +33,7 @@ const NightTheme = {
 function App(): JSX.Element {
   const [chatVisible, setChatVisible] = React.useState(false);
   const [currentRoute, setCurrentRoute] = React.useState('');
+  const [theme, setTheme] = React.useState(LightTheme)
   const navContainerRef = useNavigationContainerRef();
 
   React.useEffect(() => {
@@ -49,15 +49,24 @@ function App(): JSX.Element {
 
         setChatVisible(route_name != 'Login');
         setCurrentRoute(route_name);
+        const colorScheme = screens[route_name]
+        if(colorScheme) {
+          const newTheme = {...theme}
+          newTheme.colors.background = colorScheme.tertiary
+          newTheme.colors.card = colorScheme.quarternary
+          newTheme.colors.text = colorScheme.primary
+          setTheme(newTheme)
+        }
       }
+      setTheme(Appearance.getColorScheme() === 'dark' ? NightTheme : LightTheme)
     });
   }, []);
 
   return (
     <NavigationContainer
       ref={navContainerRef}
-      theme={Appearance.getColorScheme() === 'dark' ? NightTheme : LightTheme}>
-      <HomeScreenNavigator />
+      theme={theme}>
+      <HomeScreenNavigator accent={theme.colors.card} textColor={theme.colors.text} iconColor={theme.colors.text} />
       <ChatButton visible={chatVisible} route={currentRoute} />
     </NavigationContainer>
   );
