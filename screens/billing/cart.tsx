@@ -70,7 +70,6 @@ const addToCart = (product_id, product_name, qty, onChange) => {
       },
     )
     .then(res => {
-      console.log(onChange);
       if (onChange) {
         onChange('add');
       }

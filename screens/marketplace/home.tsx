@@ -24,7 +24,6 @@ export default function MarketplaceHome({navigation}) {
         `${constants.server_url}/api/method/open_marketplace.open_marketplace.api.marketplace_home`,
       )
       .then(res => {
-        console.log(res.data.message);
         setData(res.data.message);
       })
       .catch(err => {

@@ -66,7 +66,6 @@ export default OrderDetailScreen = ({navigation, route}) => {
         },
       )
       .then(res => {
-        console.log(res.data.message);
         setData(res.data.message);
       })
       .catch(err => {

@@ -29,7 +29,6 @@ export default function SubscriptionListScreen(props) {
         `${constants.server_url}/api/method/billing_engine.billing_engine.api.subscriptions`,
       )
       .then(res => {
-        console.log(res.data.message);
         setData(res.data.message);
       })
       .catch(err => {

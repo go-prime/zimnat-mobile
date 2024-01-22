@@ -47,7 +47,6 @@ export default function ProductScreen(props) {
         {params: {produce_id: props.route.params.produce}},
       )
       .then(res => {
-        console.log(res.data.message);
         setData(res.data.message);
         if (res.data.message.cover_image) {
           setImg(`${constants.server_url}/${res.data.message.cover_image}`);

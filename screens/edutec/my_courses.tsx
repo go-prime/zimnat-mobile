@@ -50,7 +50,6 @@ export default function Subscriptions(props) {
         `${constants.server_url}/api/method/edutec_courses.edutec_courses.api.subscribed_courses`,
       )
       .then(res => {
-        console.log(res.data.message);
         setData(res.data.message);
       })
       .catch(err => {

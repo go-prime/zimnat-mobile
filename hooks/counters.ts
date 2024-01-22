@@ -52,7 +52,6 @@ const useSalesCount = () => {
         ),
       )
       .then(res => {
-        console.log(res.data.message)
         setSalesCount(res.data.message.filter(m => m.status != "Delivered").length)
       });
   });

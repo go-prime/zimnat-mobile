@@ -42,7 +42,6 @@ export default ManageStorefrontScreen = props => {
         ),
       )
       .then(res => {
-        console.log(res.data);
         setData(res.data.message);
         setAddress(res.data.message.address);
         setPhone(res.data.message.phone);

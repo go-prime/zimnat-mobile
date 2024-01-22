@@ -79,7 +79,6 @@ const DrawerItem = props => {
   if (dark_mode && props.dark_source) {
     source = props.dark_source;
   }
-
   return (
     <Pressable onPress={props.handler}>
       <View style={styles.statusContainer}>
