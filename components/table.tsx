@@ -1,11 +1,11 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, Pressable} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import getColors from '../hooks/colors';
 import {Row} from './layout';
 import { text, card } from '../styles/inputs';
 
-export default Table = ({data, columns, key_field, sm}) => {
+export default Table = ({data, columns, key_field, sm, onRowPress}) => {
   const navigation = useNavigation();
   const colorScheme = getColors(navigation);
 
@@ -22,7 +22,7 @@ export default Table = ({data, columns, key_field, sm}) => {
       </View>
       <View style={styles.body}>
         {data.map(d => (
-          <View style={[sm ? styles.rowSm : styles.row]} key={d[key_field]}>
+          <Pressable onPress={() => {onRowPress ? onRowPress(d) : null}} style={[sm ? styles.rowSm : styles.row]} key={d[key_field]}>
             {columns.map(c => (
               <Text
                 key={c.label}
@@ -30,7 +30,7 @@ export default Table = ({data, columns, key_field, sm}) => {
                 {d[c.fieldname]}
               </Text>
             ))}
-          </View>
+          </Pressable>
         ))}
       </View>
     </View>

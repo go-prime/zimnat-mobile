@@ -37,20 +37,29 @@ const screens = {
   Books: colors,
 };
 
-export default getColors = (navigation) => {
+const getRouteName = navigation => {
+  const state = navigation.getState();
+  let route_name = '';
+  if (state && state.history && state.history.length) {
+    const length = state.history.length;
+    const index = length - 1;
+    const route = state.history[state.history.length - 1];
 
-    const state = navigation.getState();
-    if (state && state.history && state.history.length) {
-      const length = state.history.length;
-      const index = length - 1;
-      const route = state.history[state.history.length - 1];
-      let route_name = '';
-      if (route) {
-        route_name =
-          route.key && route.key.split ? route.key.split('-')[0] : '';
-      }
+    if (route) {
+      route_name = route.key && route.key.split ? route.key.split('-')[0] : '';
+    }
+  }
+  return route_name;
+};
 
-      return(screens[route_name] || colors);
-    } 
-    return colors
-}
+export default getColors = navigation => {
+  const route_name = getRouteName(navigation);
+  if (route_name) {
+    return screens[route_name] || colors;
+  }
+  return colors;
+};
+
+
+
+export {screens}

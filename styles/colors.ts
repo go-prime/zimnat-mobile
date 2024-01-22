@@ -28,6 +28,7 @@ const edutec_colors = {
 }
 
 
+
 export default colors;
 export {
   partner_colors,

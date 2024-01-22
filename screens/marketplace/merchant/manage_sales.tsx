@@ -40,7 +40,9 @@ export default ManageSalesScreen = props => {
   return (
     <ScrollView>
       <Heading>Actions</Heading>
-      <ProfileButton label="Confirm Sale" />
+      <ProfileButton action={() => {
+        navigation.navigate("Confirm Sale")
+      }} label="Confirm Sale" />
       <Heading>Sales Summary</Heading>
       <Table
         columns={[
@@ -49,6 +51,9 @@ export default ManageSalesScreen = props => {
         ]}
         data={data}
         key_field={'name'}
+        onRowPress={row => {
+          navigation.navigate("Sale Detail", {order_id: row.name})
+        }}
       />
     </ScrollView>
   );
