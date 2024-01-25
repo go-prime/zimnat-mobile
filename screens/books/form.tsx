@@ -1,5 +1,12 @@
 import React from 'react';
-import {ScrollView, Alert, Text, View, StyleSheet, Pressable} from 'react-native';
+import {
+  ScrollView,
+  Alert,
+  Text,
+  View,
+  StyleSheet,
+  Pressable,
+} from 'react-native';
 import axios from 'axios';
 import constants from '../../constants';
 import DataField from '../../components/books/data';
@@ -10,12 +17,11 @@ import NumberField from '../../components/books/number';
 import TextField from '../../components/books/text';
 import Loading from '../../components/loading';
 import TableField from '../../components/books/table';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faSave } from '@fortawesome/free-solid-svg-icons';
+import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
+import {faSave} from '@fortawesome/free-solid-svg-icons';
 import colors from '../../styles/colors';
-import { text } from '../../styles/text';
-import { iconColor } from '../../styles/inputs';
-import FrappeForm from '../../scripts/frm';
+import {text} from '../../styles/text';
+import {iconColor} from '../../styles/inputs';
 import frappe from '../../scripts/frappe';
 
 const renderField = (field, data, setData, doctype) => {
@@ -67,45 +73,42 @@ const renderField = (field, data, setData, doctype) => {
   return renderedField;
 };
 
-// previous event handlers
-function usePrevious(value) {
-  const ref = React.useRef();
-  React.useEffect(() => {
-    ref.current = value;
-  });
-  return ref.current;
-}
-
-export default function FormScreen({navigation, route}) {
-  const [fields, setFields] = React.useState([]);
-  const [data, setData] = React.useState({});
-  const prevData = usePrevious(data)
-  const [doctype, setDoctype] = React.useState('');
-  const [id, setID] = React.useState('');
-
-  const updateLocals = () => {
-    // setup global object that cal look up values from any table in a multidimensional map
-    const newLocals = {}
-    const docname = data.name
-    newLocals[doctype] = {}
-    newLocals[doctype][`${docname}`] = data
-    fields
-      .filter(f => f.fieldtype == "Table")
-      .forEach(f => {
-        newLocals[f.options] = {};
-        (data[f.fieldname] || []).forEach(row => {
-          newLocals[f.options][row.name] = row
-        })
-      })
-
-    window.locals = newLocals
+class Form extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      fields: [],
+      data: {},
+      doctype: props.route.params.doctype,
+      id: '',
+    };
+    // frappe form
+    this.fields_dict= {}
+    this.script_manager = {
+      trigger: (a, b, c) => {
+        console.log({a,b,c})
+        if (b) {
+          if (frappe.ui.form.events[b] && frappe.ui.form.events[b][a]) {
+            console.log(frappe.ui.form.events[b][a])
+            frappe.ui.form.events[b][a](window.frm, b, c);
+          }
+          return;
+        }
+        if (
+          frappe.ui.form.events[this.doc.doctype] &&
+          frappe.ui.form.events[this.doc.doctype][a]
+        ) {
+          console.log(frappe.ui.form.events[this.doc.doctype][a])
+          frappe.ui.form.events[this.doc.doctype][a](window.frm);
+        }
+      }
+    }
   }
 
-  const loadForm = () => {
-    // retrieve schema, scripts and data from remote server
-    const params = {doctype: doctype};
-    if (id) {
-      params.id = id;
+  loadForm() {
+    const params = {doctype: this.state.doctype};
+    if (this.state.id) {
+      params.id = this.state.id;
     }
     axios
       .get(`${constants.server_url}/api/method/erp.public_api.form`, {
@@ -113,8 +116,10 @@ export default function FormScreen({navigation, route}) {
       })
       .then(res => {
         if (res.data.message.meta) {
-          setFields(res.data.message.meta.fields);
-          setData(res.data.message.data);
+          this.setState({
+            fields: res.data.message.meta.fields,
+            data: {...this.state.data, ...res.data.message.data},
+          });
           eval(res.data.message.script);
         }
       })
@@ -124,19 +129,155 @@ export default function FormScreen({navigation, route}) {
           console.log(err.response.data);
         }
       });
-  };
+  }
 
-  const saveDocument = () => {
+  updateLocals() {
+    const newLocals = {};
+    const docname = this.state.data.name;
+    newLocals[this.state.doctype] = {};
+    newLocals[this.state.doctype][`${docname}`] = this.state.data;
+    this.state.fields
+      .filter(f => f.fieldtype == 'Table')
+      .forEach(f => {
+        newLocals[f.options] = {};
+        (this.state.data[f.fieldname] || []).forEach(row => {
+          newLocals[f.options][row.name] = row;
+        });
+      });
+
+    window.locals = newLocals;
+  }
+
+  /**
+   * frappe form
+   */
+
+  get doc() {
+    return this.state.data
+  }
+
+  get schema() {
+    return this.state.fields
+  }
+
+  setData(data) {
+    this.setState({data: data})
+  }
+
+  set_value(fieldname, value) {
+    const newData = {...this.doc};
+    newData[fieldname] = value;
+    this.setData(newData);
+    window.frm.doc = newData;
+    this.script_manager.trigger(fieldname);
+  }
+  set_query(query) {}
+  refresh_field(fieldname) {}
+  refresh() {}
+  disable_save() {}
+  add_custom_button() {}
+  
+  // End frappe form
+
+  componentDidMount() {
+    window.frappe = frappe;
+    window.frm = this;
+    window.locals = {};
+    this.setState({doctype: this.props.route.params.doctype});
+    this.props.navigation.setOptions({title: `New ${this.state.doctype}`});
+    const newData = {...this.state.data};
+    newData.__islocal = 1;
+    newData.doctype = this.state.doctype;
+    newData.name = `New ${this.state.doctype}`;
+    this.setState({data: newData});
+    this.loadForm();
+
+    if (this.props.route.params.id) {
+      this.setState({id: this.props.route.params.id});
+    }
+  }
+
+  componentDidUpdate(
+    prevProps: Readonly<{}>,
+    prevState: Readonly<{}>,
+    snapshot?: any,
+  ): void {
+    if (prevState.id != this.state.id && this.state.id) {
+      navigation.setOptions({title: `${doctype} ${id}`});
+      const newData = {...this.state.data};
+      newData.name = this.state.id;
+      delete newData.__islocal;
+      this.setState({data: newData});
+      this.loadForm();
+    }
+
+    if (this.state.data != prevState.data) {
+      this.onDataUpdate(prevState.data);
+    }
+  }
+
+  onDataUpdate(prevData) {
+    this.updateLocals();
+    // for initial state of form
+    if (!window.frm) {
+      return;
+    }
+
+    // HACKY -- replaced by class based app
+    // window.frm.doc = data
+
+    // trigger events when data changes.
+    let val;
+    let field;
+    const dataFields = Array.from(Object.keys(this.state.data));
+    for (let f of dataFields) {
+      if (JSON.stringify(this.state.data[f]) != JSON.stringify(prevData[f])) {
+        val = this.state.data[f];
+        field = this.state.fields.filter(g => g.fieldname == f)[0];
+        console.log({val});
+        break;
+      }
+    }
+    if (!field) {
+      return;
+    }
+
+    if (val instanceof Array) {
+      if (
+        !prevData[field.fieldname] ||
+        prevData[field.fieldname].length != val.length
+      ) {
+        // adding or removing a row, return
+        return;
+      }
+      // find diff
+      val.forEach((row, i) => {
+        const oldRow = prevData[field.fieldname][i];
+        Object.keys(row).forEach(k => {
+          if (oldRow[k] != row[k]) {
+            frm.script_manager.trigger(k, field.options, row.name);
+          }
+        });
+      });
+    } else {
+      frm.script_manager.trigger(field.fieldname);
+    }
+  }
+
+  saveDocument() {
     // post form to remote server
     axios
-      .post(
-        `${constants.server_url}/api/method/erp.public_api.form`, 
-        {doctype: doctype, args: {...data, doctype: doctype}}
-      )
+      .post(`${constants.server_url}/api/method/erp.public_api.form`, {
+        doctype: this.state.doctype,
+        args: {...this.state.data, doctype: this.state.doctype},
+      })
       .then(res => {
         if (res.data.message) {
-          Alert.alert("Success", `Saved ${doctype} ${res.data.message} successfully`)
-          navigation.navigate("List", {doctype: doctype})
+          Alert.alert(
+            'Success',
+            `Saved ${this.state.doctype} ${res.data.message} successfully`,
+          );
+          this.props.navigation.navigate('List', {doctype: this.state.doctype});
         }
       })
       .catch(err => {
@@ -147,108 +288,35 @@ export default function FormScreen({navigation, route}) {
       });
   }
 
-  React.useEffect(() => {
-    // initialize tables with empty arrays
-    const newData = {...data}
-    fields
-      .filter(f => f.fieldtype == "Table")
-      .forEach(f => {
-        newData[f.fieldname] = []
-      })
-    setData(newData)
-  }, [fields])
-  
-  React.useEffect(() => {
-    console.log('data update!')
-    updateLocals()
-    // for initial state of form
-    if(!window.frm) return 
-
-    // HACKY
-    window.frm.doc = data
-
-    // trigger events when data changes.
-    let val 
-    let field
-    const dataFields = Array.from(Object.keys(data))
-    for(let f of dataFields) {
-      if(JSON.stringify(data[f]) != JSON.stringify(prevData[f])) {
-        val = data[f]
-        field = fields.filter(g => g.fieldname == f)[0]
-        console.log({val})
-        break
-      }
-    }
-    if(!field) {
-      return
+  render() {
+    if (!this.state.fields || this.state.fields.length < 1) {
+      return <Loading />;
     }
 
-    if(val instanceof Array) {
-      if(!prevData[field.fieldname] || prevData[field.fieldname].length != val.length) {
-        // adding or removing a row, return
-        return
-      }
-      // find diff
-      val.forEach((row, i) => {
-        const oldRow = prevData[field.fieldname][i]
-        Object.keys(row).forEach(k => {
-          if(oldRow[k] != row[k]) {
-            frm.script_manager.trigger(k, field.options, row.name)
-          }
-        })
-      })
-
-    } else {
-      frm.script_manager.trigger(field.fieldname)
-    }
-  }, [data])
-
-  React.useEffect(() => {
-    navigation.setOptions({title: `New ${doctype}`});
-    const newData = {...data}
-    newData.__islocal = 1
-    newData.doctype = doctype
-    newData.name = `New ${doctype}`
-    setData(newData)
-    loadForm();
-  }, [doctype]);
-
-  React.useEffect(() => {
-    navigation.setOptions({title: `${doctype} ${id}`});
-    const newData = {...data}
-    newData.name = id
-    delete newData['__islocal']
-    setData(newData)
-    loadForm();
-  }, [id]);
-
-  React.useEffect(() => {
-    window.frappe = frappe
-    window.frm = new FrappeForm(data, setData, fields, setFields)
-    window.locals = {}
-    setDoctype(route.params.doctype);
-    if (route.params.id) {
-      setID(route.params.id);
-    }
-  }, []);
-
-  if (!fields || fields.length < 1) {
-    return <Loading />;
+    return (
+      <ScrollView>
+        {this.state.fields.map(f =>
+          renderField(
+            f,
+            this.state.data,
+            newData => this.setState({data: newData}),
+            this.state.doctype,
+          ),
+        )}
+        <View style={styles.footer}>
+          <Pressable style={styles.button} onPress={this.saveDocument}>
+            <FontAwesomeIcon icon={faSave} size={24} color={iconColor} />
+            <Text style={{...text, fontSize: 24}}>Save</Text>
+          </Pressable>
+        </View>
+      </ScrollView>
+    );
   }
-
-  return (
-    <ScrollView>
-      {fields.map(f => renderField(f, data, setData, doctype))}
-      <View style={styles.footer}>
-        <Pressable style={styles.button} onPress={saveDocument}>
-          <FontAwesomeIcon icon={faSave} size={24} color={iconColor} />
-          <Text style={{...text, fontSize: 24}}>Save</Text>
-        </Pressable>
-      </View>
-    </ScrollView>
-  );
 }
 
+export default function FormScreen({navigation, route}) {
+  return <Form navigation={navigation} route={route} />;
+}
 
 const styles = StyleSheet.create({
   button: {
@@ -259,10 +327,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     gap: 12,
-    width: 140
+    width: 140,
   },
   footer: {
     flexDirection: 'row',
-    justifyContent: 'flex-end'
-  }
-})
+    justifyContent: 'flex-end',
+  },
+});

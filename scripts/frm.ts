@@ -1,9 +1,7 @@
 class FrappeForm {
-  constructor(data, setData, schema, setSchema) {
+  constructor(data, setData) {
     this.doc = data;
     this.setData = setData;
-    this.schema = schema;
-    this.setSchema = setSchema;
     this.fields_dict = {};
     this.script_manager = {
       trigger: (a, b, c) => {
@@ -13,6 +11,8 @@ class FrappeForm {
          * c - docname
          */
         console.log({a,b,c})
+        console.log('window.frappe')
+        console.log(window.frappe)
         if (b) {
           if (frappe.ui.form.events[b] && frappe.ui.form.events[b][a]) {
             console.log(frappe.ui.form.events[b][a])
@@ -25,6 +25,7 @@ class FrappeForm {
           frappe.ui.form.events[this.doc.doctype] &&
           frappe.ui.form.events[this.doc.doctype][a]
         ) {
+          console.log(frappe.ui.form.events[this.doc.doctype][a])
           frappe.ui.form.events[this.doc.doctype][a](window.frm);
         }
       },
