@@ -48,7 +48,7 @@ export default function ShortcutScreen(props) {
         <Shortcut text="Journal Entry"  icon={faScaleBalanced} route={{name: "List", options: {doctype: "Journal Entry"}}}/>
         <Shortcut text="Payment"  icon={faHand} route={{name: "List", options: {doctype: "Payment"}}}/>
         <Shortcut text="Currency"  icon={faDollarSign} route={{name: "List", options: {doctype: "Currency"}}}/>
-        <Shortcut text="Exchange Rate"  icon={faChartLine} route={{name: "List", options: {doctype: "Exchange Rate"}}}/>
+        <Shortcut text="Exchange Rate"  icon={faChartLine} route={{name: "List", options: {doctype: "Currency Exchange"}}}/>
         <Shortcut text="Accounts"  icon={faBook} route={{name: "List", options: {doctype: "Account"}}}/>
         <Shortcut text="Payment Methods"  icon={faListDots} route={{name: "List", options: {doctype: "Payment Method"}}}/>
         </View>

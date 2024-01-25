@@ -15,6 +15,17 @@ import LinkField from './link';
 import axios from 'axios';
 import constants from '../../constants';
 
+
+const randomID = () => {
+  const options = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+  const out = []
+  for(i=0; i< 10; i++) {
+    out.push(options[Math.floor(Math.random() * 51)])
+  }
+
+  return out.join("")
+}
+
 const Heading = props => {
   return (
     <View style={styles.heading}>
@@ -161,9 +172,12 @@ export default function TableField(props) {
   const [schema, setSchema] = React.useState([]);
   const [entries, setEntries] = React.useState(props.value);
 
-
   const addRow = () => {
-    const row = {};
+    const row = {
+      idx: (entries || []).length,
+      __islocal: 1,
+      name: `New ${props.options} ${randomID()}`
+    };
     schema.map(field => {
       row[field.fieldname] = null;
     });
@@ -186,6 +200,7 @@ export default function TableField(props) {
     if (!(entries && entries.length > 0)) {
       return;
     }
+    frm.doc[props.fieldname] = entries
     entries.forEach((e, i) => {
       Object.keys(e).forEach(k => {
         if (props.value && props.value[i] && e[k] != props.value[i][k]) {
@@ -197,15 +212,12 @@ export default function TableField(props) {
   }, [entries]);
 
   React.useEffect(() => {
-    console.log(props.options)
-    console.log('props.options')
     axios.get(
         `${constants.server_url}/api/method/erp.public_api.form`,
         {params: {
             doctype: props.options
         }}
     ).then(res => {
-        console.log(res.data.message.meta.fields)
         setSchema(res.data.message.meta.fields)
     })
     if (props.value) {
