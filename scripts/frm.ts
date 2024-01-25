@@ -12,9 +12,11 @@ class FrappeForm {
          * b - doctype
          * c - docname
          */
+        console.log({a,b,c})
         if (b) {
           if (frappe.ui.form.events[b] && frappe.ui.form.events[b][a]) {
-            // todo find a way to identify the child name in the triggering function replace b
+            console.log(frappe.ui.form.events[b][a])
+            console.log(JSON.stringify(window.frm))
             frappe.ui.form.events[b][a](window.frm, b, c);
           }
           return;

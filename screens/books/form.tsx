@@ -31,40 +31,9 @@ const renderField = (field, data, setData, doctype) => {
     isInput: true,
     value: data[field.fieldname] || null,
     onChange: val => {
-      console.log('--------------------><-------------------')
-      console.log(JSON.stringify(data))
-      const oldData = JSON.parse(JSON.stringify(data))
       const newData = {...data};
       newData[field.fieldname] = val;
       setData(newData);
-      // HACKY! Find out why pass by reference for data into form is not working
-      window.frm.doc = newData
-      if(val instanceof Array) {
-        console.log('arr')
-        if(oldData[field.fieldname].length != val.length) {
-          // adding or removing a row, return
-          console.log('length')
-          return
-        }
-        // find diff
-        val.forEach((row, i) => {
-          const oldRow = oldData[field.fieldname][i]
-          console.log({oldRow})
-          console.log({row})
-          Object.keys(row).forEach(k => {
-            if(oldRow[k] != row[k]) {
-              console.log('diff')
-              frm.script_manager.trigger(k,field.options, row.name)
-            }
-          })
-        })
-
-      } else {
-        frm.script_manager.trigger(field.fieldname)
-        console.log('single')
-      }
-      console.log('--------------------<>-------------------')
-
     },
   };
   switch (field.fieldtype) {
@@ -98,13 +67,42 @@ const renderField = (field, data, setData, doctype) => {
   return renderedField;
 };
 
+// previous event handlers
+function usePrevious(value) {
+  const ref = React.useRef();
+  React.useEffect(() => {
+    ref.current = value;
+  });
+  return ref.current;
+}
+
 export default function FormScreen({navigation, route}) {
   const [fields, setFields] = React.useState([]);
   const [data, setData] = React.useState({});
+  const prevData = usePrevious(data)
   const [doctype, setDoctype] = React.useState('');
   const [id, setID] = React.useState('');
 
+  const updateLocals = () => {
+    // setup global object that cal look up values from any table in a multidimensional map
+    const newLocals = {}
+    const docname = data.name
+    newLocals[doctype] = {}
+    newLocals[doctype][`${docname}`] = data
+    fields
+      .filter(f => f.fieldtype == "Table")
+      .forEach(f => {
+        newLocals[f.options] = {};
+        (data[f.fieldname] || []).forEach(row => {
+          newLocals[f.options][row.name] = row
+        })
+      })
+
+    window.locals = newLocals
+  }
+
   const loadForm = () => {
+    // retrieve schema, scripts and data from remote server
     const params = {doctype: doctype};
     if (id) {
       params.id = id;
@@ -129,6 +127,7 @@ export default function FormScreen({navigation, route}) {
   };
 
   const saveDocument = () => {
+    // post form to remote server
     axios
       .post(
         `${constants.server_url}/api/method/erp.public_api.form`, 
@@ -148,25 +147,60 @@ export default function FormScreen({navigation, route}) {
       });
   }
 
-  const updateLocals = () => {
-    const newLocals = {}
-    const docname = data.name
-    newLocals[doctype] = {}
-    newLocals[doctype][`${docname}`] = data
+  React.useEffect(() => {
+    // initialize tables with empty arrays
+    const newData = {...data}
     fields
       .filter(f => f.fieldtype == "Table")
       .forEach(f => {
-        newLocals[f.options] = {};
-        (data[f.fieldname] || []).forEach(row => {
-          newLocals[f.options][row.name] = row
+        newData[f.fieldname] = []
+      })
+    setData(newData)
+  }, [fields])
+  
+  React.useEffect(() => {
+    console.log('data update!')
+    updateLocals()
+    // for initial state of form
+    if(!window.frm) return 
+
+    // HACKY
+    window.frm.doc = data
+
+    // trigger events when data changes.
+    let val 
+    let field
+    const dataFields = Array.from(Object.keys(data))
+    for(let f of dataFields) {
+      if(JSON.stringify(data[f]) != JSON.stringify(prevData[f])) {
+        val = data[f]
+        field = fields.filter(g => g.fieldname == f)[0]
+        console.log({val})
+        break
+      }
+    }
+    if(!field) {
+      return
+    }
+
+    if(val instanceof Array) {
+      if(!prevData[field.fieldname] || prevData[field.fieldname].length != val.length) {
+        // adding or removing a row, return
+        return
+      }
+      // find diff
+      val.forEach((row, i) => {
+        const oldRow = prevData[field.fieldname][i]
+        Object.keys(row).forEach(k => {
+          if(oldRow[k] != row[k]) {
+            frm.script_manager.trigger(k, field.options, row.name)
+          }
         })
       })
 
-    window.locals = newLocals
-  }
-
-  React.useEffect(() => {
-    updateLocals()
+    } else {
+      frm.script_manager.trigger(field.fieldname)
+    }
   }, [data])
 
   React.useEffect(() => {

@@ -47,6 +47,7 @@ const frappe = {
           })
           newData[s.fieldname] = children
         })
+        console.log(newData)
         frm.setData(newData)
     },
     set_value(cdt, cdn, fieldname, value) {

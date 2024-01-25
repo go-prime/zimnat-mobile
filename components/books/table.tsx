@@ -200,7 +200,6 @@ export default function TableField(props) {
     if (!(entries && entries.length > 0)) {
       return;
     }
-    frm.doc[props.fieldname] = entries
     entries.forEach((e, i) => {
       Object.keys(e).forEach(k => {
         if (props.value && props.value[i] && e[k] != props.value[i][k]) {
