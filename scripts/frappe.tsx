@@ -47,7 +47,6 @@ const frappe = {
           })
           newData[s.fieldname] = children
         })
-        console.log(newData)
         frm.setData(newData)
     },
     set_value(cdt, cdn, fieldname, value) {
@@ -89,6 +88,12 @@ const frappe = {
     get_doc: function () {},
     get_list: function () {},
   },
+  throw: function(msg) {
+    Alert.alert("Error", msg)
+    // throw errors that don't break app
+    // throw new Error(msg);
+    
+  }
 };
 
 export default frappe;

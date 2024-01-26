@@ -3,7 +3,7 @@ import {View, Text, ScrollView, StyleSheet, processColor} from 'react-native'
 import { Heading, Label, SmallLabel } from '../../components/text'
 import {PieChart, LineChart} from 'react-native-charts-wrapper';
 import { card } from '../../styles/inputs';
-import { text } from '../../styles/text';
+import { background, text } from '../../styles/text';
 
 const Bar = ({label, value, per, color}) => {
     return (
@@ -22,7 +22,7 @@ const Bar = ({label, value, per, color}) => {
 
 export default function InsightScreen(props) {
     return (
-    <ScrollView>
+    <ScrollView style={{backgroundColor: background.color}}>
         <View style={styles.card}>
             <Heading>Revenue vs Expenses</Heading>
             <Bar per={80} label={'Revenue'} color={'limegreen'} value={3000} />

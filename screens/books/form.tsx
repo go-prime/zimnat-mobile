@@ -20,9 +20,10 @@ import TableField from '../../components/books/table';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faSave} from '@fortawesome/free-solid-svg-icons';
 import colors from '../../styles/colors';
-import {text} from '../../styles/text';
+import {background, text} from '../../styles/text';
 import {iconColor} from '../../styles/inputs';
 import frappe from '../../scripts/frappe';
+import { randomID } from '../../components/books/table';
 
 const renderField = (field, data, setData, doctype) => {
   let renderedField;
@@ -116,9 +117,15 @@ class Form extends React.Component {
       })
       .then(res => {
         if (res.data.message.meta) {
+          const newData = {...this.state.data}
+          res.data.message.meta.fields
+            .filter(f => f.fieldtype == "Table")
+            .forEach(f => {
+              newData[f.fieldname] = []
+            })
           this.setState({
             fields: res.data.message.meta.fields,
-            data: {...this.state.data, ...res.data.message.data},
+            data: {...newData, ...res.data.message.data},
           });
           eval(res.data.message.script);
         }
@@ -176,11 +183,22 @@ class Form extends React.Component {
   refresh() {}
   disable_save() {}
   add_custom_button() {}
+  add_child(table, child) {
+    const newData = {...this.state.data}
+    const rows = [...newData[table]]
+    const doctype = this.state.fields.filter(f => f.fieldname == table)[0].options
+    child.doctype = doctype
+    child.name = `New ${doctype} ${randomID()}`
+    rows.push(child)
+    newData[table] = rows
+    this.setState({data: newData})
+  }
   
   // End frappe form
 
   componentDidMount() {
     window.frappe = frappe;
+    window.flt = frappe.flt;
     window.frm = this;
     window.locals = {};
     this.setState({doctype: this.props.route.params.doctype});
@@ -189,6 +207,7 @@ class Form extends React.Component {
     newData.__islocal = 1;
     newData.doctype = this.state.doctype;
     newData.name = `New ${this.state.doctype}`;
+    
     this.setState({data: newData});
     this.loadForm();
 
@@ -203,7 +222,7 @@ class Form extends React.Component {
     snapshot?: any,
   ): void {
     if (prevState.id != this.state.id && this.state.id) {
-      navigation.setOptions({title: `${doctype} ${id}`});
+      this.props.navigation.setOptions({title: `${this.state.doctype} ${this.state.id}`});
       const newData = {...this.state.data};
       newData.name = this.state.id;
       delete newData.__islocal;
@@ -264,7 +283,7 @@ class Form extends React.Component {
     }
   }
 
-  saveDocument() {
+  saveDocument = () => {
     // post form to remote server
     axios
       .post(`${constants.server_url}/api/method/erp.public_api.form`, {
@@ -294,7 +313,7 @@ class Form extends React.Component {
     }
 
     return (
-      <ScrollView>
+      <ScrollView style={{backgroundColor: background.color}}>
         {this.state.fields.map(f =>
           renderField(
             f,
@@ -321,16 +340,18 @@ export default function FormScreen({navigation, route}) {
 const styles = StyleSheet.create({
   button: {
     backgroundColor: colors.primary,
-    padding: 12,
+    padding: 8,
     borderRadius: 6,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     gap: 12,
+    margin: 12,
     width: 140,
   },
   footer: {
     flexDirection: 'row',
-    justifyContent: 'flex-end',
+    justifyContent: 'flex-start',
+    
   },
 });

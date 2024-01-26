@@ -23,7 +23,7 @@ const Shortcut = ({icon, text, route}) => {
 
 export default function ShortcutScreen(props) {
     return (
-    <ScrollView style={{backgroundColor: background}}>
+    <ScrollView style={{backgroundColor: background.color}}>
         <Heading>Sales</Heading>
         <View style={styles.content}>
         <Shortcut text="Sales Invoice"  icon={faFileAlt} route={{name: "List", options: {doctype: "Sales Invoice"}}}/>

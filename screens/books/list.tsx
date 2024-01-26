@@ -11,9 +11,9 @@ import axios from 'axios';
 import constants from '../../constants';
 import colors from '../../styles/colors';
 import {card, iconColor} from '../../styles/inputs';
-import {text} from '../../styles/text';
+import {background, text} from '../../styles/text';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faFilter } from '@fortawesome/free-solid-svg-icons';
+import { faFilter, faRefresh } from '@fortawesome/free-solid-svg-icons';
 import Loading from '../../components/loading';
 
 export default function ListScreen({navigation, route}) {
@@ -22,8 +22,7 @@ export default function ListScreen({navigation, route}) {
   const [doctype, setDoctype] = React.useState('');
   const [filters, setFilters] = React.useState({});
 
-  React.useEffect(() => {
-    navigation.setOptions({title: `${doctype} List`});
+  const loadEntries = () => {
     axios
       .get(`${constants.server_url}/api/method/erp.public_api.list`, {
         params: {doctype: doctype},
@@ -43,6 +42,11 @@ export default function ListScreen({navigation, route}) {
           console.log(err.response.data);
         }
       });
+  }
+
+  React.useEffect(() => {
+    navigation.setOptions({title: `${doctype} List`});
+    loadEntries()
   }, [doctype]);
 
   React.useEffect(() => {
@@ -54,7 +58,7 @@ export default function ListScreen({navigation, route}) {
   }
 
   return (
-    <>
+    <View style={{backgroundColor: background.color, flex: 1}}>
       <View style={styles.controls}>
         
         <View style={styles.filterContainer}>
@@ -67,6 +71,9 @@ export default function ListScreen({navigation, route}) {
           navigation.navigate("Form", {doctype: doctype})
         }} style={styles.button}>
           <Text>Create New</Text>
+        </Pressable>
+        <Pressable onPress={loadEntries} style={styles.refreshButton}>
+          <FontAwesomeIcon icon={faRefresh} color={colors.primary} size={24} />
         </Pressable>
       </View>
       <ScrollView horizontal={true}>
@@ -107,7 +114,7 @@ export default function ListScreen({navigation, route}) {
           />
         </View>
       </ScrollView>
-    </>
+    </View>
   );
 }
 
@@ -150,6 +157,16 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 6,
     width: 100,
+  },
+  refreshButton: {
+    borderColor: colors.primary,
+    borderWidth: 2,
+    padding: 8,
+    borderRadius: 6,
+    width: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 12
   },
   filters: {
     borderWidth: 1,

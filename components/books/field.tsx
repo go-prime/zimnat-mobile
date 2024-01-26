@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, Appearance} from 'react-native';
 import {inputContainer, text} from '../../styles/inputs';
 import colors from '../../styles/colors';
 
@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
   inputFrame: inputContainer,
   readOnlyInputFrame: {
     ...inputContainer,
-    backgroundColor : '#f5f5f5',
+    backgroundColor : Appearance.getColorScheme() == "dark" ? "#000" : '#f5f5f5',
   },
   fullWidth: {
     flex: 1,

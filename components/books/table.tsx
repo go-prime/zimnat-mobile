@@ -254,6 +254,8 @@ export default function TableField(props) {
   );
 }
 
+export {randomID}
+
 const baseColumn = {
   // borderRightWidth: 1,
   // borderLeftWidth: 1,

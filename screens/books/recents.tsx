@@ -4,7 +4,7 @@ import {View, Text, Pressable, StyleSheet, ScrollView} from 'react-native';
 import {Heading} from '../../components/text';
 import {faFileAlt} from '@fortawesome/free-solid-svg-icons';
 import {card} from '../../styles/inputs';
-import {text} from '../../styles/text';
+import {background, text} from '../../styles/text';
 import {iconColor} from '../../styles/inputs';
 
 const Recent = ({document_type, document_id, icon}) => {
@@ -34,7 +34,7 @@ const Older = ({document_type, document_id, icon}) => {
 
 export default function RecentScreen(props) {
   return (
-    <ScrollView>
+    <ScrollView style={{backgroundColor: background.color}}>
       <Heading>Recent Documents</Heading>
       <ScrollView horizontal>
         <Recent document_id={'INV-000156'} document_type={'Sales Invoice'} />
