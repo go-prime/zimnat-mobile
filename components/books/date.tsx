@@ -12,15 +12,18 @@ const convertDateToString = (d: Date) => {
 };
 
 export default function DateField(props) {
-  const [value, setValue] = React.useState(
-    props.value ? new Date(props.value) : null,
-  );
+  const [value, setValue] = React.useState(null)
   const [show, setShow] = React.useState(false);
   React.useEffect(() => {
     if(value) {
       props.onChange(convertDateToString(value));
     }
   }, [value]);
+  React.useEffect(() => {
+    if(props.value) {
+      setValue(new Date(props.value))
+    }
+  }, [])
 
   return (
     <View>

@@ -15,6 +15,7 @@ import BooleanField from '../../components/books/boolean';
 import LinkField from '../../components/books/link';
 import NumberField from '../../components/books/number';
 import TextField from '../../components/books/text';
+import DynamicLinkField from '../../components/books/dynamic_link';
 import Loading from '../../components/loading';
 import TableField from '../../components/books/table';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
@@ -27,14 +28,16 @@ import { randomID } from '../../components/books/table';
 
 const renderField = (field, data, setData, doctype) => {
   let renderedField;
+  const submitted = data.docstatus && data.docstatus == 1
   const props = {
     fieldtype: field.fieldtype,
+    formData: data,
     fieldname: field.fieldname,
     options: field.options,
     hidden: field.hidden,
     mandatory: field.mandatory,
     label: field.label,
-    read_only: field.read_only,
+    read_only: field.read_only || submitted,
     isInput: true,
     value: data[field.fieldname] || null,
     onChange: val => {
@@ -55,6 +58,9 @@ const renderField = (field, data, setData, doctype) => {
       break;
     case 'Link':
       renderedField = <LinkField {...props} />;
+      break;
+    case 'DynamicLink':
+      renderedField = <DynamicLinkField {...props} />;
       break;
     case 'Int':
     case 'Float':
@@ -87,10 +93,8 @@ class Form extends React.Component {
     this.fields_dict= {}
     this.script_manager = {
       trigger: (a, b, c) => {
-        console.log({a,b,c})
         if (b) {
           if (frappe.ui.form.events[b] && frappe.ui.form.events[b][a]) {
-            console.log(frappe.ui.form.events[b][a])
             frappe.ui.form.events[b][a](window.frm, b, c);
           }
           return;
@@ -99,11 +103,11 @@ class Form extends React.Component {
           frappe.ui.form.events[this.doc.doctype] &&
           frappe.ui.form.events[this.doc.doctype][a]
         ) {
-          console.log(frappe.ui.form.events[this.doc.doctype][a])
           frappe.ui.form.events[this.doc.doctype][a](window.frm);
         }
       }
     }
+    
   }
 
   loadForm() {
@@ -193,6 +197,7 @@ class Form extends React.Component {
     newData[table] = rows
     this.setState({data: newData})
   }
+
   
   // End frappe form
 

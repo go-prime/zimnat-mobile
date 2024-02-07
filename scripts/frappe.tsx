@@ -84,7 +84,18 @@ const frappe = {
     }
   },
   db: {
-    get_value: function () {},
+    get_value: async function (doctype, name, fields) {
+      const resp = await axios.get(`${constants.server_url}/api/resource/${doctype}/${name}`)
+        const message = {}
+        if(fields instanceof Array) {
+          fields.forEach(f => {
+            message[f] = resp.data.data[f]
+          })
+        } else {
+          message[fields] = resp.data.data[fields]
+        }
+        return {'message': message}
+    },
     get_doc: function () {},
     get_list: function () {},
   },

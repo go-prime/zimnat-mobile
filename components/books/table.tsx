@@ -3,7 +3,7 @@ import {View, Text, StyleSheet, ScrollView, Pressable} from 'react-native';
 import Schema from '../../models/schema';
 import colors from '../../styles/colors';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {faTimes} from '@fortawesome/free-solid-svg-icons';
+import {faTimes, faEdit, faSave} from '@fortawesome/free-solid-svg-icons';
 import {card, text} from '../../styles/inputs';
 import DataField from './data';
 import BooleanField from './boolean';
@@ -14,17 +14,19 @@ import NumberField from './number';
 import LinkField from './link';
 import axios from 'axios';
 import constants from '../../constants';
-
+import DynamicLinkField from './dynamic_link';
+import {Modal} from 'react-native';
 
 const randomID = () => {
-  const options = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
-  const out = []
-  for(i=0; i< 10; i++) {
-    out.push(options[Math.floor(Math.random() * 51)])
+  const options =
+    'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  const out = [];
+  for (i = 0; i < 10; i++) {
+    out.push(options[Math.floor(Math.random() * 51)]);
   }
 
-  return out.join("")
-}
+  return out.join('');
+};
 
 const Heading = props => {
   return (
@@ -37,14 +39,19 @@ const Heading = props => {
             <Text style={styles.headingText}>{field.label}</Text>
           </View>
         ))}
+      <View style={styles.buttonHeadingColumn} />
     </View>
   );
 };
 
-const renderTableField = (field: any, data: any, handler: Function) => {
+const renderTableField = (
+  field: any,
+  data: any,
+  handler: Function,
+  is_input: boolean,
+) => {
   let element;
   const value = (data && data[field.fieldname]) || null;
-
   const props = {
     fieldtype: field.fieldtype,
     fieldname: field.fieldname,
@@ -53,13 +60,13 @@ const renderTableField = (field: any, data: any, handler: Function) => {
     mandatory: field.mandatory,
     label: field.label,
     read_only: field.read_only,
-    isInput: false,
+    isInput: is_input,
     value: value,
+    formData: data,
     onChange: val => {
       handler(field.fieldname, val);
     },
   };
-
   switch (field.fieldtype) {
     case 'Data':
     case 'Small Text':
@@ -81,6 +88,9 @@ const renderTableField = (field: any, data: any, handler: Function) => {
       break;
     case 'Link':
       element = <LinkField {...props} key={field.id} />;
+      break;
+    case 'Dynamic Link':
+      element = <DynamicLinkField {...props} key={field.id} />;
       break;
     case 'Date':
       element = <DateField {...props} key={field.id} />;
@@ -115,6 +125,7 @@ const Body = props => {
             index={index}
             entry={entry}
             updateEntries={updateEntries}
+            modalTrigger={props.modalTrigger}
             schema={props.schema}
             removeRow={props.removeRow}
           />
@@ -148,10 +159,17 @@ const Row = props => {
                   props.entry,
                   handler,
                   props.read_only_view,
+                  false,
                 )}
             </View>
           );
         })}
+      <View style={styles.buttonColumn}>
+        <Pressable
+          onPress={() => props.modalTrigger(props.index, props.read_only_view)}>
+          <FontAwesomeIcon icon={faEdit} size={28} color={'black'} />
+        </Pressable>
+      </View>
     </View>
   );
 };
@@ -168,15 +186,55 @@ const Footer = props => {
   );
 };
 
+const RowModal = props => {
+  const handler = (fieldname, value) => {
+    const newEntry = {...props.entries[props.index]};
+    newEntry[fieldname] = value;
+    props.updateEntry(props.index, newEntry);
+  };
+  return (
+    <Modal
+      visible={props.visible}
+      transparent={true}
+      onRequestClose={props.onClose}>
+      <View style={styles.modalContainer}>
+        <View style={styles.modalHeader}>
+          <Text style={styles.modalHeaderText}>Edit Row</Text>
+          <View style={styles.modalButtonContainer}>
+            <Pressable style={styles.modalButton} onPress={props.onClose}>
+              <FontAwesomeIcon icon={faTimes} size={20} />
+            </Pressable>
+          </View>
+        </View>
+        <ScrollView>
+          {props.schema
+            .filter(s => !s.hidden)
+            .map(field => {
+              return renderTableField(
+                field,
+                props.entries[props.index],
+                handler,
+                true,
+              );
+            })}
+        </ScrollView>
+      </View>
+    </Modal>
+  );
+};
+
 export default function TableField(props) {
   const [schema, setSchema] = React.useState([]);
   const [entries, setEntries] = React.useState(props.value);
+  const [modalVisible, setModalVisible] = React.useState(false);
+  const [modalReadOnly, setModalReadOnly] = React.useState(false);
+  const [modalIndex, setModalIndex] = React.useState(null);
 
   const addRow = () => {
     const row = {
       idx: (entries || []).length,
       __islocal: 1,
-      name: `New ${props.options} ${randomID()}`
+      name: `New ${props.options} ${randomID()}`,
     };
     schema.map(field => {
       row[field.fieldname] = null;
@@ -196,6 +254,19 @@ export default function TableField(props) {
     setEntries(newEntries);
   };
 
+  const showRowTable = (rowIndex, read_only) => {
+    setModalVisible(true);
+    setModalReadOnly(read_only);
+    setModalIndex(rowIndex);
+  };
+
+  const updateEntry = (idx, newEntry) => {
+    // Only applicable for modal
+    const newEntries = [...entries];
+    newEntries[idx] = newEntry;
+    setEntries(newEntries);
+  };
+
   React.useEffect(() => {
     if (!(entries && entries.length > 0)) {
       return;
@@ -211,14 +282,15 @@ export default function TableField(props) {
   }, [entries]);
 
   React.useEffect(() => {
-    axios.get(
-        `${constants.server_url}/api/method/erp.public_api.form`,
-        {params: {
-            doctype: props.options
-        }}
-    ).then(res => {
-        setSchema(res.data.message.meta.fields)
-    })
+    axios
+      .get(`${constants.server_url}/api/method/erp.public_api.form`, {
+        params: {
+          doctype: props.options,
+        },
+      })
+      .then(res => {
+        setSchema(res.data.message.meta.fields);
+      });
     if (props.value) {
       setEntries(props.value);
     }
@@ -246,15 +318,25 @@ export default function TableField(props) {
             removeRow={removeRow}
             form={props.form}
             setEntries={setEntries}
+            modalTrigger={showRowTable}
           />
           <Footer addRow={addRow} />
         </View>
       </ScrollView>
+      <RowModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        entries={entries}
+        index={modalIndex}
+        schema={schema}
+        read_only_view={modalReadOnly}
+        updateEntry={updateEntry}
+      />
     </View>
   );
 }
 
-export {randomID}
+export {randomID};
 
 const baseColumn = {
   // borderRightWidth: 1,
@@ -348,5 +430,44 @@ const styles = StyleSheet.create({
     ...baseHeadingColumn,
     width: 200,
     backgroundColor: 'black',
+  },
+  modalContainer: {
+    margin: 24,
+    padding: 16,
+    backgroundColor: '#fff',
+    flex: 1,
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+    alignItems: 'center',
+  },
+  modalHeaderText: {
+    fontWeight: 'bold',
+    fontSize: 18,
+  },
+  modalButton: {
+    padding: 4,
+    borderRadius: 4,
+    borderWidth: 2,
+    borderColor: 'black',
+    flexDirection: 'row',
+    gap: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalButtonContainer: {
+    flexDirection: 'row',
+    gap: 8,
   },
 });

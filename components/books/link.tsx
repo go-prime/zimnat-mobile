@@ -25,7 +25,6 @@ export default function LinkField(props) {
   const [value, setValue] = React.useState(props.value);
 
   React.useEffect(() => {
-    console.log({value})
     props.onChange(value);
   }, [value]);
 
@@ -85,7 +84,7 @@ const OptionsModal = props => {
         allOptions.filter(opt => {
           if (
             opt.name &&
-            opt.name.toLowerCase().indexOf(input.toLowerCase())
+            opt.name.toLowerCase().indexOf(input.toLowerCase()) > -1
           ) {
             return true;
           }
@@ -148,6 +147,8 @@ const OptionsModal = props => {
     </Modal>
   );
 };
+
+export {OptionsModal}
 
 const styles = StyleSheet.create({
   pressableStyle: {

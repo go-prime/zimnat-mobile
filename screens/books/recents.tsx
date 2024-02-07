@@ -6,10 +6,18 @@ import {faFileAlt} from '@fortawesome/free-solid-svg-icons';
 import {card} from '../../styles/inputs';
 import {background, text} from '../../styles/text';
 import {iconColor} from '../../styles/inputs';
+import Loading from '../../components/loading';
+import constants from '../../constants';
+import axios from 'axios';
+import { useNavigation } from '@react-navigation/native';
+
 
 const Recent = ({document_type, document_id, icon}) => {
+  const navigator = useNavigation()
   return (
-    <Pressable style={styles.recent}>
+    <Pressable style={styles.recent} onPress={() => {
+      navigator.navigate("Form", {doctype: document_type, id: document_id})
+    }}>
       <View style={styles.recentContent}>
         <FontAwesomeIcon icon={faFileAlt} size={48} color={iconColor} />
         <View>
@@ -22,7 +30,9 @@ const Recent = ({document_type, document_id, icon}) => {
 };
 const Older = ({document_type, document_id, icon}) => {
   return (
-    <Pressable style={styles.older}>
+    <Pressable style={styles.older} onPress={() => {
+      navigator.navigate("Form", {doctype: document_type, id: document_id})
+    }}>
       <FontAwesomeIcon icon={faFileAlt} size={28} color={iconColor} />
       <View>
         <Text style={styles.bold}>{document_type}</Text>
@@ -33,22 +43,33 @@ const Older = ({document_type, document_id, icon}) => {
 };
 
 export default function RecentScreen(props) {
+  const [recents, setRecents] = React.useState([])
+  React.useEffect(() => {
+    axios.get(`${constants.server_url}/api/method/erp.public_api.recents`)
+    .then(res => {
+      console.log(res.data)
+      setRecents(res.data.message)
+    }).catch(err => {
+      console.log(err)
+      if(err.response) {
+        console.log(err.response.data)
+      }
+    })
+  })
+
+  if(recents.length == 0) {
+    return <Loading />
+  }
+
   return (
     <ScrollView style={{backgroundColor: background.color}}>
       <Heading>Recent Documents</Heading>
       <ScrollView horizontal>
-        <Recent document_id={'INV-000156'} document_type={'Sales Invoice'} />
-        <Recent document_id={'INV-000150'} document_type={'Sales Invoice'} />
-        <Recent document_id={'INV-000148'} document_type={'Sales Invoice'} />
+        {recents.slice(0, 5).map(r => <Recent document_id={r.name} document_type={r.doctype} />)}
       </ScrollView>
       <Heading>OLDER</Heading>
-      <Older document_id={'INV-000128'} document_type={'Sales Invoice'} />
-      <Older document_id={'QUOT-000192'} document_type={'Quotation'} />
-      <Older document_id={'PROD-0023'} document_type={'Item'} />
-      <Older document_id={'PROD-0040'} document_type={'Item'} />
-      <Older document_id={'PR-000060'} document_type={'Purchase Receipt'} />
-      <Older document_id={'PO-000096'} document_type={'Purchase Order'} />
-      <Older document_id={'PROD-0042'} document_type={'Item'} />
+      {recents.slice(5, 16).map(r => <Older document_id={r.name} document_type={r.doctype} />)}
+      
     </ScrollView>
   );
 }
