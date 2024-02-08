@@ -1,9 +1,13 @@
 import React from 'react';
 import axios from 'axios';
 import {getAbsoluteURL} from '../utils';
+import handleErr from '../scripts/axios';
+import { useNavigation } from '@react-navigation/native';
 
 const useWishlistCount = () => {
   const [wishlistCount, setWishlistCount] = React.useState(0);
+  const navigator = useNavigation()
+
   React.useEffect(() => {
     axios
       .get(
@@ -17,8 +21,8 @@ const useWishlistCount = () => {
         } else {
           setWishlistCount(0);
         }
-      });
-  });
+      }).catch(err => handleErr(err, navigator));
+  }, []);
 
   return wishlistCount;
 };
@@ -26,6 +30,7 @@ const useWishlistCount = () => {
 
 const useOrderCount = () => {
   const [orderCount, setOrderCount] = React.useState(0);
+  const navigator = useNavigation()
   React.useEffect(() => {
       axios
         .get(
@@ -35,8 +40,8 @@ const useOrderCount = () => {
         )
         .then(res => {
           // console.log(res.data.message);
-        })
-  });
+        }).catch(err => handleErr(err, navigator))
+  }, []);
 
   return orderCount;
 };

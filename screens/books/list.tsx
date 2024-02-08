@@ -117,12 +117,12 @@ export default function ListScreen({navigation, route}) {
         params: {doctype: doctype},
       })
       .then(res => {
-        console.log(res.data.message);
         if (res.data.message.meta) {
           setColumns(
             res.data.message.meta.fields.filter(f => f.in_list_view > 0),
           );
           setFields(res.data.message.meta.fields)
+          console.log(res.data.message.meta.fields)
           setData(res.data.message.data);
         }
       })
