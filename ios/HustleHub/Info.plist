@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSCameraUsageDescription</key>
+	<string>Hustle Hub uses the camera to scan QR codes to make completing orders and purchases quick and easy.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Hustle Hub uses the photos stored on your device for providing images to storefront content and products.No images besides the ones you explicitly allow are accessed or used.</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
