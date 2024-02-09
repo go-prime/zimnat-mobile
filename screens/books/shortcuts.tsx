@@ -24,11 +24,14 @@ import {
   faUser,
   faUserAlt,
   faWarehouse,
+  faSearch
 } from '@fortawesome/free-solid-svg-icons';
 import {Heading} from '../../components/text';
 import {background, text} from '../../styles/text';
 import {card, iconColor} from '../../styles/inputs';
 import {TextInput} from 'react-native-gesture-handler';
+import axios from 'axios';
+import constants from '../../constants';
 
 const ICON_MAP = {
   'fa-book': faBook,
@@ -135,7 +138,7 @@ const SHORTCUT_LIST = [
     module: 'Accounts',
     text: 'Payment',
     icon: 'fa-hand',
-    route: {name: 'List', options: {doctype: 'Customer'}},
+    route: {name: 'List', options: {doctype: 'Payment'}},
   },
   {
     module: 'Accounts',
@@ -147,7 +150,7 @@ const SHORTCUT_LIST = [
     module: 'Accounts',
     text: 'Exchange Rate',
     icon: 'fa-chart-line',
-    route: {name: 'List', options: {doctype: 'Exchange Rate'}},
+    route: {name: 'List', options: {doctype: 'Currency Exchange'}},
   },
   {
     module: 'Accounts',
@@ -182,42 +185,80 @@ const Shortcut = ({icon, text, route}) => {
 export default function ShortcutScreen(props) {
   const [input, setInput] = React.useState('');
   const [filterdItems, setFilteredItems] = React.useState(SHORTCUT_LIST);
-  React.useEffect(() => {
-    if(!input || input.length < 3) {
-        setFilteredItems(SHORTCUT_LIST)
-        return
-    }
-    setFilteredItems(SHORTCUT_LIST.filter(s => s.text.toLowerCase().indexOf(input.toLowerCase()) > -1))
+  const [company, setCompany] = React.useState(null) 
+  const navigator = useNavigation()
 
-  }, [input])
-  
+  React.useEffect(() => {
+    if (!input || input.length < 3) {
+      setFilteredItems(SHORTCUT_LIST);
+      return;
+    }
+    setFilteredItems(
+      SHORTCUT_LIST.filter(
+        s => s.text.toLowerCase().indexOf(input.toLowerCase()) > -1,
+      ),
+    );
+  }, [input]);
+
+  React.useEffect(() => {
+    console.log('setup')
+    axios.get(`${constants.server_url}/api/method/erp.public_api.setup`)
+      .then(res => {
+        console.log(res.data)
+        if(!res.data.message) {
+          navigator.navigate("Form", {doctype: "Company"})
+        } else {
+          setCompany(res.data.message)
+        }
+      }).catch(err => {
+        console.log('err')
+        console.log(err)
+        if(err.response && err.response.status == 403) {
+          console.log(err.response)
+
+          navigator.navigate("Login")
+        }
+      })
+  }, [])
+
   return (
     <>
+      
+      {company && (
+        <Pressable style={styles.company} onPress={() => {
+          navigator.navigate("Form", {doctype: "Company", id: company})
+        }}>
+          <FontAwesomeIcon icon={faBuilding} size={48} color='black' />
+            <View>
+              <Text style={styles.company_label}>MY COMPANY</Text>
+              <Text style={styles.company_name}>{company}</Text>
+            </View>
+        </Pressable>)}
         <View style={styles.search}>
-            <TextInput placeholder='Search' value={input} onChangeText={setInput} />
-        </View>
-        {/* <View>
-            <Text>My Company</Text>
-            <FontAwesomeIcon icon={faBuilding} size={32} color='black' />
-        </View> */}
+        <FontAwesomeIcon icon={faSearch} size={20} />
+        <TextInput placeholder="Search" value={input} onChangeText={setInput} />
+      </View>
       <ScrollView style={{backgroundColor: background.color}}>
         {Array.from(new Set(filterdItems.map(f => f.module)))
           .sort()
           .map(m => {
-            return (<>
-              <Heading>{m}</Heading>
-              <View style={styles.content}>
-                {filterdItems
-                  .filter(i => i.module == m)
-                  .map(fi => (
-                    <Shortcut
-                      text={fi.text}
-                      icon={ICON_MAP[fi.icon]}
-                      route={fi.route}
-                    />
-                  ))}
-              </View>
-            </>);
+            return (
+              <React.Fragment key={m}>
+                <Heading>{m}</Heading>
+                <View style={styles.content}>
+                  {filterdItems
+                    .filter(i => i.module == m)
+                    .map((fi, idx) => (
+                      <Shortcut
+                        text={fi.text}
+                        icon={ICON_MAP[fi.icon]}
+                        route={fi.route}
+                        key={idx}
+                      />
+                    ))}
+                </View>
+              </React.Fragment>
+            );
           })}
       </ScrollView>
     </>
@@ -252,6 +293,27 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     height: 48,
     padding: 4,
-    margin: 8
+    paddingLeft: 12,
+    margin: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12
+  },
+  company: {
+    backgroundColor: 'white',
+    borderRadius: 8,
+    margin: 12,
+    padding: 12,
+    flexDirection: 'row',
+    gap: 16
+  },
+  company_label: {
+    color: 'black',
+    fontWeight: 'bold',
+    fontSize: 12
+  },
+  company_name: {
+    color: 'black',
+    fontSize: 24
   }
 });

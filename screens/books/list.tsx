@@ -380,6 +380,7 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     height: 36,
     flexDirection: 'row',
+    margin: 4,
     gap: 12,
     paddingHorizontal: 18,
     alignItems: 'center'

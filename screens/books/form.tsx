@@ -132,6 +132,9 @@ class Form extends React.Component {
             data: {...newData, ...res.data.message.data},
           });
           eval(res.data.message.script);
+          if(frappe.ui.form.events[this.state.doctype].refresh) {
+            frappe.ui.form.events[this.state.doctype].refresh(this)
+          }
         }
       })
       .catch(err => {
@@ -198,6 +201,17 @@ class Form extends React.Component {
     this.setState({data: newData})
   }
 
+  set_df_property(field, property, value) {
+    const newFields = [...this.state.fields]
+    const newFieldIndex = this.state.fields.map(f => f.fieldname).indexOf(field)
+    const newField = this.state.fields[newFieldIndex]
+    newField[property] = value
+    newFields[newFieldIndex] = newField
+    console.log({newFields})
+    this.setState({fields: newFields})
+
+  }
+
   
   // End frappe form
 
@@ -258,7 +272,6 @@ class Form extends React.Component {
       if (JSON.stringify(this.state.data[f]) != JSON.stringify(prevData[f])) {
         val = this.state.data[f];
         field = this.state.fields.filter(g => g.fieldname == f)[0];
-        console.log({val});
         break;
       }
     }
@@ -307,8 +320,13 @@ class Form extends React.Component {
       .catch(err => {
         console.log(err);
         if (err.response) {
-          console.log(err.response.data);
+          JSON.parse(err.response.data._server_messages).forEach(m => {
+            const msg = JSON.parse(m)
+            Alert.alert(msg.title, msg.message)
+          })
+          
         }
+        
       });
   }
 

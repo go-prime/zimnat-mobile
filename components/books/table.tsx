@@ -53,6 +53,7 @@ const renderTableField = (
   let element;
   const value = (data && data[field.fieldname]) || null;
   const props = {
+    key: randomID(),
     fieldtype: field.fieldtype,
     fieldname: field.fieldname,
     options: field.options,
@@ -302,7 +303,7 @@ export default function TableField(props) {
     }
   }, [props.value]);
 
-  if (!(schema && schema.length > 0)) {
+  if (!(schema && schema.length > 0) || props.hidden == 1) {
     return <View style={{height: 0}} />;
   }
 
