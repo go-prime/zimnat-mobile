@@ -129,6 +129,7 @@ const Body = props => {
             modalTrigger={props.modalTrigger}
             schema={props.schema}
             removeRow={props.removeRow}
+            read_only={props.read_only}
           />
         ))}
     </>
@@ -145,9 +146,9 @@ const Row = props => {
   return (
     <View style={styles.row}>
       <View style={styles.buttonColumn}>
-        <Pressable onPress={() => props.removeRow(props.index)}>
+        {!props.read_only && <Pressable onPress={() => props.removeRow(props.index)}>
           <FontAwesomeIcon icon={faTimes} size={28} color={'crimson'} />
-        </Pressable>
+        </Pressable>}
       </View>
       {props.schema
         .filter(s => !s.hidden && (s.in_list_view || s.in_grid_view))
@@ -320,8 +321,9 @@ export default function TableField(props) {
             form={props.form}
             setEntries={setEntries}
             modalTrigger={showRowTable}
+            read_only={props.read_only}
           />
-          <Footer addRow={addRow} />
+          {!props.read_only && <Footer addRow={addRow} />}
         </View>
       </ScrollView>
       <RowModal

@@ -118,11 +118,17 @@ export default function ListScreen({navigation, route}) {
       })
       .then(res => {
         if (res.data.message.meta) {
-          setColumns(
-            res.data.message.meta.fields.filter(f => f.in_list_view > 0),
-          );
+          let newColumns = []
+          if (res.data.message.meta.is_submittable) {
+            newColumns.push({
+              fieldname: 'docstatus',
+              fieldtype: 'Data',
+              label: 'Status'
+            })
+          }
+          newColumns = newColumns.concat(res.data.message.meta.fields.filter(f => f.in_list_view > 0))
+          setColumns(newColumns);
           setFields(res.data.message.meta.fields)
-          console.log(res.data.message.meta.fields)
           setData(res.data.message.data);
         }
       })
@@ -213,9 +219,18 @@ export default function ListScreen({navigation, route}) {
                       id: item.item.name,
                     });
                   }}>
-                  <Text style={styles.cell}>{item.item.name}</Text>
+                  <Text style={{...styles.cell, fontWeight: 'bold'}}>{item.item.name}</Text>
                 </Pressable>
                 {columns.map(col => {
+                  if (col.fieldname == "docstatus") {
+                    return (
+                      <View>
+                        <Text style={{...styles.cell, fontWeight: '700', color: item.item[col.fieldname] == 0 ? "tangerine" : "steelblue" }}>
+                          {item.item[col.fieldname] == 0 ? "Draft" : "Submitted" }
+                        </Text>
+                      </View>
+                    );
+                  }
                   return (
                     <View>
                       <Text style={styles.cell}>

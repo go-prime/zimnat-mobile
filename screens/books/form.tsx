@@ -42,6 +42,7 @@ const renderField = (field, data, setData, doctype) => {
     value: data[field.fieldname] || null,
     onChange: val => {
       const newData = {...data};
+      newData.__unsaved = 1
       newData[field.fieldname] = val;
       setData(newData);
     },
@@ -80,14 +81,50 @@ const renderField = (field, data, setData, doctype) => {
   return renderedField;
 };
 
+
+const SaveSubmitButton = ({submittable, unsaved, handler, data}) => {
+  const [label, setLabel] = React.useState("Save")
+  const [visible, setVisible] = React.useState(true)
+  console.log({unsaved})
+  React.useEffect(() => {
+    if(submittable) {
+      if(data.docstatus > 0) {
+        setVisible(false)
+      } else {
+        setVisible(true)
+        if(!unsaved) {
+          setLabel("Submit")
+        } else {
+          setLabel("Save")
+        }
+      }
+    } else {
+      setVisible(true)
+      setLabel("Save")
+    }
+  }, [submittable, unsaved, data])
+
+  if(!visible) {
+    return <View />
+  }
+
+  return (
+    <Pressable style={styles.button} onPress={handler}>
+        <FontAwesomeIcon icon={faSave} size={24} color={'white'} />
+        <Text style={{...text, color: 'white', fontSize: 24}}>{label}</Text>
+      </Pressable>
+  )
+}
+
 class Form extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       fields: [],
       data: {},
+      meta: {},
       doctype: props.route.params.doctype,
-      id: '',
+      id: ''
     };
     // frappe form
     this.fields_dict= {}
@@ -107,7 +144,6 @@ class Form extends React.Component {
         }
       }
     }
-    
   }
 
   loadForm() {
@@ -121,15 +157,17 @@ class Form extends React.Component {
       })
       .then(res => {
         if (res.data.message.meta) {
-          const newData = {...this.state.data}
+          const currData = {...this.state.data}
           res.data.message.meta.fields
             .filter(f => f.fieldtype == "Table")
             .forEach(f => {
-              newData[f.fieldname] = []
+              currData[f.fieldname] = []
             })
+          const newData = {...currData, ...res.data.message.data}
           this.setState({
             fields: res.data.message.meta.fields,
-            data: {...newData, ...res.data.message.data},
+            meta: res.data.message.meta,
+            data: newData,
           });
           eval(res.data.message.script);
           if(frappe.ui.form.events[this.state.doctype].refresh) {
@@ -175,12 +213,16 @@ class Form extends React.Component {
   }
 
   setData(data) {
+    if(JSON.stringify(data) != JSON.stringify(this.state.data)) {
+      data.__unsaved = 1
+    }
     this.setState({data: data})
   }
 
   set_value(fieldname, value) {
     const newData = {...this.doc};
     newData[fieldname] = value;
+    newData.__unsaved = 1
     this.setData(newData);
     window.frm.doc = newData;
     this.script_manager.trigger(fieldname);
@@ -212,7 +254,6 @@ class Form extends React.Component {
 
   }
 
-  
   // End frappe form
 
   componentDidMount() {
@@ -226,7 +267,6 @@ class Form extends React.Component {
     newData.__islocal = 1;
     newData.doctype = this.state.doctype;
     newData.name = `New ${this.state.doctype}`;
-    
     this.setState({data: newData});
     this.loadForm();
 
@@ -249,7 +289,11 @@ class Form extends React.Component {
       this.loadForm();
     }
 
-    if (this.state.data != prevState.data) {
+    if(JSON.stringify(prevProps.route) != JSON.stringify(this.props.route)) {
+      this.setState({id: this.props.route.params.id});
+    }
+
+    if (JSON.stringify(this.state.data) != JSON.stringify(prevState.data)) {
       this.onDataUpdate(prevState.data);
     }
   }
@@ -324,9 +368,7 @@ class Form extends React.Component {
             const msg = JSON.parse(m)
             Alert.alert(msg.title, msg.message)
           })
-          
         }
-        
       });
   }
 
@@ -346,10 +388,12 @@ class Form extends React.Component {
           ),
         )}
         <View style={styles.footer}>
-          <Pressable style={styles.button} onPress={this.saveDocument}>
-            <FontAwesomeIcon icon={faSave} size={24} color={iconColor} />
-            <Text style={{...text, fontSize: 24}}>Save</Text>
-          </Pressable>
+          <SaveSubmitButton
+            submittable={this.state.meta && this.state.meta.is_submittable}
+            unsaved={this.state.data.__unsaved}
+            handler={this.saveDocument}
+            data={this.state.data}
+          />
         </View>
       </ScrollView>
     );

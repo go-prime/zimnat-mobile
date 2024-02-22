@@ -11,6 +11,7 @@ import {
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {
   faCaretDown,
+  faPlus,
   faSearch,
   faTimes,
   faTimesCircle,
@@ -19,6 +20,7 @@ import {card, inputContainer, inputText, text} from '../../styles/inputs';
 import FieldContainer from './field';
 import axios from 'axios'
 import constants from '../../constants';
+import { useNavigation } from '@react-navigation/native';
 
 export default function LinkField(props) {
   const [optionsVisible, setOptionsVisible] = React.useState(false);
@@ -63,6 +65,8 @@ const OptionsModal = props => {
   const [options, setOptions] = React.useState([]);
   const [allOptions, setAllOptions] = React.useState([]);
   const [input, setInput] = React.useState(props.value);
+  const navigator = useNavigation()
+
 
   React.useEffect(() => {
     axios.get(`${constants.server_url}/api/method/erp.public_api.list`, {
@@ -122,6 +126,14 @@ const OptionsModal = props => {
             <FontAwesomeIcon icon={faTimes} />
           </Pressable>
         </View>
+        <Pressable style={styles.createNewBtn} onPress={() => {
+          props.onClose()
+          navigator.navigate("List", {doctype: props.options})
+          navigator.navigate("Form", {doctype: props.options})
+        }}>
+          <FontAwesomeIcon size={28} color={'steelblue'} icon={faPlus} />
+          <Text style={styles.createNewText}>Create New</Text>
+        </Pressable>
         <FlatList
           style={styles.optionList}
           data={options}
@@ -203,4 +215,16 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: 'bold',
   },
+  createNewBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 12,
+    justifyContent: 'center', 
+    gap: 12
+  },
+  createNewText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: 'steelblue'
+  }
 });
