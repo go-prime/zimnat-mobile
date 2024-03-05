@@ -42,7 +42,6 @@ const renderField = (field, data, setData, doctype) => {
     value: data[field.fieldname] || null,
     onChange: val => {
       const newData = {...data};
-      newData.__unsaved = 1
       newData[field.fieldname] = val;
       setData(newData);
     },
@@ -85,8 +84,8 @@ const renderField = (field, data, setData, doctype) => {
 const SaveSubmitButton = ({submittable, unsaved, handler, data}) => {
   const [label, setLabel] = React.useState("Save")
   const [visible, setVisible] = React.useState(true)
-  console.log({unsaved})
   React.useEffect(() => {
+    console.log({submittable, unsaved})
     if(submittable) {
       if(data.docstatus > 0) {
         setVisible(false)
@@ -249,7 +248,6 @@ class Form extends React.Component {
     const newField = this.state.fields[newFieldIndex]
     newField[property] = value
     newFields[newFieldIndex] = newField
-    console.log({newFields})
     this.setState({fields: newFields})
 
   }
@@ -285,8 +283,9 @@ class Form extends React.Component {
       const newData = {...this.state.data};
       newData.name = this.state.id;
       delete newData.__islocal;
-      this.setState({data: newData});
-      this.loadForm();
+      this.setState({data: newData}, () => {
+        this.loadForm();
+      });
     }
 
     if(JSON.stringify(prevProps.route) != JSON.stringify(this.props.route)) {
@@ -295,6 +294,14 @@ class Form extends React.Component {
 
     if (JSON.stringify(this.state.data) != JSON.stringify(prevState.data)) {
       this.onDataUpdate(prevState.data);
+    }
+
+    const contentDiff = JSON.stringify(this.state.data) != JSON.stringify(prevState.data)
+    const keyLengthDiff = Object.keys(this.state.data).length == Object.keys(prevState.data).length
+    if (contentDiff && keyLengthDiff && this.state.data.__unsaved != 1) {
+      const newData = {...this.state.data}
+      newData.__unsaved = 1
+      this.setState({data: newData})
     }
   }
 
