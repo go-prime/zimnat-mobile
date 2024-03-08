@@ -10,7 +10,7 @@ import Loading from '../../components/loading';
 import { Title } from '../../components/text';
 import ImageIcon from '../../components/image';
 import { Image } from 'react-native';
-import { faChartPie, faClock, faEdit, faReply } from '@fortawesome/free-solid-svg-icons';
+import { faChartPie, faClock, faEdit, faLightbulb, faReply } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
@@ -19,6 +19,8 @@ import FormScreen from './form';
 import InsightScreen from './insights';
 import ShortcutScreen from './shortcuts';
 import ListScreen from './list';
+import ReportScreen from './report';
+import ReportListScreen from './report_list';
 
 
 const Stack = createNativeStackNavigator();
@@ -47,10 +49,15 @@ export default function BooksHomeScreen({navigation}): JSX.Element {
       <Stack.Screen component={InsightScreen} name="Insights"></Stack.Screen>
       <Stack.Screen component={ListScreen} name="List"></Stack.Screen>
       <Stack.Screen component={FormScreen} name="Form"></Stack.Screen>
+      <Stack.Screen component={ReportScreen} name="Report"></Stack.Screen>
+      <Stack.Screen component={ReportListScreen} name="Report List"></Stack.Screen>
 
     </Stack.Navigator>
     <View style={styles.footer}>
-      <Pressable onPress={() => navigation.navigate("Insights")} style={styles.footerIcon}>
+    <Pressable onPress={() => navigation.navigate("Insights")} style={styles.footerIcon}>
+        <FontAwesomeIcon icon={faLightbulb} size={28}/>
+      </Pressable>
+      <Pressable onPress={() => navigation.navigate("Report List")} style={styles.footerIcon}>
         <FontAwesomeIcon icon={faChartPie} size={28}/>
       </Pressable>
       <Pressable onPress={() => navigation.navigate("Quick Links")} style={styles.footerIcon}>
