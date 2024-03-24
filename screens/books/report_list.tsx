@@ -26,11 +26,15 @@ export default function ReportListScreen(props) {
       <View style={styles.card}>
         <Heading>Sales Reports</Heading>
             <ReportButton name="Customer Statement" label="Customer Statement" />
+            <ReportButton name="Invoice Ageing" label="Invoice Ageing" />
       </View>
       <View style={styles.card}>
         <Heading>Inventory Reports</Heading>
             <ReportButton name="Stock Ledger" label="Stock Ledger" />
             <ReportButton name="Stock Levels" label="Stock Levels" />
+            <ReportButton name="Outstanding Orders" label="Outstanding Orders" />
+            <ReportButton name="Stock Ageing" label="Stock Ageing" />
+
       </View>
     </ScrollView>
   );

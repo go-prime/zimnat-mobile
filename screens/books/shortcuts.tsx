@@ -24,7 +24,9 @@ import {
   faUser,
   faUserAlt,
   faWarehouse,
-  faSearch
+  faSearch,
+  faBookOpen,
+  faCalculator
 } from '@fortawesome/free-solid-svg-icons';
 import {Heading} from '../../components/text';
 import {background, text} from '../../styles/text';
@@ -35,7 +37,9 @@ import constants from '../../constants';
 
 const ICON_MAP = {
   'fa-book': faBook,
+  'fa-book-open': faBookOpen,
   'fa-boxes': faBoxes,
+  'fa-calculator': faCalculator,
   'fa-building': faBuilding,
   'fa-calendar-alt': faCalendarAlt,
   'fa-chart-line': faChartLine,
@@ -117,6 +121,12 @@ const SHORTCUT_LIST = [
     route: {name: 'List', options: {doctype: 'Purchase Receipt'}},
   },
   {
+    module: 'Inventory',
+    text: 'Debit Note',
+    icon: 'fa-clipboard-list',
+    route: {name: 'List', options: {doctype: 'Debit Note'}},
+  },
+  {
     module: 'Accounts',
     text: 'Customers',
     icon: 'fa-user',
@@ -163,6 +173,18 @@ const SHORTCUT_LIST = [
     text: 'Payment Methods',
     icon: 'fa-list-dots',
     route: {name: 'List', options: {doctype: 'Payment Method'}},
+  },
+  {
+    module: 'Accounts',
+    text: 'Bank Reconciliation',
+    icon: 'fa-book-open',
+    route: {name: 'List', options: {doctype: 'Bank Reconciliation'}},
+  },
+  {
+    module: 'Accounts',
+    text: 'Payment Reconciliation',
+    icon: 'fa-calculator',
+    route: {name: 'Form', options: {doctype: 'Payment Reconciliation'}},
   },
 ];
 
