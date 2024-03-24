@@ -1,7 +1,7 @@
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import React from 'react';
 import {View, Text, Pressable, StyleSheet, ScrollView} from 'react-native';
-import {Heading} from '../../components/text';
+import {Heading, Title} from '../../components/text';
 import {faFileAlt} from '@fortawesome/free-solid-svg-icons';
 import {card} from '../../styles/inputs';
 import {background, text} from '../../styles/text';
@@ -57,14 +57,15 @@ export default function RecentScreen(props) {
     axios
       .get(`${constants.server_url}/api/method/erp.public_api.recents`)
       .then(res => {
-        console.log(res.data);
         setRecents(res.data.message);
       })
       .catch(err => handleErr(err, navigator));
   }, []);
 
   if (recents.length == 0) {
-    return <Loading />;
+    return <View>
+      <Title>No Recent Documents</Title>
+    </View>;
   }
 
   return (

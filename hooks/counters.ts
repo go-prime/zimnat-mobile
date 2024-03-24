@@ -6,9 +6,14 @@ import { useNavigation } from '@react-navigation/native';
 
 const useWishlistCount = () => {
   const [wishlistCount, setWishlistCount] = React.useState(0);
+  const [lastUpdate, setLastUpdate] = React.useState(null)
+
   const navigator = useNavigation()
 
   React.useEffect(() => {
+    if (lastUpdate && (new Date() - lastUpdate) < (1000 * 30)) {
+      return
+    }
     axios
       .get(
         getAbsoluteURL(
@@ -16,6 +21,7 @@ const useWishlistCount = () => {
         ),
       )
       .then(res => {
+        setLastUpdate(new Date())
         if (res.data.message && res.data.message.items) {
           setWishlistCount(res.data.message.items.length);
         } else {
@@ -68,7 +74,11 @@ const useSalesCount = () => {
 
 const useCartCount = () => {
   const [cartCount, setCartCount] = React.useState(0);
+  const [lastUpdate, setLastUpdate] = React.useState(null)
   React.useEffect(() => {
+    if (lastUpdate && (new Date() - lastUpdate) < (1000 * 30)) {
+      return
+    }
     axios
       .get(
         getAbsoluteURL(
@@ -76,6 +86,7 @@ const useCartCount = () => {
         ),
       )
       .then(res => {
+        setLastUpdate(new Date())
         if (res.data.message && res.data.message.items) {
           setCartCount(res.data.message.items.length);
         } else {

@@ -186,8 +186,6 @@ const NavOptions = props => {
   const navigation = useNavigation();
   const wishlistedItems = useWishlistCount()
   const itemsInCart = useCartCount()
-  const openOrders = useOrderCount()
-  const openSales = useSalesCount()
 
   return (
     <View style={{flexDirection: 'row', alignItems: 'flex-end'}}>

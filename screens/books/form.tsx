@@ -85,7 +85,6 @@ const SaveSubmitButton = ({submittable, unsaved, handler, data}) => {
   const [label, setLabel] = React.useState("Save")
   const [visible, setVisible] = React.useState(true)
   React.useEffect(() => {
-    console.log({submittable, unsaved})
     if(submittable) {
       if(data.docstatus > 0) {
         setVisible(false)
@@ -357,7 +356,7 @@ class Form extends React.Component {
     axios
       .post(`${constants.server_url}/api/method/erp.public_api.form`, {
         doctype: this.state.doctype,
-        args: {...this.state.data, doctype: this.state.doctype},
+        args: {...this.state.data, doctype: this.state.doctype}
       })
       .then(res => {
         if (res.data.message) {
