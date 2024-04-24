@@ -104,6 +104,11 @@ const frappe = {
     // throw errors that don't break app
     // throw new Error(msg);
     
+  },
+  datetime: {
+    nowdate: function() {
+      return new Date().toISOString().split('T')[0]
+    }
   }
 };
 

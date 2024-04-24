@@ -185,7 +185,16 @@ export default function LoginScreen({navigation}) {
                 title="Business Books"
                 source={require('../assets/images/books.png')}
                 message="Stay on top of your hustle."
-                handler={() => login(navigation, 'Books')}
+                handler={() => {
+                  AsyncStorage.getItem('user')
+                    .then(user => {
+                      if(user) {
+                        login(navigation, 'Books')
+                      } else {
+                        Alert.alert("Error", "You must be logged in to use business books.")
+                      }
+                    })
+                }}
                 width={width / 2 - 48}
                 height={height / 5 - 12}
               />

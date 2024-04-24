@@ -147,6 +147,7 @@ class Form extends React.Component {
 
   loadForm() {
     console.log('loading form')
+    const me = this
     const params = {
       doctype: this.props.route.params.doctype,
       id: this.props.route.params.id || null
@@ -156,9 +157,13 @@ class Form extends React.Component {
         params: params,
       })
       .then(res => {
-        console.log(res.data.message.data)
         if (res.data.message.meta) {
           const currData = {...this.state.data}
+          // set fields dict 
+          res.data.message.meta.fields.forEach(f => {
+            me.fields_dict[f.fieldname] = f
+          })
+
           res.data.message.meta.fields
             .filter(f => f.fieldtype == "Table")
             .forEach(f => {
@@ -173,6 +178,9 @@ class Form extends React.Component {
           eval(res.data.message.script);
           if(frappe.ui.form.events[this.state.doctype].refresh) {
             frappe.ui.form.events[this.state.doctype].refresh(this)
+          }
+          if(frappe.ui.form.events[this.state.doctype].onload_post_render) {
+            frappe.ui.form.events[this.state.doctype].onload_post_render(this)
           }
         }
       })
