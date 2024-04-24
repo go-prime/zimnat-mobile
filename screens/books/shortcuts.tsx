@@ -311,23 +311,26 @@ const styles = StyleSheet.create({
     ...text,
   },
   search: {
-    backgroundColor: 'white',
+    backgroundColor: '#efefef',
     borderRadius: 4,
     height: 48,
     padding: 4,
     paddingLeft: 12,
-    margin: 8,
+    margin: 12,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12
+    gap: 12,
+    borderWidth: 1,
+    borderColor: "#efefef"
   },
   company: {
     backgroundColor: 'white',
     borderRadius: 8,
     margin: 12,
-    padding: 12,
+    padding: 16,
     flexDirection: 'row',
-    gap: 16
+    gap: 16,
+    elevation: 3
   },
   company_label: {
     color: 'black',

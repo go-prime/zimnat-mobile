@@ -43,7 +43,6 @@ const ValueWidget = ({field, value, onChange}) => {
     is_input: true,
     value: value,
     onChange: (value) => {
-      console.log(value)
       onChange(value)
     }
   }
@@ -112,6 +111,7 @@ export default function ListScreen({navigation, route}) {
   }
 
   const loadEntries = () => {
+    console.log(`Doctype ${doctype}`)
     axios
       .get(`${constants.server_url}/api/method/erp.public_api.list`, {
         params: {doctype: doctype},
@@ -141,8 +141,11 @@ export default function ListScreen({navigation, route}) {
   };
 
   React.useEffect(() => {
-    navigation.setOptions({title: `${doctype} List`});
-    loadEntries();
+    if(![null, ""].includes(doctype)) {
+      navigation.setOptions({title: `${doctype} List`});
+      loadEntries();
+    }
+    
   }, [doctype]);
 
   React.useEffect(() => {
@@ -155,7 +158,6 @@ export default function ListScreen({navigation, route}) {
         params: {doctype: doctype, filters: JSON.stringify(filters)},
       })
       .then(res => {
-        console.log(res.data.message.data);
         setData(res.data.message.data);
       })
       .catch(err => {
@@ -193,7 +195,7 @@ export default function ListScreen({navigation, route}) {
         </Pressable>
       </View>
       <View style={styles.badgeContainer}>
-        {Object.keys(filters).map(k => <Badge field={k} value={filters[k]} clearFilter={clearFilter} />)}
+        {Object.keys(filters).map(k => <Badge key={k} field={k} value={filters[k]} clearFilter={clearFilter} />)}
       </View>
       <ScrollView horizontal={true}>
         <View>
@@ -202,7 +204,7 @@ export default function ListScreen({navigation, route}) {
               <Text style={styles.header}>ID</Text>
             </View>
             {columns.map(col => (
-              <View>
+              <View key={col.label}>
                 <Text style={styles.header}>{col.label}</Text>
               </View>
             ))}
@@ -224,7 +226,7 @@ export default function ListScreen({navigation, route}) {
                 {columns.map(col => {
                   if (col.fieldname == "docstatus") {
                     return (
-                      <View>
+                      <View key={col.fieldname}>
                         <Text style={{...styles.cell, fontWeight: '700', color: item.item[col.fieldname] == 0 ? "tangerine" : "steelblue" }}>
                           {item.item[col.fieldname] == 0 ? "Draft" : "Submitted" }
                         </Text>
@@ -232,7 +234,7 @@ export default function ListScreen({navigation, route}) {
                     );
                   }
                   return (
-                    <View>
+                    <View  key={col.fieldname}>
                       <Text style={styles.cell}>
                         {item.item[col.fieldname]}
                       </Text>
@@ -248,8 +250,7 @@ export default function ListScreen({navigation, route}) {
         <ScrollView style={styles.modalContainer}>
           <View>
             <Text style={textStyles.label}>Field:</Text>
-            <Picker selectedValue={currentField} onValueChange={(value, idx) =>{
-              console.log({value})
+            <Picker selectedValue={currentField} onValueChange={(value, idx) => {
               setCurrentField(value)
             }}>
             <Picker.Item label="-Select Value-" value={''} />

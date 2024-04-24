@@ -33,6 +33,7 @@ const renderField = (field, data, setData, doctype) => {
     fieldtype: field.fieldtype,
     formData: data,
     fieldname: field.fieldname,
+    key: field.fieldname,
     options: field.options,
     hidden: field.hidden,
     mandatory: field.mandatory,
@@ -145,15 +146,17 @@ class Form extends React.Component {
   }
 
   loadForm() {
-    const params = {doctype: this.state.doctype};
-    if (this.state.id) {
-      params.id = this.state.id;
-    }
+    console.log('loading form')
+    const params = {
+      doctype: this.props.route.params.doctype,
+      id: this.props.route.params.id || null
+    };
     axios
       .get(`${constants.server_url}/api/method/erp.public_api.form`, {
         params: params,
       })
       .then(res => {
+        console.log(res.data.message.data)
         if (res.data.message.meta) {
           const currData = {...this.state.data}
           res.data.message.meta.fields
@@ -277,11 +280,12 @@ class Form extends React.Component {
     prevState: Readonly<{}>,
     snapshot?: any,
   ): void {
-    if (prevState.id != this.state.id && this.state.id) {
-      this.props.navigation.setOptions({title: `${this.state.doctype} ${this.state.id}`});
+    if (this.props.route.params.id != prevProps.route.params.id && this.props.route.params.id) {
+      this.props.navigation.setOptions({title: `${this.props.route.params.doctype} ${this.props.route.params.id}`});
       const newData = {...this.state.data};
-      newData.name = this.state.id;
+      newData.name = this.props.route.params.id;
       delete newData.__islocal;
+      console.log('did update')
       this.setState({data: newData}, () => {
         this.loadForm();
       });
@@ -425,6 +429,5 @@ const styles = StyleSheet.create({
   footer: {
     flexDirection: 'row',
     justifyContent: 'flex-start',
-    
   },
 });

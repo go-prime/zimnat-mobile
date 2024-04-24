@@ -7,6 +7,7 @@ import {
   FlatList,
   Pressable,
   Modal,
+  Appearance,
 } from 'react-native';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {
@@ -21,6 +22,7 @@ import FieldContainer from './field';
 import axios from 'axios'
 import constants from '../../constants';
 import { useNavigation } from '@react-navigation/native';
+import { Label } from '../text';
 
 export default function LinkField(props) {
   const [optionsVisible, setOptionsVisible] = React.useState(false);
@@ -108,13 +110,15 @@ const OptionsModal = props => {
     setOptions(allOptions)
   }
 
+  const iconColors = Appearance.getColorScheme() == "dark" ?  "white" : "black"
+
   return (
     <Modal
       transparent={true}
       visible={props.visible}
       onRequestClose={props.onClose}>
       <View style={styles.modalContainer}>
-        <Text style={styles.label}>Select an option</Text>
+        <Label>Select an option</Label>
         <View style={styles.input}>
         <FontAwesomeIcon icon={faSearch} />
           <TextInput
@@ -123,7 +127,7 @@ const OptionsModal = props => {
             style={styles.inputText}
           />
           <Pressable onPress={clearInput}>
-            <FontAwesomeIcon icon={faTimes} />
+            <FontAwesomeIcon icon={faTimes} color={iconColors} />
           </Pressable>
         </View>
         <Pressable style={styles.createNewBtn} onPress={() => {

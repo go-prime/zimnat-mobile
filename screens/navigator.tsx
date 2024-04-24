@@ -69,7 +69,6 @@ import {Alert} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Badge from '../components/badge';
 import { useCartCount, useOrderCount, useSalesCount, useWishlistCount } from '../hooks/counters';
-import getColors from '../hooks/colors';
 
 const Drawer = createDrawerNavigator();
 
@@ -122,7 +121,6 @@ function DrawerContent(props): JSX.Element {
         label="Partner Store"
         handler={() => props.navigation.navigate('Home')}
       />
-
       <DrawerItem
         color={props.iconColor}
         source={require('../assets/images/edutec.png')}
@@ -193,7 +191,7 @@ const NavOptions = props => {
           <FontAwesomeIcon
             icon={faSearch}
             size={28}
-            color={colors.primary}
+            color={props.color}
             style={{marginRight: 16}}
           />
         </Pressable>
@@ -231,7 +229,7 @@ export default function HomeScreenNavigator(props): JSX.Element {
     headerTintColor: props.textColor,
     headerShadowVisible: false,
     drawerStyle: {
-      backgroundColor: props.accent,
+      backgroundColor: Appearance.getColorScheme() == "dark" ? "#333333" : "#ffffff"
     },
   };
   return (

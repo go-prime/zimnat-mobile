@@ -31,13 +31,12 @@ export default function BooksHomeScreen({navigation}): JSX.Element {
     <>
     <Stack.Navigator screenOptions={{
       headerStyle: {
-        backgroundColor: 'transparent',
+        backgroundColor: '#007bff',
       },
       headerShadowVisible: false,
       headerTintColor: 'white',
       headerRight: () => (
         <Pressable onPress={() => {
-          console.log('pressed')
           navigation.navigate('Home')
         }}>
           <FontAwesomeIcon icon={faReply} size={28} color='white' />

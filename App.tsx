@@ -23,6 +23,7 @@ const LightTheme = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
+    background: "#ffffff"
   },
 };
 
@@ -52,7 +53,7 @@ function App(): JSX.Element {
         const colorScheme = screens[route_name]
         if(colorScheme) {
           const newTheme = {...theme}
-          newTheme.colors.background = colorScheme.tertiary
+          // newTheme.colors.background = colorScheme.tertiary
           newTheme.colors.card = colorScheme.quarternary
           newTheme.colors.text = colorScheme.primary
           setTheme(newTheme)
