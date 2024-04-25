@@ -77,15 +77,29 @@ const OptionsModal = props => {
         }
     }).then(res => {
         setAllOptions(res.data.message.data)
+        if(props.value) {
+          setOptions(
+            res.data.message.data.filter(opt => {
+              if (
+                opt.name &&
+                opt.name.toLowerCase().indexOf(props.value.toLowerCase()) > -1
+              ) {
+                return true;
+              }
+              return false;
+            })
+          )
+        } else {
+          setOptions(res.data.message.data)
+        }
+        
     }).catch(err => {
       console.log(err)
       console.log("Could not retrieve the list")
     })
   }, [props.options, props.value]);
 
-  React.useEffect(() => {
-    setOptions(allOptions);
-  }, [allOptions]);
+  
 
   React.useEffect(() => {
     if (input && input.length > 2) {
@@ -100,6 +114,8 @@ const OptionsModal = props => {
           return false;
         }),
       );
+    } else if(input && input.length > 0) {
+      setOptions(allOptions)
     }
   }, [input]);
 

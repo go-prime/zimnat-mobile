@@ -85,7 +85,11 @@ const renderField = (field, data, setData, doctype) => {
 const SaveSubmitButton = ({submittable, unsaved, handler, data}) => {
   const [label, setLabel] = React.useState("Save")
   const [visible, setVisible] = React.useState(true)
+  
   React.useEffect(() => {
+    console.log('submittable')
+    console.log(unsaved)
+    console.log(submittable)
     if(submittable) {
       if(data.docstatus > 0) {
         setVisible(false)
@@ -123,7 +127,7 @@ class Form extends React.Component {
       data: {},
       meta: {},
       doctype: props.route.params.doctype,
-      id: ''
+      id: props.route.params.id ? props.route.params.id : ''
     };
     // frappe form
     this.fields_dict= {}
@@ -146,7 +150,6 @@ class Form extends React.Component {
   }
 
   loadForm() {
-    console.log('loading form')
     const me = this
     const params = {
       doctype: this.props.route.params.doctype,
@@ -174,6 +177,7 @@ class Form extends React.Component {
             fields: res.data.message.meta.fields,
             meta: res.data.message.meta,
             data: newData,
+            initialData: newData
           });
           eval(res.data.message.script);
           if(frappe.ui.form.events[this.state.doctype].refresh) {
@@ -222,16 +226,14 @@ class Form extends React.Component {
   }
 
   setData(data) {
-    if(JSON.stringify(data) != JSON.stringify(this.state.data)) {
-      data.__unsaved = 1
-    }
-    this.setState({data: data})
+    this.setState({data: data}, () => {
+      this.setUnsaved()
+    })
   }
 
   set_value(fieldname, value) {
     const newData = {...this.doc};
     newData[fieldname] = value;
-    newData.__unsaved = 1
     this.setData(newData);
     window.frm.doc = newData;
     this.script_manager.trigger(fieldname);
@@ -259,7 +261,6 @@ class Form extends React.Component {
     newField[property] = value
     newFields[newFieldIndex] = newField
     this.setState({fields: newFields})
-
   }
 
   // End frappe form
@@ -272,7 +273,9 @@ class Form extends React.Component {
     this.setState({doctype: this.props.route.params.doctype});
     this.props.navigation.setOptions({title: `New ${this.state.doctype}`});
     const newData = {...this.state.data};
-    newData.__islocal = 1;
+    if(!this.props.route.params.id ) {
+      newData.__islocal = 1;
+    }
     newData.doctype = this.state.doctype;
     newData.name = `New ${this.state.doctype}`;
     this.setState({data: newData});
@@ -288,15 +291,11 @@ class Form extends React.Component {
     prevState: Readonly<{}>,
     snapshot?: any,
   ): void {
-    if (this.props.route.params.id != prevProps.route.params.id && this.props.route.params.id) {
-      this.props.navigation.setOptions({title: `${this.props.route.params.doctype} ${this.props.route.params.id}`});
-      const newData = {...this.state.data};
-      newData.name = this.props.route.params.id;
-      delete newData.__islocal;
-      console.log('did update')
-      this.setState({data: newData}, () => {
-        this.loadForm();
-      });
+    if(this.state.data.name != prevState.data.name) {
+      this.props.navigation.setOptions({title: `${this.props.route.params.doctype} ${this.state.data.name}`});
+    }   
+    if (this.props.route.params.id != prevProps.route.params.id) {
+      this.loadForm();
     }
 
     if(JSON.stringify(prevProps.route) != JSON.stringify(this.props.route)) {
@@ -307,13 +306,6 @@ class Form extends React.Component {
       this.onDataUpdate(prevState.data);
     }
 
-    const contentDiff = JSON.stringify(this.state.data) != JSON.stringify(prevState.data)
-    const keyLengthDiff = Object.keys(this.state.data).length == Object.keys(prevState.data).length
-    if (contentDiff && keyLengthDiff && this.state.data.__unsaved != 1) {
-      const newData = {...this.state.data}
-      newData.__unsaved = 1
-      this.setState({data: newData})
-    }
   }
 
   onDataUpdate(prevData) {
@@ -388,6 +380,17 @@ class Form extends React.Component {
           })
         }
       });
+  }
+
+  setUnsaved() {
+    const newData = {...this.state.data}
+    if(JSON.stringify(this.state.data) != JSON.stringify(this.state.initialData)) {
+      newData.__unsaved = 1
+    } else {
+      //  might have to delete the key entirely
+      delete newData.__unsaved
+    }
+    this.setState({data: newData})
   }
 
   render() {
