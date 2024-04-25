@@ -68,7 +68,7 @@ import axios from 'axios';
 import {Alert} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Badge from '../components/badge';
-import { useCartCount, useOrderCount, useSalesCount, useWishlistCount } from '../hooks/counters';
+import { useCartCount, useWishlistCount } from '../hooks/counters';
 
 const Drawer = createDrawerNavigator();
 
@@ -105,6 +105,7 @@ const DrawerItem = props => {
 function DrawerContent(props): JSX.Element {
   const wishlistedItems = useWishlistCount()
   const itemsInCart = useCartCount()
+
   return (
     <DrawerContentScrollView {...props}>
       <DrawerItem

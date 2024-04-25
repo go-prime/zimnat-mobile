@@ -20,8 +20,9 @@ import Centered, {Row} from '../components/layout';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faEye, faEyeSlash, faLock} from '@fortawesome/free-solid-svg-icons';
 
-import {useNavigation} from '@react-navigation/native';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
 import NotPermitted from '../components/not_permitted';
+import { Label } from '../components/text';
 
 const toCookieObj = (cookie: string) => {
   const arr = cookie.split(';').map(item => item.split('='));
@@ -128,17 +129,22 @@ const SignInView = (props) => {
 export default function LoginScreen({navigation}) {
   const [showLogin, setShowLogin] = React.useState(false);
   const {width, height} = Dimensions.get('screen');
+  const [username, setUsername] = React.useState(null)
+  const isFocused = useIsFocused()
   React.useEffect(() => {
     AsyncStorage.getItem('expiry').then(expiry => {
       if (expiry && new Date() < new Date(expiry)) {
         AsyncStorage.getItem('user').then(user => {
+          setUsername(user)
           if (user) {
             navigation.navigate('Home');
           }
         });
+      } else {
+        setUsername(null)
       }
     });
-  }, []);
+  }, [isFocused]);
 
   return (
     <ImageBackground
@@ -154,6 +160,7 @@ export default function LoginScreen({navigation}) {
           <SignInView toggleLogin={setShowLogin} />
         ) : (
           <View>
+            {username && <Row><Label bold>Welcome {username}</Label></Row>}
             <Row>
               <LoginCard
                 title="Marketplace"

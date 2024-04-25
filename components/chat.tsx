@@ -77,7 +77,10 @@ const ChatModal = props => {
         const newMessages = res.data.message.map(msg => ({
           text: msg.content,
           bot: true,
-        }));
+        }))
+      .catch(err => {
+        Alert.alert("Error", "Could not send or process your chat message")
+      });
 
         setChat(prevChat => {
           const newChat = [...prevChat, ...newMessages];

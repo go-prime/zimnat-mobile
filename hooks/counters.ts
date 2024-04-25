@@ -2,100 +2,76 @@ import React from 'react';
 import axios from 'axios';
 import {getAbsoluteURL} from '../utils';
 import handleErr from '../scripts/axios';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const useWishlistCount = () => {
   const [wishlistCount, setWishlistCount] = React.useState(0);
-  const [lastUpdate, setLastUpdate] = React.useState(null)
+  const [lastUpdate, setLastUpdate] = React.useState(null);
 
-  const navigator = useNavigation()
+  const navigator = useNavigation();
 
   React.useEffect(() => {
-    if (lastUpdate && (new Date() - lastUpdate) < (1000 * 30)) {
-      return
+    if (lastUpdate && new Date() - lastUpdate < 1000 * 30) {
+      return;
     }
-    axios
-      .get(
-        getAbsoluteURL(
-          '/api/method/billing_engine.billing_engine.api.get_wishlist',
-        ),
-      )
-      .then(res => {
-        setLastUpdate(new Date())
-        if (res.data.message && res.data.message.items) {
-          setWishlistCount(res.data.message.items.length);
-        } else {
-          setWishlistCount(0);
-        }
-      }).catch(err => handleErr(err, navigator));
+    AsyncStorage.getItem('user').then(user => {
+      if (!user) {
+        return;
+      }
+      axios
+        .get(
+          getAbsoluteURL(
+            '/api/method/billing_engine.billing_engine.api.get_wishlist',
+          ),
+        )
+        .then(res => {
+          setLastUpdate(new Date());
+          if (res.data.message && res.data.message.items) {
+            setWishlistCount(res.data.message.items.length);
+          } else {
+            setWishlistCount(0);
+          }
+        })
+        .catch(err => handleErr(err, navigator));
+    });
   }, []);
 
   return wishlistCount;
 };
 
+const useCartCount = () => {
+  const [cartCount, setCartCount] = React.useState(0);
+  const [lastUpdate, setLastUpdate] = React.useState(null);
+  const navigator = useNavigation();
 
-const useOrderCount = () => {
-  const [orderCount, setOrderCount] = React.useState(0);
-  const navigator = useNavigation()
   React.useEffect(() => {
+    if (lastUpdate && new Date() - lastUpdate < 1000 * 30) {
+      return;
+    }
+    AsyncStorage.getItem('user').then(user => {
+      if (!user) {
+        return;
+      }
       axios
         .get(
           getAbsoluteURL(
-            'api/method/billing_engine.billing_engine.api.get_orders',
+            '/api/method/billing_engine.billing_engine.api.get_cart',
           ),
         )
         .then(res => {
-          // console.log(res.data.message);
-        }).catch(err => handleErr(err, navigator))
-  }, []);
-
-  return orderCount;
-};
-
-
-const useSalesCount = () => {
-  const [salesCount, setSalesCount] = React.useState(0);
-  React.useEffect(() => {
-    axios
-      .get(
-        getAbsoluteURL(
-         '/api/method/open_marketplace.open_marketplace.api.sales_summary',
-        ),
-      )
-      .then(res => {
-        setSalesCount(res.data.message.filter(m => m.status != "Delivered").length)
-      });
-  });
-
-  return salesCount;
-};
-
-
-
-const useCartCount = () => {
-  const [cartCount, setCartCount] = React.useState(0);
-  const [lastUpdate, setLastUpdate] = React.useState(null)
-  React.useEffect(() => {
-    if (lastUpdate && (new Date() - lastUpdate) < (1000 * 30)) {
-      return
-    }
-    axios
-      .get(
-        getAbsoluteURL(
-          '/api/method/billing_engine.billing_engine.api.get_cart',
-        ),
-      )
-      .then(res => {
-        setLastUpdate(new Date())
-        if (res.data.message && res.data.message.items) {
-          setCartCount(res.data.message.items.length);
-        } else {
-          setCartCount(0);
-        }
-      });
+          setLastUpdate(new Date());
+          if (res.data.message && res.data.message.items) {
+            setCartCount(res.data.message.items.length);
+          } else {
+            setCartCount(0);
+          }
+        })
+        .catch(err => handleErr(err, navigator));
+    });
   });
 
   return cartCount;
 };
 
-export {useCartCount, useWishlistCount, useOrderCount, useSalesCount};
+export {useCartCount, useWishlistCount};

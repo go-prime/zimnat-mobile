@@ -34,6 +34,7 @@ import {card, iconColor} from '../../styles/inputs';
 import {TextInput} from 'react-native-gesture-handler';
 import axios from 'axios';
 import constants from '../../constants';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ICON_MAP = {
   'fa-book': faBook,
@@ -224,23 +225,28 @@ export default function ShortcutScreen(props) {
 
   React.useEffect(() => {
     console.log('setup')
-    axios.get(`${constants.server_url}/api/method/erp.public_api.setup`)
-      .then(res => {
-        console.log(res.data)
-        if(!res.data.message) {
-          navigator.navigate("Form", {doctype: "Company"})
-        } else {
-          setCompany(res.data.message)
-        }
-      }).catch(err => {
-        console.log('err')
-        console.log(err)
-        if(err.response && err.response.status == 403) {
-          console.log(err.response)
-
+    AsyncStorage.getItem("user")
+      .then(user => {
+        if(!user) {
           navigator.navigate("Login")
         }
+        axios.get(`${constants.server_url}/api/method/erp.public_api.setup`)
+          .then(res => {
+            if(!res.data.message) {
+              navigator.navigate("Form", {doctype: "Company"})
+            } else {
+              setCompany(res.data.message)
+            }
+          }).catch(err => {
+            console.log('err')
+            console.log(err)
+            if(err.response && err.response.status == 403) {
+              console.log(err.response)
+              navigator.navigate("Login")
+            }
+          })
       })
+    
   }, [])
 
   return (

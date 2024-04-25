@@ -77,6 +77,9 @@ const OptionsModal = props => {
         }
     }).then(res => {
         setAllOptions(res.data.message.data)
+    }).catch(err => {
+      console.log(err)
+      console.log("Could not retrieve the list")
     })
   }, [props.options, props.value]);
 
