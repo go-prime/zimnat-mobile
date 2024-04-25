@@ -1,5 +1,9 @@
 import {Appearance} from 'react-native';
 
+const background = {
+    color: Appearance.getColorScheme() === 'dark' ? '#333' : 'white',
+  };
+
 const text = {
     color: Appearance.getColorScheme() === 'dark' ? 'white' : 'black',
   };
@@ -36,4 +40,4 @@ const subTitle = {
 };
 
 
-export {label, text, paragraph, title, subTitle}
+export {label, text, paragraph, title, subTitle, background}

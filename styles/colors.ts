@@ -27,7 +27,6 @@ const edutec_colors = {
   quarternary: "#F5BE6C",
 }
 
-
 export default colors;
 export {
   partner_colors,

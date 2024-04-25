@@ -64,7 +64,6 @@ export default ConfirmSaleScreen = props => {
         },
       )
       .then(res => {
-        console.log(res);
         if (res.data.message && res.data.message.verified) {
           Alert.alert('Success', 'Verified Order successfully');
           setOrderID("")

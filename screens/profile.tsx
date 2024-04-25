@@ -44,7 +44,6 @@ const onSave = (fullname, phone, address, email, imgData, imgName) => {
       },
     )
     .then(res => {
-      console.log(res.data.message);
       Alert.alert('Success', 'Updated your details successfully');
     })
     .catch(err => {

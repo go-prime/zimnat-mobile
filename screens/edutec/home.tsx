@@ -36,7 +36,6 @@ export default function CoursesHomeScreen({navigation}): JSX.Element {
         `${constants.server_url}/api/method/edutec_courses.edutec_courses.api.edutec_home`,
       )
       .then(res => {
-        console.log(res.data.message);
         setData(res.data.message);
       })
       .catch(err => {

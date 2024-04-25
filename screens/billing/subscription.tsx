@@ -40,7 +40,6 @@ export default function SubscriptionListScreen(props) {
         {params: {subscription_id: props.route.params.subscription_id}},
       )
       .then(res => {
-        console.log(res.data.message);
         setData(res.data.message);
       })
       .catch(err => {

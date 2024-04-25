@@ -43,7 +43,6 @@ export default function HomeScreen({navigation}): JSX.Element {
         `${constants.server_url}/api/method/partner_hub.partner_hub.api.get_landing_screen`,
       )
       .then(res => {
-        console.log(res.data.message);
         setData(res.data.message);
       })
       .catch(err => {

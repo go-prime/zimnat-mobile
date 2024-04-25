@@ -1,10 +1,19 @@
 import React from 'react';
 import axios from 'axios';
 import {getAbsoluteURL} from '../utils';
+import handleErr from '../scripts/axios';
+import { useNavigation } from '@react-navigation/native';
 
 const useWishlistCount = () => {
   const [wishlistCount, setWishlistCount] = React.useState(0);
+  const [lastUpdate, setLastUpdate] = React.useState(null)
+
+  const navigator = useNavigation()
+
   React.useEffect(() => {
+    if (lastUpdate && (new Date() - lastUpdate) < (1000 * 30)) {
+      return
+    }
     axios
       .get(
         getAbsoluteURL(
@@ -12,13 +21,14 @@ const useWishlistCount = () => {
         ),
       )
       .then(res => {
+        setLastUpdate(new Date())
         if (res.data.message && res.data.message.items) {
           setWishlistCount(res.data.message.items.length);
         } else {
           setWishlistCount(0);
         }
-      });
-  });
+      }).catch(err => handleErr(err, navigator));
+  }, []);
 
   return wishlistCount;
 };
@@ -26,6 +36,7 @@ const useWishlistCount = () => {
 
 const useOrderCount = () => {
   const [orderCount, setOrderCount] = React.useState(0);
+  const navigator = useNavigation()
   React.useEffect(() => {
       axios
         .get(
@@ -35,8 +46,8 @@ const useOrderCount = () => {
         )
         .then(res => {
           // console.log(res.data.message);
-        })
-  });
+        }).catch(err => handleErr(err, navigator))
+  }, []);
 
   return orderCount;
 };
@@ -52,7 +63,6 @@ const useSalesCount = () => {
         ),
       )
       .then(res => {
-        console.log(res.data.message)
         setSalesCount(res.data.message.filter(m => m.status != "Delivered").length)
       });
   });
@@ -64,7 +74,11 @@ const useSalesCount = () => {
 
 const useCartCount = () => {
   const [cartCount, setCartCount] = React.useState(0);
+  const [lastUpdate, setLastUpdate] = React.useState(null)
   React.useEffect(() => {
+    if (lastUpdate && (new Date() - lastUpdate) < (1000 * 30)) {
+      return
+    }
     axios
       .get(
         getAbsoluteURL(
@@ -72,6 +86,7 @@ const useCartCount = () => {
         ),
       )
       .then(res => {
+        setLastUpdate(new Date())
         if (res.data.message && res.data.message.items) {
           setCartCount(res.data.message.items.length);
         } else {

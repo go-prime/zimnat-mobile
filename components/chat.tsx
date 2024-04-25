@@ -171,8 +171,8 @@ const styles = StyleSheet.create({
     ...shadow,
     elevation: 5,
     position: 'absolute',
-    bottom: 20,
-    right: 20,
+    bottom: 62,
+    right: 30,
   },
   input: {
     marginLeft: 12,

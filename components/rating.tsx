@@ -39,7 +39,6 @@ const submitRating = (rating, description, item_type, item_name, onRating) => {
       },
     )
     .then(res => {
-      console.log(res.data.message);
       Alert.alert('Submitted Rating Successfully');
       onRating();
     })
@@ -66,7 +65,6 @@ const RatingModal = props => {
         },
       )
       .then(res => {
-        console.log(res.data.message);
         setUserRatings(res.data.message);
       })
       .catch(err => {

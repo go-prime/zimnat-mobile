@@ -60,7 +60,7 @@ const login = (navigation, route) => {
   navigation.navigate(route || 'Home');
 };
 
-const SignInView = props => {
+const SignInView = (props) => {
   const navigator = useNavigation();
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
@@ -76,7 +76,7 @@ const SignInView = props => {
         const cookies = toCookieObj(res.headers['set-cookie'][0]);
         AsyncStorage.setItem('expiry', new Date(cookies.Expires).toISOString());
         AsyncStorage.setItem('user', username);
-        navigator.navigate('Profile');
+        props.toggleLogin(false)
       })
       .catch(err => {
         Alert.alert('Error', 'Could not log in with provided credentials');
@@ -151,7 +151,7 @@ export default function LoginScreen({navigation}) {
           style={{width: width, height: height / 4}}
         />
         {showLogin ? (
-          <SignInView />
+          <SignInView toggleLogin={setShowLogin} />
         ) : (
           <View>
             <Row>
@@ -185,7 +185,16 @@ export default function LoginScreen({navigation}) {
                 title="Business Books"
                 source={require('../assets/images/books.png')}
                 message="Stay on top of your hustle."
-                handler={() => login(navigation, 'Books')}
+                handler={() => {
+                  AsyncStorage.getItem('user')
+                    .then(user => {
+                      if(user) {
+                        login(navigation, 'Books')
+                      } else {
+                        Alert.alert("Error", "You must be logged in to use business books.")
+                      }
+                    })
+                }}
                 width={width / 2 - 48}
                 height={height / 5 - 12}
               />

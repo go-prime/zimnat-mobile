@@ -45,7 +45,7 @@ const text = {
   color: Appearance.getColorScheme() === 'dark' ? 'white' : 'black',
 }
 
+const iconColor= Appearance.getColorScheme() === 'dark' ? 'white' : 'black'
 
 
-
-export {label, inputContainer, inputText, shadow, card, text};
+export {label, inputContainer, inputText, shadow, card, text, iconColor};

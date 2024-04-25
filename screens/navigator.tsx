@@ -66,11 +66,9 @@ import SignUpScreen from './sign_up';
 import {getAbsoluteURL} from '../utils';
 import axios from 'axios';
 import {Alert} from 'react-native';
-import getColors from '../hooks/colors';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Badge from '../components/badge';
 import { useCartCount, useOrderCount, useSalesCount, useWishlistCount } from '../hooks/counters';
-
 
 const Drawer = createDrawerNavigator();
 
@@ -80,24 +78,25 @@ const DrawerItem = props => {
   if (dark_mode && props.dark_source) {
     source = props.dark_source;
   }
-
-
   return (
     <Pressable onPress={props.handler}>
       <View style={styles.statusContainer}>
-        <Badge textSize={12} text={props.badgeText}>
-          <View>
-          {props.icon && (
-            <FontAwesomeIcon icon={props.icon} color={colors.primary} size={24} />
-          )}
-          {source && (
-            <Centered styles={{width: 30, height: 30, overflow: 'hidden'}}>
-              <Image source={source} style={{width: 80, height: 80}} />
-            </Centered>
-          )}
-          </View>
-        </Badge>
-        <Text style={styles.status}>{props.label}</Text>
+        {props.icon && (
+          <FontAwesomeIcon icon={props.icon} color={props.color} size={24} />
+        )}
+        {source && (
+          <Centered
+            styles={{
+              width: 30,
+              height: 30,
+              overflow: 'hidden',
+              borderRadius: 15,
+              backgroundColor: 'white',
+            }}>
+            <Image source={source} style={{width: 80, height: 80}} />
+          </Centered>
+        )}
+        <Text style={[styles.status, {color: props.color}]}>{props.label}</Text>
       </View>
     </Pressable>
   );
@@ -122,7 +121,6 @@ function DrawerContent(props): JSX.Element {
         label="Partner Store"
         handler={() => props.navigation.navigate('Home')}
       />
-
       <DrawerItem
         color={props.iconColor}
         source={require('../assets/images/edutec.png')}
@@ -152,8 +150,8 @@ function DrawerContent(props): JSX.Element {
       />
       <DrawerItem
         icon={faShoppingCart}
-        color={props.iconColor}
         badgeText={`${itemsInCart}`}
+        color={props.iconColor}
         label="My Shopping Cart"
         handler={() => props.navigation.navigate('Cart')}
       />
@@ -186,8 +184,6 @@ const NavOptions = props => {
   const navigation = useNavigation();
   const wishlistedItems = useWishlistCount()
   const itemsInCart = useCartCount()
-  const openOrders = useOrderCount()
-  const openSales = useSalesCount()
 
   return (
     <View style={{flexDirection: 'row', alignItems: 'flex-end'}}>
@@ -195,7 +191,7 @@ const NavOptions = props => {
           <FontAwesomeIcon
             icon={faSearch}
             size={28}
-            color={colors.primary}
+            color={props.color}
             style={{marginRight: 16}}
           />
         </Pressable>
@@ -233,7 +229,7 @@ export default function HomeScreenNavigator(props): JSX.Element {
     headerTintColor: props.textColor,
     headerShadowVisible: false,
     drawerStyle: {
-      backgroundColor: props.accent,
+      backgroundColor: Appearance.getColorScheme() == "dark" ? "#333333" : "#ffffff"
     },
   };
   return (

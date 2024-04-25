@@ -44,7 +44,6 @@ export default HHImagePicker = props => {
         if (response.didCancel) {
           return;
         }
-        console.log(response.assets[0]);
         setImg(response.assets[0].base64);
         setName(response.assets[0].fileName);
         props.onImageChange(response.assets[0].base64);
