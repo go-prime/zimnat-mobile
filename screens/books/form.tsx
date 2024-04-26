@@ -85,11 +85,8 @@ const renderField = (field, data, setData, doctype) => {
 const SaveSubmitButton = ({submittable, unsaved, handler, data}) => {
   const [label, setLabel] = React.useState("Save")
   const [visible, setVisible] = React.useState(true)
-  
+
   React.useEffect(() => {
-    console.log('submittable')
-    console.log(unsaved)
-    console.log(submittable)
     if(submittable) {
       if(data.docstatus > 0) {
         setVisible(false)

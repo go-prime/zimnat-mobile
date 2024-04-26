@@ -4,6 +4,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {
   createDrawerNavigator,
   DrawerContentScrollView,
+  useDrawerStatus,
 } from '@react-navigation/drawer';
 
 import {
@@ -12,8 +13,8 @@ import {
   faHeart,
   faShoppingCart,
   faUserGraduate,
-  faShop,
-  faHandshake,
+  faRightToBracket,
+  faEdit,
   faDoorOpen,
   faSearch,
 } from '@fortawesome/free-solid-svg-icons';
@@ -69,6 +70,8 @@ import {Alert} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Badge from '../components/badge';
 import { useCartCount, useWishlistCount } from '../hooks/counters';
+import { Pill } from '../components/text';
+import { Row } from '../components/layout';
 
 const Drawer = createDrawerNavigator();
 
@@ -105,9 +108,57 @@ const DrawerItem = props => {
 function DrawerContent(props): JSX.Element {
   const wishlistedItems = useWishlistCount()
   const itemsInCart = useCartCount()
+  const [user, setUser] = React.useState("")
+  const drawerOpen = useDrawerStatus()
+
+  React.useEffect(() => {
+    AsyncStorage.getItem('user')
+      .then(u => setUser(u))
+  }, [drawerOpen])
+
+  const logOut = () => {
+    axios
+      .post(getAbsoluteURL('/api/method/logout'))
+      .then(res => {
+        AsyncStorage.setItem('expiry', '');
+        AsyncStorage.setItem('user', '');
+        setUser("")
+        Alert.alert(
+          'Success',
+          'Signed out of your account successfully.',
+        );
+        props.navigation.navigate('Login');
+      })
+      .catch(err => {
+        Alert.alert('Error', 'Failed to sign out of your account.');
+        props.navigation.navigate('Login');
+      });
+    
+  }
+
+  const logIn = () => {
+    props.navigation.navigate('Login');
+  }
 
   return (
     <DrawerContentScrollView {...props}>
+      {user && <View >
+        <Row styles={{justifyContent: 'center'}}>
+          <View style={{...styles.circle, backgroundColor: colors.primary}}>
+            <FontAwesomeIcon icon={faUser} color={'white'} size={40}/>
+          </View>
+        </Row>
+        <Row styles={{justifyContent: 'space-around', alignItems: 'center'}}>
+          <Text style={styles.label}>{user}</Text>
+          <Pressable onPress={() => props.navigation.navigate('Profile')}>
+            <Pill> 
+              <FontAwesomeIcon icon={faEdit} color="white" size={14} />
+              <Text> Edit</Text>
+            </Pill>
+          </Pressable>
+        </Row>
+
+      </View>}
       <DrawerItem
         color={props.iconColor}
         source={require('../assets/images/marketplace.png')}
@@ -137,12 +188,6 @@ function DrawerContent(props): JSX.Element {
         handler={() => props.navigation.navigate('Books')}
       />
       <DrawerItem
-        icon={faUser}
-        color={props.iconColor}
-        label="My Profile"
-        handler={() => props.navigation.navigate('Profile')}
-      />
-      <DrawerItem
         icon={faHeart}
         color={props.iconColor}
         label="My Wishlist"
@@ -157,25 +202,10 @@ function DrawerContent(props): JSX.Element {
         handler={() => props.navigation.navigate('Cart')}
       />
       <DrawerItem
-        icon={faDoorOpen}
+        icon={user ? faDoorOpen : faRightToBracket}
         color={props.iconColor}
-        label="Log out"
-        handler={() => {
-          axios
-            .post(getAbsoluteURL('/api/method/logout'))
-            .then(res => {
-              AsyncStorage.setItem('expiry', '');
-              AsyncStorage.setItem('user', '');
-              Alert.alert(
-                'Success',
-                'Signed out of your account successfully.',
-              );
-            })
-            .catch(err => {
-              Alert.alert('Error', 'Failed to sign out of your account.');
-            });
-          props.navigation.navigate('Login');
-        }}
+        label={user ? "Log out" : "Log In / Sign up"}
+        handler={user ? logOut : logIn}
       />
     </DrawerContentScrollView>
   );
@@ -319,4 +349,15 @@ const styles = StyleSheet.create({
     paddingLeft: 18,
     fontSize: 18,
   },
+  circle: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  label: {
+    fontWeight: 'bold',
+    fontSize: 16
+  }
 });

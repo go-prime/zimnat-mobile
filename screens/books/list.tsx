@@ -26,6 +26,7 @@ import LinkField from '../../components/books/link';
 import NumberField from '../../components/books/number';
 import DataField from '../../components/books/data';
 import { textStyles } from '../../components/text';
+import { useIsFocused } from '@react-navigation/native';
 
 
 const ValueWidget = ({field, value, onChange}) => {
@@ -86,6 +87,9 @@ export default function ListScreen({navigation, route}) {
   const [filterType, setFilterType] = React.useState('')
   const [filterValue, setFilterValue] = React.useState(null)
 
+  const isFocused = useIsFocused()
+
+
   const applyFilter = () => {
     const newFilters = {...filters}
     let value = filterValue
@@ -140,13 +144,14 @@ export default function ListScreen({navigation, route}) {
       });
   };
 
+
   React.useEffect(() => {
     if(![null, ""].includes(doctype)) {
       navigation.setOptions({title: `${doctype} List`});
       loadEntries();
     }
     
-  }, [doctype]);
+  }, [isFocused, doctype]);
 
   React.useEffect(() => {
     setDoctype(route.params.doctype);

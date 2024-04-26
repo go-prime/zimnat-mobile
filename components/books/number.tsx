@@ -6,9 +6,8 @@ import FieldContainer from './field';
 export default function NumberField(props) {
   const [value, setValue] = React.useState(props.value);
   React.useEffect(() => {
-    props.onChange(value);
+    props.onChange(parseFloat(value));
   }, [value]);
-
 
   return (
     <FieldContainer

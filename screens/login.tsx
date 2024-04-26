@@ -18,11 +18,15 @@ import colors from '../styles/colors';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Centered, {Row} from '../components/layout';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {faEye, faEyeSlash, faLock} from '@fortawesome/free-solid-svg-icons';
+import {
+  faEye,
+  faEyeSlash,
+  faLock,
+  faDoorOpen,
+} from '@fortawesome/free-solid-svg-icons';
 
 import {useIsFocused, useNavigation} from '@react-navigation/native';
-import NotPermitted from '../components/not_permitted';
-import { Label } from '../components/text';
+import { getAbsoluteURL } from '../utils';
 
 const toCookieObj = (cookie: string) => {
   const arr = cookie.split(';').map(item => item.split('='));
@@ -61,7 +65,7 @@ const login = (navigation, route) => {
   navigation.navigate(route || 'Home');
 };
 
-const SignInView = (props) => {
+const SignInView = props => {
   const navigator = useNavigation();
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
@@ -77,7 +81,8 @@ const SignInView = (props) => {
         const cookies = toCookieObj(res.headers['set-cookie'][0]);
         AsyncStorage.setItem('expiry', new Date(cookies.Expires).toISOString());
         AsyncStorage.setItem('user', username);
-        props.toggleLogin(false)
+        props.setUser(username)
+        props.toggleLogin(false);
       })
       .catch(err => {
         Alert.alert('Error', 'Could not log in with provided credentials');
@@ -129,38 +134,53 @@ const SignInView = (props) => {
 export default function LoginScreen({navigation}) {
   const [showLogin, setShowLogin] = React.useState(false);
   const {width, height} = Dimensions.get('screen');
-  const [username, setUsername] = React.useState(null)
-  const isFocused = useIsFocused()
+  const [username, setUsername] = React.useState(null);
+  const isFocused = useIsFocused();
   React.useEffect(() => {
     AsyncStorage.getItem('expiry').then(expiry => {
       if (expiry && new Date() < new Date(expiry)) {
         AsyncStorage.getItem('user').then(user => {
-          setUsername(user)
-          if (user) {
-            navigation.navigate('Home');
-          }
+          setUsername(user);
         });
       } else {
-        setUsername(null)
+        setUsername(null);
       }
     });
   }, [isFocused]);
+
+  logOut = () => {
+    axios
+      .post(getAbsoluteURL('/api/method/logout'))
+      .then(res => {
+        AsyncStorage.setItem('expiry', '');
+        AsyncStorage.setItem('user', '');
+        setUsername(null)
+        Alert.alert('Success', 'Signed out of your account successfully.');
+      })
+      .catch(err => {
+        Alert.alert('Error', 'Failed to sign out of your account.');
+      });
+  };
 
   return (
     <ImageBackground
       source={require('../assets/images/background_2.png')}
       style={{width: '100%', height: '100%'}}>
-        {/* <NotPermitted visible /> */}
+      {/* <NotPermitted visible /> */}
       <ScrollView>
         <Image
           source={require('../assets/images/Logo-01.png')}
           style={{width: width, height: height / 4}}
         />
         {showLogin ? (
-          <SignInView toggleLogin={setShowLogin} />
+          <SignInView setUser={setUsername} toggleLogin={setShowLogin} />
         ) : (
           <View>
-            {username && <Row><Label bold>Welcome {username}</Label></Row>}
+            {username && (
+              <Row styles={{justifyContent: 'center'}}>
+                <Text style={styles.welcome}>Welcome {username}</Text>
+              </Row>
+            )}
             <Row>
               <LoginCard
                 title="Marketplace"
@@ -193,14 +213,16 @@ export default function LoginScreen({navigation}) {
                 source={require('../assets/images/books.png')}
                 message="Stay on top of your hustle."
                 handler={() => {
-                  AsyncStorage.getItem('user')
-                    .then(user => {
-                      if(user) {
-                        login(navigation, 'Books')
-                      } else {
-                        Alert.alert("Error", "You must be logged in to use business books.")
-                      }
-                    })
+                  AsyncStorage.getItem('user').then(user => {
+                    if (user) {
+                      login(navigation, 'Books');
+                    } else {
+                      Alert.alert(
+                        'Error',
+                        'You must be logged in to use business books.',
+                      );
+                    }
+                  });
                 }}
                 width={width / 2 - 48}
                 height={height / 5 - 12}
@@ -209,21 +231,37 @@ export default function LoginScreen({navigation}) {
           </View>
         )}
         <Centered>
-          <Pressable onPress={() => setShowLogin(!showLogin)}>
-            <Row styles={styles.pill}>
-              {showLogin ? null : (
-                <FontAwesomeIcon
-                  icon={faLock}
-                  color={colors.primary}
-                  size={24}
-                />
-              )}
-              <Text style={styles.signIn}>
-                {' '}
-                {showLogin ? 'Dashboard' : 'Sign In'}
-              </Text>
-            </Row>
-          </Pressable>
+          {!username && (
+            <Pressable onPress={() => setShowLogin(!showLogin)}>
+              <Row styles={styles.pill}>
+                {showLogin ? null : (
+                  <FontAwesomeIcon
+                    icon={faLock}
+                    color={colors.primary}
+                    size={24}
+                  />
+                )}
+                <Text style={styles.signIn}>
+                  {' '}
+                  {showLogin ? 'Dashboard' : 'Sign In'}
+                </Text>
+              </Row>
+            </Pressable>
+          )}
+          {username && (
+            <Pressable onPress={logOut}>
+              <Row styles={styles.pill}>
+                {showLogin ? null : (
+                  <FontAwesomeIcon
+                    icon={faDoorOpen}
+                    color={colors.primary}
+                    size={24}
+                  />
+                )}
+                <Text style={styles.signIn}>{'  '} Log Out</Text>
+              </Row>
+            </Pressable>
+          )}
         </Centered>
       </ScrollView>
     </ImageBackground>
@@ -258,10 +296,10 @@ const styles = StyleSheet.create({
     left: 12,
   },
   welcome: {
-    fontSize: 36,
+    fontSize: 18,
     color: 'black',
     fontWeight: 'bold',
-    margin: 36,
+    margin: 12,
     textAlign: 'center',
   },
   heading: {

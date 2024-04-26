@@ -69,7 +69,7 @@ const useCartCount = () => {
         })
         .catch(err => handleErr(err, navigator));
     });
-  });
+  }, []);
 
   return cartCount;
 };
