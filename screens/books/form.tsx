@@ -167,7 +167,11 @@ class Form extends React.Component {
           res.data.message.meta.fields
             .filter(f => f.fieldtype == "Table")
             .forEach(f => {
-              currData[f.fieldname] = []
+              currData[f.fieldname] = [{
+                name: `New ${f.options} ${randomID()}`,
+                idx: 0,
+                doctype: f.options
+              }]
             })
           const newData = {...currData, ...res.data.message.data}
           this.setState({
@@ -222,18 +226,22 @@ class Form extends React.Component {
     return this.state.fields
   }
 
-  setData(data) {
+  setData(data, callback) {
     this.setState({data: data}, () => {
       this.setUnsaved()
+      if(callback) {
+        callback()
+      }
     })
   }
 
   set_value(fieldname, value) {
     const newData = {...this.doc};
     newData[fieldname] = value;
-    this.setData(newData);
-    window.frm.doc = newData;
-    this.script_manager.trigger(fieldname);
+    this.setData(newData, () => {
+      this.script_manager.trigger(fieldname);
+    });
+    
   }
   set_query(query) {}
   refresh_field(fieldname) {}
@@ -290,7 +298,7 @@ class Form extends React.Component {
   ): void {
     if(this.state.data.name != prevState.data.name) {
       this.props.navigation.setOptions({title: `${this.props.route.params.doctype} ${this.state.data.name}`});
-    }   
+    } 
     if (this.props.route.params.id != prevProps.route.params.id) {
       this.loadForm();
     }
@@ -311,9 +319,6 @@ class Form extends React.Component {
     if (!window.frm) {
       return;
     }
-
-    // HACKY -- replaced by class based app
-    // window.frm.doc = data
 
     // trigger events when data changes.
     let val;

@@ -30,7 +30,7 @@ const frappe = {
     },
   },
   model: {
-    _rebuildData() {
+    _rebuildData(callback) {
       const newData = locals[frm.doc.doctype][frm.doc.name]
       frm.schema.filter(s => s.fieldtype == "Table")
         .forEach(s => {
@@ -47,12 +47,14 @@ const frappe = {
           })
           newData[s.fieldname] = children
         })
-        frm.setData(newData)
+        frm.setData(newData, callback)
     },
     set_value(cdt, cdn, fieldname, value) {
       locals[cdt][cdn][fieldname] = value
-      this._rebuildData()
-      frm.script_manager.trigger(fieldname, cdt, cdn)
+      this._rebuildData(() => {
+        frm.script_manager.trigger(fieldname, cdt, cdn)
+      })
+      
 
     },
   },

@@ -237,6 +237,7 @@ export default function TableField(props) {
       idx: (entries || []).length,
       __islocal: 1,
       name: `New ${props.options} ${randomID()}`,
+      doctype: props.options
     };
     schema.map(field => {
       row[field.fieldname] = null;
