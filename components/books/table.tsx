@@ -277,7 +277,7 @@ export default function TableField(props) {
     entries.forEach((e, i) => {
       Object.keys(e).forEach(k => {
         if (props.value && props.value[i] && e[k] != props.value[i][k]) {
-          console.log(`${e[k]} != ${props.value[i][k]}`);
+          console.log(`${k}: ${e[k]} != ${props.value[i][k]}`);
         }
       });
     });

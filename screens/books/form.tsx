@@ -197,6 +197,14 @@ class Form extends React.Component {
       });
   }
 
+  /**
+   * frappe form
+   */
+
+  get doc() {
+    return this.state.data
+  }
+
   updateLocals() {
     const newLocals = {};
     const docname = this.state.data.name;
@@ -210,16 +218,8 @@ class Form extends React.Component {
           newLocals[f.options][row.name] = row;
         });
       });
-
-    window.locals = newLocals;
-  }
-
-  /**
-   * frappe form
-   */
-
-  get doc() {
-    return this.state.data
+    window.locals = newLocals
+    return newLocals
   }
 
   get schema() {
@@ -236,11 +236,15 @@ class Form extends React.Component {
   }
 
   set_value(fieldname, value) {
-    const newData = {...this.doc};
-    newData[fieldname] = value;
-    this.setData(newData, () => {
+    this.setState(
+      (prevState, props) => {
+      const newData = {...prevState.data};
+      newData[fieldname] = value;
+      return {data: newData}
+    }, () => {
+      this.setUnsaved()
       this.script_manager.trigger(fieldname);
-    });
+    })
     
   }
   set_query(query) {}

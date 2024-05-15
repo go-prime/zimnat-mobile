@@ -13,7 +13,7 @@ const frappe = {
 
   },
   flt: function (value: any, decimals: number): number {
-    if ((null, undefined, '').includes(value)) {
+    if ([null, undefined, '', NaN].includes(value)) {
       return 0;
     }
     if (decimals) {
@@ -31,6 +31,7 @@ const frappe = {
   },
   model: {
     _rebuildData(callback) {
+      // TODO ensure that multiple calls are processed in turn
       const newData = locals[frm.doc.doctype][frm.doc.name]
       frm.schema.filter(s => s.fieldtype == "Table")
         .forEach(s => {
@@ -54,8 +55,6 @@ const frappe = {
       this._rebuildData(() => {
         frm.script_manager.trigger(fieldname, cdt, cdn)
       })
-      
-
     },
   },
   msgprint: function (msg) {
