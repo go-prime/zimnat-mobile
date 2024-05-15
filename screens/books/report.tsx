@@ -115,7 +115,7 @@ export default function ReportScreen({navigation, route}) {
   };
 
   return (
-    <ScrollView>
+    <ScrollView style={{paddingBottom: 60}}>
       <View style={styles.card}>
         <Heading>Filters</Heading>
         {fields.map(f => renderField(f, filters, setFilters))}
