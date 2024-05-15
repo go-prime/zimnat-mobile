@@ -9,6 +9,7 @@ import {
   Dimensions,
   ScrollView,
   TextInput,
+  PermissionsAndroid
 } from 'react-native';
 import {card, shadow} from '../styles/inputs';
 import axios from 'axios';
@@ -27,6 +28,7 @@ import {
 
 import {useIsFocused, useNavigation} from '@react-navigation/native';
 import { getAbsoluteURL } from '../utils';
+import Geolocation from 'react-native-geolocation-service';
 
 const toCookieObj = (cookie: string) => {
   const arr = cookie.split(';').map(item => item.split('='));
@@ -147,6 +149,38 @@ export default function LoginScreen({navigation}) {
       }
     });
   }, [isFocused]);
+
+  const requestLocationPermission = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        {
+          title: 'Geolocation Permission',
+          message: 'Can we access your location?',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        },
+      );
+      if (granted === 'granted') {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (err) {
+      return false;
+    }
+  };
+
+  React.useEffect(() => {
+    requestLocationPermission()
+    Geolocation.getCurrentPosition((position) => {
+      Alert.alert(
+        'Success',
+        `Your location is ${position.coords.latitude}, ${position.coords.longitude}`,
+      );
+    })
+  }, [])
 
   logOut = () => {
     axios
