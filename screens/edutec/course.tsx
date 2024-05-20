@@ -25,6 +25,7 @@ import {Heading, Paragraph, SubTitle, Title} from '../../components/text';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
 import {BundleButton, ItemButton} from '../../components/button';
 import getColors from '../../hooks/colors';
+import useGeolocation from '../../hooks/location';
 
 const onSubscribe = course_id => {
   axios
@@ -45,12 +46,20 @@ export default function CourseScreen(props) {
   const isFocused = useIsFocused();
   const navigation = useNavigation()
   const colorScheme = getColors(navigation)
+  const location = useGeolocation();
 
   React.useEffect(() => {
     axios
       .get(
         `${constants.server_url}/api/method/edutec_courses.edutec_courses.api.get_course`,
-        {params: {course_id: props.route.params.course_id}},
+        {
+          params: {
+            course_id: props.route.params.course_id
+          },
+          headers: {
+            'Fine-Location': JSON.stringify(location),
+          }
+        },
       )
       .then(res => {
         setData(res.data.message);

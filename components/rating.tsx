@@ -82,9 +82,8 @@ const RatingModal = props => {
         <SubTitle subtitle="Rating" />
         <Row styles={{justifyContent: 'space-around'}}>
           {new Array(5).fill(0).map((_, i) => (
-            <Pressable onPress={() => setRating(i+ 1)}>
+            <Pressable key={i} onPress={() => setRating(i+ 1)}>
               <FontAwesomeIcon
-                key={i}
                 icon={faStar}
                 size={36}
                 color={rating >= i + 1 ? '#FFA41C' : "#ccc"}

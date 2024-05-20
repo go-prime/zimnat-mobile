@@ -7,10 +7,15 @@ import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import {Image} from 'react-native';
 import ImageIcon from './image';
 import Centered from './layout';
+import {
+  useCameraPermission,
+} from 'react-native-vision-camera';
 
 export default HHImagePicker = props => {
   const [img, setImg] = React.useState(null);
   const [name, setName] = React.useState(null);
+  const {hasPermission, requestPermission} = useCameraPermission();
+
 
   const selectGalleryImg = () => {
     launchImageLibrary(
@@ -44,6 +49,7 @@ export default HHImagePicker = props => {
         if (response.didCancel) {
           return;
         }
+        console.log(response);
         setImg(response.assets[0].base64);
         setName(response.assets[0].fileName);
         props.onImageChange(response.assets[0].base64);
@@ -51,6 +57,15 @@ export default HHImagePicker = props => {
       },
     );
   };
+
+  if(!hasPermission) {
+    requestPermission()
+    return (
+      <View>
+        <Label>Loading...</Label>
+      </View>
+    )
+  }
 
   return (
     <View>
@@ -85,10 +100,10 @@ export default HHImagePicker = props => {
             <FontAwesomeIcon size={24} color={'#333'} icon={faImage} />
             <Text style={styles.selectBtnText}>From Camera</Text>
           </Pressable>
-          <Pressable style={styles.selectBtn} onPress={selectGalleryImg}>
+          {!props.cameraOnly && <Pressable style={styles.selectBtn} onPress={selectGalleryImg}>
             <FontAwesomeIcon size={24} color={'#333'} icon={faCamera} />
             <Text style={styles.selectBtnText}>From Device</Text>
-          </Pressable>
+          </Pressable>}
         </View>
       )}
     </View>

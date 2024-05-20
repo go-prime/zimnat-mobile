@@ -31,6 +31,8 @@ import Loading from '../../components/loading';
 import {Heading, Paragraph, SubTitle, Title} from '../../components/text';
 import {ItemButton} from '../../components/button';
 import CartCounter from '../../components/cart';
+import useGeolocation from '../../hooks/location';
+
 
 export default function ProductScreen(props) {
   const [data, setData] = React.useState(null);
@@ -38,13 +40,21 @@ export default function ProductScreen(props) {
   const [qty, setQty] = React.useState(1);
   const width = Dimensions.get('screen').width;
   const height = Dimensions.get('screen').height;
+  const location = useGeolocation();
   const navigation = props.navigation;
 
   React.useEffect(() => {
     axios
       .get(
         `${constants.server_url}/api/method/open_marketplace.open_marketplace.api.get_produce`,
-        {params: {produce_id: props.route.params.produce}},
+        {
+          params: {
+            produce_id: props.route.params.produce
+          },
+          headers: {
+            'Fine-Location': JSON.stringify(location),
+          }
+        },
       )
       .then(res => {
         setData(res.data.message);

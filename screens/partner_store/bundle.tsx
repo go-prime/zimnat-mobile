@@ -14,10 +14,7 @@ import colors from '../../styles/colors';
 import {card, shadow, text} from '../../styles/inputs';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import axios from 'axios';
-import {
-  faTimes,
-  
-} from '@fortawesome/free-solid-svg-icons';
+import {faTimes} from '@fortawesome/free-solid-svg-icons';
 import constants from '../../constants';
 import Centered, {Circle, Row} from '../../components/layout';
 import Rating from '../../components/rating';
@@ -29,8 +26,15 @@ import {
 import Loading from '../../components/loading';
 import {RoundedSquareButton} from '../../components/partner_store/buttons';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
-import {Heading, Label, Paragraph, SubTitle, Title} from '../../components/text';
+import {
+  Heading,
+  Label,
+  Paragraph,
+  SubTitle,
+  Title,
+} from '../../components/text';
 import {getAbsoluteURL} from '../../utils';
+import useGeolocation from '../../hooks/location';
 
 const BundleProduct = props => {
   const navigation = useNavigation();
@@ -49,7 +53,12 @@ const BundleProduct = props => {
         <SubTitle>{props.id}</SubTitle>
         <Paragraph>{props.description}</Paragraph>
         <Label>
-          {props.formatted} <FontAwesomeIcon color={Appearance.getColorScheme() == "dark" ? "white": "black"} icon={faTimes} /> {props.qty}
+          {props.formatted}{' '}
+          <FontAwesomeIcon
+            color={Appearance.getColorScheme() == 'dark' ? 'white' : 'black'}
+            icon={faTimes}
+          />{' '}
+          {props.qty}
         </Label>
       </View>
     </Pressable>
@@ -62,11 +71,20 @@ export default function BundleScreen(props) {
   const height = Dimensions.get('screen').height;
   const navigation = props.navigation;
   const isFocused = useIsFocused();
+  const location = useGeolocation();
+
   React.useEffect(() => {
     axios
       .get(
         `${constants.server_url}/api/method/partner_hub.partner_hub.api.get_bundle`,
-        {params: {bundle_id: props.route.params.bundle}},
+        {
+          params: {
+            bundle_id: props.route.params.bundle,
+          },
+          headers: {
+            'Fine-Location': JSON.stringify(location),
+          },
+        },
       )
       .then(res => {
         setData(res.data.message);

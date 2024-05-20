@@ -74,21 +74,29 @@ const SignInView = props => {
   const [showPassword, setShowPassword] = React.useState(false);
 
   const onLogin = () => {
-    axios
+    Geolocation.getCurrentPosition((position) => {
+      axios
       .post(`${constants.server_url}/api/method/login`, {
         usr: username,
         pwd: password,
+      }, {
+        headers: {
+          'fine-location': JSON.stringify(position.coords),
+        },
       })
       .then(res => {
         const cookies = toCookieObj(res.headers['set-cookie'][0]);
         AsyncStorage.setItem('expiry', new Date(cookies.Expires).toISOString());
         AsyncStorage.setItem('user', username);
+        AsyncStorage.setItem('location', JSON.stringify(position.coords));
+        AsyncStorage.setItem('location-last-fetch', new Date().toISOString());
         props.setUser(username)
         props.toggleLogin(false);
       })
       .catch(err => {
         Alert.alert('Error', 'Could not log in with provided credentials');
       });
+    })
   };
 
   return (
@@ -173,27 +181,29 @@ export default function LoginScreen({navigation}) {
   };
 
   React.useEffect(() => {
-    requestLocationPermission()
-    Geolocation.getCurrentPosition((position) => {
-      Alert.alert(
-        'Success',
-        `Your location is ${position.coords.latitude}, ${position.coords.longitude}`,
-      );
-    })
+    requestLocationPermission();
   }, [])
 
   logOut = () => {
-    axios
-      .post(getAbsoluteURL('/api/method/logout'))
-      .then(res => {
-        AsyncStorage.setItem('expiry', '');
-        AsyncStorage.setItem('user', '');
-        setUsername(null)
-        Alert.alert('Success', 'Signed out of your account successfully.');
-      })
-      .catch(err => {
-        Alert.alert('Error', 'Failed to sign out of your account.');
-      });
+    Geolocation.getCurrentPosition((position) => {
+      axios
+        .post(getAbsoluteURL('/api/method/logout'), {}, {
+          headers: {
+            'fine-location': JSON.stringify(position.coords),
+          },
+        })
+        .then(res => {
+          AsyncStorage.setItem('expiry', '');
+          AsyncStorage.setItem('user', '');
+          AsyncStorage.setItem('location', JSON.stringify(position.coords));
+          AsyncStorage.setItem('location-last-fetch', new Date().toISOString());
+          setUsername(null)
+          Alert.alert('Success', 'Signed out of your account successfully.');
+        })
+        .catch(err => {
+          Alert.alert('Error', 'Failed to sign out of your account.');
+        });
+    })
   };
 
   return (

@@ -64,6 +64,7 @@ import AddProduceScreen from './marketplace/merchant/add_produce';
 import MyOrdersScreen from './billing/orders';
 import OrderDetailScreen from './billing/order_detail';
 import SignUpScreen from './sign_up';
+import KYCForm from './kyc';
 import {getAbsoluteURL} from '../utils';
 import axios from 'axios';
 import {Alert} from 'react-native';
@@ -285,6 +286,7 @@ export default function HomeScreenNavigator(props): JSX.Element {
       <Drawer.Screen component={SearchScreen} name="Search" />
       <Drawer.Screen component={SubscriptionListScreen} name="Subscriptions" />
       <Drawer.Screen component={SubscriptionScreen} name="Subscription" />
+      <Drawer.Screen component={KYCForm} name="KYC Information" />
       <Drawer.Screen
         options={{headerShown: false}}
         component={InAppWebViewScreen}

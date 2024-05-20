@@ -20,11 +20,12 @@ import {
   faSave,
   faArrowUp,
   faAngleRight,
+  faEdit,
 } from '@fortawesome/free-solid-svg-icons';
 import Centered, {Row} from '../components/layout';
 import {useIsFocused} from '@react-navigation/native';
 import ImageIcon from '../components/image';
-import {Heading} from '../components/text';
+import {Heading, Paragraph} from '../components/text';
 import Field from '../components/form'
 import { ProfileButton } from '../components/button';
 import ImagePicker from '../components/image_picker'
@@ -127,7 +128,21 @@ export default function ProfileScreen({navigation}) {
       <Field value={phone} onTextChange={setPhone} label={"Phone"} />
       <Field value={email} onTextChange={setEmail} label={"Email"} />
       <Field value={address} multiline onTextChange={setAddress} label={"Address"} />
-  
+
+      <Heading heading="KYC Status" />
+        <Paragraph>All KYC Information is Correct.</Paragraph>
+        <Pressable
+        onPress={() => navigation.navigate("KYC Information")}
+        style={styles.kyc}>
+        <FontAwesomeIcon
+          icon={faEdit}
+          color={'white'}
+          size={24}
+          style={{marginRight: 12}}
+        />
+        <Text style={styles.tierText}>Edit KYC</Text>
+      </Pressable>
+
       <Pressable
         onPress={() => onSave(fullname, phone, address, email, imgData, imgName)}
         style={styles.save}>
@@ -165,6 +180,17 @@ const styles = StyleSheet.create({
   save: {
     padding: 12,
     backgroundColor: colors.tertiary,
+    margin: 8,
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+    marginBottom: 24
+  },
+  kyc: {
+    padding: 12,
+    width: 150,
+    backgroundColor: colors.primary,
     margin: 8,
     borderRadius: 8,
     justifyContent: 'center',
