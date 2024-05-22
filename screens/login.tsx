@@ -202,6 +202,7 @@ export default function LoginScreen({navigation}) {
         })
         .catch(err => {
           Alert.alert('Error', 'Failed to sign out of your account.');
+          AsyncStorage.setItem('user', '');
         });
     })
   };
