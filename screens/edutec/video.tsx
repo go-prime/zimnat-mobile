@@ -25,10 +25,11 @@ import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {Picker} from '@react-native-picker/picker';
 import {card, text} from '../../styles/inputs';
 import colors from '../../styles/colors';
-import {useNavigation} from '@react-navigation/native';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
 import VideoOverlay from './video/overlay';
 import { Heading, Paragraph, SubTitle, Title } from '../../components/text';
 import getColors from '../../hooks/colors'
+import handleResourceRetrievalError from '../../scripts/permissions';
 
 
 const OptionsModal = props => {
@@ -76,6 +77,7 @@ export default function VideoPlayer(props) {
 
   const navigation = useNavigation()
   const colorScheme = getColors(navigation)
+  const isFocused = useIsFocused()
 
   React.useEffect(() => {
     if (!(playerRef && playerRef.current)) {
@@ -102,8 +104,9 @@ export default function VideoPlayer(props) {
       })
       .catch(err => {
         console.log(err.response.data);
+        handleResourceRetrievalError(err, navigation)
       });
-  }, [props.route.params.video_id]);
+  }, [props.route.params.video_id, isFocused]);
 
   if (data === null) {
     return <Loading />;

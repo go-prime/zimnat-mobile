@@ -19,8 +19,9 @@ import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faCheck} from '@fortawesome/free-solid-svg-icons';
 import colors from '../../styles/colors';
 import { SubTitle, Title } from '../../components/text';
-import { useNavigation } from '@react-navigation/native';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
 import getColors from '../../hooks/colors'
+import handleResourceRetrievalError from '../../scripts/permissions';
 
 
 const markAsRead = (article_id, course_id) => {
@@ -46,6 +47,7 @@ export default function ArticleViewer(props) {
   const [data, setData] = React.useState(null);
   const navigation = useNavigation()
   const colorScheme = getColors(navigation)
+  const isFocused = useIsFocused()
   React.useEffect(() => {
     axios
       .get(
@@ -59,8 +61,9 @@ export default function ArticleViewer(props) {
       })
       .catch(err => {
         console.log(err.response.data);
+        handleResourceRetrievalError(err, navigation)
       });
-  }, [props.route.params.article_id]);
+  }, [props.route.params.article_id, isFocused]);
   if (data === null) {
     return <Loading />;
   }

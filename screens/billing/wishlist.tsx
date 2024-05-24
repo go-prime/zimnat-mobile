@@ -67,9 +67,9 @@ const WishlistItem = props => {
       <View style={{flex: 2}}>
         <Pressable
           onPress={() => {
-            // TODO implement routing to cart item
+            navigator.navigate(props.doctype, props.name)
           }}>
-          <SubTitle>{props.label}</SubTitle>
+          <SubTitle>{props.label || props.description}</SubTitle>
         </Pressable>
         <SubTitle>{props.formatted}</SubTitle>
         <AddToCartButton

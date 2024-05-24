@@ -7,8 +7,9 @@ import {background, text} from '../../styles/text';
 import axios from 'axios';
 import constants from '../../constants';
 import Loading from '../../components/loading';
-import { useNavigation } from '@react-navigation/native';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
 import colors from '../../styles/colors';
+import handleResourceRetrievalError from '../../scripts/permissions';
 
 
 const Bar = ({label, value, per, color}) => {
@@ -30,14 +31,19 @@ const Bar = ({label, value, per, color}) => {
 export default function InsightScreen(props) {
   const [insights, setInsights] = React.useState(null);
   const [range, setRange] = React.useState(1)
+  const navigation = useNavigation();
+  const isFocused = useIsFocused()
+
   React.useEffect(() => {
     axios
       .get(`${constants.server_url}/api/method/erp.public_api.insights`)
       .then(res => {
         setInsights(res.data.message);
         setRange(Math.max(res.data.message.expenses, res.data.message.total_sales, res.data.message.profit))
-      });
-  }, []);
+      }).catch(err => {
+        handleResourceRetrievalError(err, navigation)
+      })
+  }, [isFocused]);
 
   if (!insights) {
     return <Loading />;

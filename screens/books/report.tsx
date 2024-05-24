@@ -15,6 +15,7 @@ import TextField from '../../components/books/text';
 import DynamicLinkField from '../../components/books/dynamic_link';
 import colors from '../../styles/colors';
 import Table from '../../components/books/report_table';
+import { useIsFocused } from '@react-navigation/native';
 
 const renderField = (field, filters, setFilters) => {
   let renderedField;
@@ -70,6 +71,8 @@ export default function ReportScreen({navigation, route}) {
   const [title, setTitle] = React.useState('');
   const [data, setData] = React.useState([]);
   const [columns, setColumns] = React.useState([]);
+  const isFocused = useIsFocused()
+
 
   React.useEffect(() => {
     // capture the result
@@ -88,7 +91,7 @@ export default function ReportScreen({navigation, route}) {
         setTitle(route.params.id)
         navigation.setOptions({'title': `${route.params.id} Report`});
       });
-  }, []);
+  }, [isFocused]);
 
 
   if (title.length == 0) {

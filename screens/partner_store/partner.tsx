@@ -10,11 +10,15 @@ import Loading from '../../components/loading';
 import {Dimensions} from 'react-native';
 import {Title, Heading, Paragraph} from '../../components/text';
 import {BundleButton, CourseButton, ItemButton} from '../../components/button';
+import { useIsFocused } from '@react-navigation/native';
+import handleResourceRetrievalError from '../../scripts/permissions';
 
 export default function PartnerScreen(props) {
   const [data, setData] = React.useState(null);
   const navigation = props.navigation;
   const {width, height} = Dimensions.get('screen');
+  const isFocused = useIsFocused()
+  
 
   React.useEffect(() => {
     axios
@@ -27,8 +31,9 @@ export default function PartnerScreen(props) {
       })
       .catch(err => {
         console.log(err.response.data);
+        handleResourceRetrievalError(err, navigation)
       });
-  }, [props.route.params.partner]);
+  }, [props.route.params.partner, isFocused]);
 
   if (!data) {
     return <Loading />;

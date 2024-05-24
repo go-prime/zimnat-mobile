@@ -47,7 +47,7 @@ const SearchItem = props => {
         <ImageIcon url={props.img_url} width={50} height={50} />
         <View style={styles.resultTextContainer}>
           <Text style={subTitle}>{props.title}</Text>
-          <Text style={paragraph}>{props.description}</Text>
+          <Text style={paragraph}>{props.type}</Text>
         </View>
       </Row>
     </Pressable>
@@ -60,9 +60,10 @@ export default SearchScreen = props => {
   const [searching, setSearching] = React.useState(false);
   React.useEffect(() => {
     if (search.length < 3) {
+      setResults([]);
       return;
     }
-
+    setSearching(true);
     axios
       .get(
         `${constants.server_url}/api/method/billing_engine.billing_engine.api.search`,
@@ -71,6 +72,8 @@ export default SearchScreen = props => {
         },
       )
       .then(res => {
+        setSearching(false);
+        console.log(res.data.message)
         setResults(res.data.message);
       })
       .catch(err => {
@@ -109,7 +112,7 @@ export default SearchScreen = props => {
       ) : (
         <Row styles={{padding: 12, alignItems: 'center'}}>
             <FontAwesomeIcon color={'white'} size={28} icon={faRectangleXmark} />
-            <SubTitle>No Results Found</SubTitle>
+            <SubTitle>{search.length > 3 ? "No Results Found" : "Start typing to begin searching"}</SubTitle>
           </Row>
       )}
     </View>

@@ -26,7 +26,8 @@ import Loading from '../../components/loading';
 import {Heading, Title} from '../../components/text';
 import {BundleButton, CategoryButton} from '../../components/button';
 import useColors from '../../hooks/colors';
-import { useTheme } from '@react-navigation/native';
+import { useIsFocused, useTheme } from '@react-navigation/native';
+import handleResourceRetrievalError from '../../scripts/permissions';
 
 const variable = 0;
 
@@ -35,7 +36,8 @@ export default function HomeScreen({navigation}): JSX.Element {
   const [search, setSearch] = React.useState('');
   const [data, setData] = React.useState();
   const colorScheme = useColors(navigation)
-  console.log(colorScheme)
+
+  const isFocused = useIsFocused()
 
   React.useEffect(() => {
     axios
@@ -46,10 +48,9 @@ export default function HomeScreen({navigation}): JSX.Element {
         setData(res.data.message);
       })
       .catch(err => {
-        console.log(err);
-        Alert.alert('Error', 'Failed to get resources.');
+        handleResourceRetrievalError(err, navigation)
       });
-  }, []);
+  }, [isFocused]);
 
   if (!data) {
     return <Loading />;

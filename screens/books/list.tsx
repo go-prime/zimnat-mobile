@@ -27,6 +27,7 @@ import NumberField from '../../components/books/number';
 import DataField from '../../components/books/data';
 import { textStyles } from '../../components/text';
 import { useIsFocused } from '@react-navigation/native';
+import handleResourceRetrievalError from '../../scripts/permissions';
 
 
 const ValueWidget = ({field, value, onChange}) => {
@@ -89,7 +90,6 @@ export default function ListScreen({navigation, route}) {
 
   const isFocused = useIsFocused()
 
-
   const applyFilter = () => {
     const newFilters = {...filters}
     let value = filterValue
@@ -137,10 +137,7 @@ export default function ListScreen({navigation, route}) {
         }
       })
       .catch(err => {
-        console.log(err);
-        if (err.response) {
-          console.log(err.response.data);
-        }
+        handleResourceRetrievalError(err, navigation)
       });
   };
 

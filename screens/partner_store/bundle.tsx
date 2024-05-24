@@ -35,6 +35,7 @@ import {
 } from '../../components/text';
 import {getAbsoluteURL} from '../../utils';
 import useGeolocation from '../../hooks/location';
+import handleResourceRetrievalError from '../../scripts/permissions';
 
 const BundleProduct = props => {
   const navigation = useNavigation();
@@ -91,8 +92,9 @@ export default function BundleScreen(props) {
       })
       .catch(err => {
         console.log(err.response.data);
+        handleResourceRetrievalError(err, navigation)
       });
-  }, [props.route.params.bundle]);
+  }, [props.route.params.bundle, isFocused]);
 
   if (!data) {
     return <Loading />;

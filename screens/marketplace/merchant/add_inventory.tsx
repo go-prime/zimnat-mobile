@@ -7,6 +7,7 @@ import axios from 'axios';
 import {getAbsoluteURL} from '../../../utils';
 import colors from '../../../styles/colors';
 import {SubmitButton} from '../../../components/button';
+import handleResourceRetrievalError from '../../../scripts/permissions';
 
 export default AddInventoryScreen = props => {
   const [produce, setProduce] = React.useState('');
@@ -30,7 +31,7 @@ export default AddInventoryScreen = props => {
       })
       .catch(err => {
         console.log(err.response.data);
-        Alert.alert('Error', 'Failed to create inventory entry');
+        handleResourceRetrievalError(err, navigation)
       });
   };
 

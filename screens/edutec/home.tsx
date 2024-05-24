@@ -124,17 +124,7 @@ export default function CoursesHomeScreen({navigation}): JSX.Element {
           />
         ))}
       </ScrollView>
-      {/* <Heading heading="Featured Partners" />
-      <ScrollView horizontal={true}>
-        {data.publishers.map(p => (
-          <RoundedSquareButton
-            key={p.name}
-            title={p.name}
-            url={`${constants.server_url}${p.image}`}
-            handler={() => navigation.navigate('Partner', {partner: p.name})}
-          />
-        ))}
-      </ScrollView> */}
+      <View style={{height: 40}} />
     </ScrollView>
   );
 }

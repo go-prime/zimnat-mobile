@@ -28,8 +28,9 @@ import {
 import Loading from '../../components/loading';
 import {Heading, Paragraph, SubTitle, Title} from '../../components/text';
 import {BundleButton, CourseButton, ItemButton} from '../../components/button';
-import {useNavigation} from '@react-navigation/native';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
 import CartCounter from '../../components/cart';
+import handleResourceRetrievalError from '../../scripts/permissions';
 
 export default function ProductScreen(props) {
   const [data, setData] = React.useState(null);
@@ -38,6 +39,7 @@ export default function ProductScreen(props) {
   const {width, height} = Dimensions.get('screen');
 
   const navigation = useNavigation();
+  const isFocused = useIsFocused()
 
   React.useEffect(() => {
     axios
@@ -53,8 +55,9 @@ export default function ProductScreen(props) {
       })
       .catch(err => {
         console.log(err.response.data);
+        handleResourceRetrievalError(err, navigation)
       });
-  }, [props.route.params.product]);
+  }, [props.route.params.product, isFocused]);
 
   if (!data) {
     return <Loading />;

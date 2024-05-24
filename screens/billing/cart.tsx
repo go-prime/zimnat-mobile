@@ -149,7 +149,7 @@ export default function CartScreen({navigation}) {
       .then(res => {
         Alert.alert(
           'Success',
-          'Successfully  carried out checkout of your cart.',
+          'Successfully completed checkout of your cart.',
         );
         navigation.navigate('My Orders');
       })

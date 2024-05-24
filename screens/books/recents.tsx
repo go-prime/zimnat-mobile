@@ -11,6 +11,7 @@ import constants from '../../constants';
 import axios from 'axios';
 import {useNavigation} from '@react-navigation/native';
 import handleErr from '../../scripts/axios';
+import handleResourceRetrievalError from '../../scripts/permissions';
 
 
 const Recent = ({document_type, document_id, icon}) => {
@@ -59,7 +60,7 @@ export default function RecentScreen(props) {
       .then(res => {
         setRecents(res.data.message);
       })
-      .catch(err => handleErr(err, navigator));
+      .catch(err => handleResourceRetrievalError(err, navigator));
   }, []);
 
   if (recents.length == 0) {

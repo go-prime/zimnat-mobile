@@ -20,6 +20,7 @@ import Loading from '../../components/loading';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
 import ProgressBar from '../../components/edutec/progress';
 import { Title, SubTitle } from '../../components/text';
+import handleResourceRetrievalError from '../../scripts/permissions';
 
 
 const SubscriptionCard = props => {
@@ -44,6 +45,7 @@ const SubscriptionCard = props => {
 export default function Subscriptions(props) {
   const [data, setData] = React.useState(null);
   const isFocused = useIsFocused();
+  const navigation = useNavigation()
   React.useEffect(() => {
     axios
       .get(
@@ -54,6 +56,7 @@ export default function Subscriptions(props) {
       })
       .catch(err => {
         console.log(err.response.data);
+        handleResourceRetrievalError(err, navigation)
       });
   }, [isFocused]);
 

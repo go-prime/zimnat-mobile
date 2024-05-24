@@ -7,14 +7,17 @@ import constants from '../../constants';
 import ImageIcon from '../../components/image';
 import Loading from '../../components/loading';
 import { ItemButton } from '../../components/button';
-import { useNavigation } from '@react-navigation/native';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
 import { Heading, Paragraph, Title } from '../../components/text';
+import handleResourceRetrievalError from '../../scripts/permissions';
 
 
 export default function CategoryScreen(props) {
   const [data, setData] = React.useState(null);
   const navigation = useNavigation()
   const {width, height} = Dimensions.get('screen')
+  const isFocused = useIsFocused()
+
   React.useEffect(() => {
     axios
       .get(
@@ -25,9 +28,9 @@ export default function CategoryScreen(props) {
         setData(res.data.message);
       })
       .catch(err => {
-        console.log(err.response.data);
+        handleResourceRetrievalError(err, navigation)
       });
-  }, [props.route.params.category]);
+  }, [props.route.params.category, isFocused]);
 
   if(!data) {
     return <Loading />

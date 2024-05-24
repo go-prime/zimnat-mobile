@@ -1,7 +1,7 @@
 import React from 'react';
 import {View, Image} from 'react-native';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {faImage} from '@fortawesome/free-solid-svg-icons';
+import {faImage, faUser} from '@fortawesome/free-solid-svg-icons';
 import colors from '../styles/colors';
 import { getAbsoluteURL } from '../utils';
 
@@ -15,9 +15,9 @@ export default function ImageIcon(props) {
         />
       ) : (
         <FontAwesomeIcon
-          icon={faImage}
+          icon={props.icon ? props.icon : faImage}
           size={props.height}
-          color={colors.primary}
+          color={props.iconColor ? props.iconColor : colors.primary}
         />
       )}
     </View>

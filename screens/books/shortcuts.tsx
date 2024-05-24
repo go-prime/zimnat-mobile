@@ -228,6 +228,7 @@ export default function ShortcutScreen(props) {
     AsyncStorage.getItem("user")
       .then(user => {
         if(!user) {
+          Alert.alert("You need to login first to access this page")
           navigator.navigate("Login")
         }
         axios.get(`${constants.server_url}/api/method/erp.public_api.setup`)

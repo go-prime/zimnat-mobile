@@ -26,8 +26,9 @@ import {useIsFocused, useNavigation} from '@react-navigation/native';
 import {BundleButton, ItemButton} from '../../components/button';
 import getColors from '../../hooks/colors';
 import useGeolocation from '../../hooks/location';
+import handleResourceRetrievalError from '../../scripts/permissions';
 
-const onSubscribe = course_id => {
+const onSubscribe = (course_id, navigation) => {
   axios
     .get(
       `${constants.server_url}/api/method/edutec_courses.edutec_courses.api.subscribe_to_course`,
@@ -38,6 +39,7 @@ const onSubscribe = course_id => {
     })
     .catch(err => {
       console.log(err.response.data);
+      handleResourceRetrievalError(err, navigation)
     });
 };
 
@@ -66,6 +68,7 @@ export default function CourseScreen(props) {
       })
       .catch(err => {
         console.log(err.response.data);
+        
       });
   }, [isFocused]);
 
@@ -94,7 +97,7 @@ export default function CourseScreen(props) {
           },
         ]}
         onPress={() =>
-          data.is_subscribed ? null : onSubscribe(props.route.params.course_id)
+          data.is_subscribed ? null : onSubscribe(props.route.params.course_id, navigation)
         }>
         <Text style={[styles.subscribedBtnText, {color: data.is_subscribed ? colorScheme.primary : colorScheme.secondary}]}>
           SUBSCRIBE{data.is_subscribed ? 'D' : null}

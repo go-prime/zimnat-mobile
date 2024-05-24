@@ -5,7 +5,7 @@ import {
   Text,
   Pressable,
   StyleSheet,
-  Image,
+  Alert,
   ScrollView,
   Dimensions,
 } from 'react-native';
@@ -32,7 +32,7 @@ import {Heading, Paragraph, SubTitle, Title} from '../../components/text';
 import {ItemButton} from '../../components/button';
 import CartCounter from '../../components/cart';
 import useGeolocation from '../../hooks/location';
-
+import handleResourceRetrievalError from '../../scripts/permissions';
 
 export default function ProductScreen(props) {
   const [data, setData] = React.useState(null);
@@ -57,6 +57,7 @@ export default function ProductScreen(props) {
         },
       )
       .then(res => {
+        console.log(res.data);
         setData(res.data.message);
         if (res.data.message.cover_image) {
           setImg(`${constants.server_url}/${res.data.message.cover_image}`);
@@ -64,6 +65,7 @@ export default function ProductScreen(props) {
       })
       .catch(err => {
         console.log(err.response.data);
+        handleResourceRetrievalError(err, navigation)
       });
   }, [props.route.params.produce]);
 

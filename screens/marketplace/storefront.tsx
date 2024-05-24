@@ -11,6 +11,8 @@ import Loading from '../../components/loading';
 import ProduceCard from '../../components/marketplace/produce';
 import {ItemButton} from '../../components/button';
 import { Paragraph } from '../../components/text';
+import handleResourceRetrievalError from '../../scripts/permissions';
+
 export default function StorefrontScreen(props) {
   const [data, setData] = React.useState(null);
   const isFocused = useIsFocused();
@@ -30,9 +32,8 @@ export default function StorefrontScreen(props) {
       })
       .catch(err => {
         console.log(err);
-        if (!err.response) {
-          console.log(err.response.data);
-        }
+        handleResourceRetrievalError(err, navigation)
+        
       });
   }, [isFocused]);
 

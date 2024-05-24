@@ -21,6 +21,7 @@ import axios from 'axios';
 import Loading from '../../../components/loading';
 import {getAbsoluteURL} from '../../../utils';
 import {useNavigation} from '@react-navigation/native';
+import handleResourceRetrievalError from '../../../scripts/permissions';
 
 export default ManageStorefrontScreen = props => {
   const [data, setData] = React.useState(null);
@@ -50,7 +51,7 @@ export default ManageStorefrontScreen = props => {
         setStoreName(res.data.message.name);
       })
       .catch(err => {
-        Alert.alert('Error', 'Could not fetch resources');
+        handleResourceRetrievalError(err, navigation);
       });
   }, []);
 
@@ -74,7 +75,7 @@ export default ManageStorefrontScreen = props => {
         Alert.alert('Success', 'Updated storefront details successfully');
       })
       .catch(err => {
-        Alert.alert('Error', 'Failed to update storefront details');
+        handleResourceRetrievalError(err, navigation);
       });
   };
 

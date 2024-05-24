@@ -70,9 +70,11 @@ import axios from 'axios';
 import {Alert} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Badge from '../components/badge';
-import { useCartCount, useWishlistCount } from '../hooks/counters';
-import { Pill } from '../components/text';
-import { Row } from '../components/layout';
+import {useCartCount, useWishlistCount} from '../hooks/counters';
+import {Label, Pill} from '../components/text';
+import {Row} from '../components/layout';
+import useUserProfile from '../hooks/user';
+import ImageIcon from '../components/image';
 
 const Drawer = createDrawerNavigator();
 
@@ -90,13 +92,7 @@ const DrawerItem = props => {
         )}
         {source && (
           <Centered
-            styles={{
-              width: 30,
-              height: 30,
-              overflow: 'hidden',
-              borderRadius: 15,
-              backgroundColor: 'white',
-            }}>
+            styles={styles.drawerItemIcon}>
             <Image source={source} style={{width: 80, height: 80}} />
           </Centered>
         )}
@@ -107,15 +103,9 @@ const DrawerItem = props => {
 };
 
 function DrawerContent(props): JSX.Element {
-  const wishlistedItems = useWishlistCount()
-  const itemsInCart = useCartCount()
-  const [user, setUser] = React.useState("")
-  const drawerOpen = useDrawerStatus()
-
-  React.useEffect(() => {
-    AsyncStorage.getItem('user')
-      .then(u => setUser(u))
-  }, [drawerOpen])
+  const wishlistedItems = useWishlistCount();
+  const itemsInCart = useCartCount();
+  const userDetails = useUserProfile();
 
   const logOut = () => {
     axios
@@ -123,43 +113,57 @@ function DrawerContent(props): JSX.Element {
       .then(res => {
         AsyncStorage.setItem('expiry', '');
         AsyncStorage.setItem('user', '');
-        setUser("")
-        Alert.alert(
-          'Success',
-          'Signed out of your account successfully.',
-        );
+        setUser('');
+        Alert.alert('Success', 'Signed out of your account successfully.');
         props.navigation.navigate('Login');
       })
       .catch(err => {
         Alert.alert('Error', 'Failed to sign out of your account.');
         props.navigation.navigate('Login');
       });
-    
-  }
+  };
 
   const logIn = () => {
     props.navigation.navigate('Login');
-  }
+  };
 
   return (
     <DrawerContentScrollView {...props}>
-      {user && <View >
-        <Row styles={{justifyContent: 'center'}}>
-          <View style={{...styles.circle, backgroundColor: colors.primary}}>
-            <FontAwesomeIcon icon={faUser} color={'white'} size={40}/>
-          </View>
-        </Row>
-        <Row styles={{justifyContent: 'space-around', alignItems: 'center'}}>
-          <Text style={styles.label}>{user}</Text>
-          <Pressable onPress={() => props.navigation.navigate('Profile')}>
-            <Pill> 
-              <FontAwesomeIcon icon={faEdit} color="white" size={14} />
-              <Text> Edit</Text>
-            </Pill>
-          </Pressable>
-        </Row>
-
-      </View>}
+      {userDetails && userDetails.full_name && (
+        <View style={styles.profile}>
+          <Row>
+            {userDetails.subscription && (
+              <View style={styles.subscriptionBanner}>
+                <Text style={styles.subscriptionBannerText}>
+                  {userDetails.subscription.subscription_type}
+                </Text>
+              </View>
+            )}
+          </Row>
+          <Row styles={{justifyContent: 'center'}}>
+            <View style={{...styles.circle, backgroundColor: colors.primary}}>
+              <ImageIcon
+                iconColor={'white'}
+                width={120}
+                height={120}
+                icon={faUser}
+                url={userDetails.photo}
+              />
+            </View>
+          </Row>
+          <Row styles={{justifyContent: 'center'}}>
+            <Text style={styles.label}>{userDetails.full_name}</Text>
+          </Row>
+          <Row styles={{justifyContent: 'center'}}>
+            <Pressable onPress={() => props.navigation.navigate('Profile')}>
+              <Pill>
+                <FontAwesomeIcon icon={faEdit} color="white" size={14} />
+                <Text> Edit</Text>
+              </Pill>
+            </Pressable>
+          </Row>
+        </View>
+      )}
       <DrawerItem
         color={props.iconColor}
         source={require('../assets/images/marketplace.png')}
@@ -203,10 +207,14 @@ function DrawerContent(props): JSX.Element {
         handler={() => props.navigation.navigate('Cart')}
       />
       <DrawerItem
-        icon={user ? faDoorOpen : faRightToBracket}
+        icon={
+          userDetails && userDetails.full_name ? faDoorOpen : faRightToBracket
+        }
         color={props.iconColor}
-        label={user ? "Log out" : "Log In / Sign up"}
-        handler={user ? logOut : logIn}
+        label={
+          userDetails && userDetails.full_name ? 'Log out' : 'Log In / Sign up'
+        }
+        handler={userDetails && userDetails.full_name ? logOut : logIn}
       />
     </DrawerContentScrollView>
   );
@@ -214,38 +222,38 @@ function DrawerContent(props): JSX.Element {
 
 const NavOptions = props => {
   const navigation = useNavigation();
-  const wishlistedItems = useWishlistCount()
-  const itemsInCart = useCartCount()
+  const wishlistedItems = useWishlistCount();
+  const itemsInCart = useCartCount();
 
   return (
     <View style={{flexDirection: 'row', alignItems: 'flex-end'}}>
-        <Pressable onPress={() => navigation.navigate('Search')}>
+      <Pressable onPress={() => navigation.navigate('Search')}>
+        <FontAwesomeIcon
+          icon={faSearch}
+          size={28}
+          color={props.color}
+          style={{marginRight: 16}}
+        />
+      </Pressable>
+      <Badge text={`${wishlistedItems}`} textSize={12}>
+        <Pressable onPress={() => navigation.navigate('Wishlist')}>
           <FontAwesomeIcon
-            icon={faSearch}
+            icon={faHeart}
             size={28}
             color={props.color}
             style={{marginRight: 16}}
           />
         </Pressable>
-        <Badge text={`${wishlistedItems}`} textSize={12}>
-        <Pressable onPress={() => navigation.navigate('Wishlist')}>
-        <FontAwesomeIcon
-          icon={faHeart}
-          size={28}
-          color={props.color}
-          style={{marginRight: 16}}
-        />
-      </Pressable>
       </Badge>
       <Badge text={`${itemsInCart}`} textSize={12}>
         <Pressable onPress={() => navigation.navigate('Cart')}>
-        <FontAwesomeIcon
-          icon={faShoppingCart}
-          size={28}
-          color={props.color}
-          style={{marginRight: 16}}
-        />
-      </Pressable>
+          <FontAwesomeIcon
+            icon={faShoppingCart}
+            size={28}
+            color={props.color}
+            style={{marginRight: 16}}
+          />
+        </Pressable>
       </Badge>
     </View>
   );
@@ -261,7 +269,8 @@ export default function HomeScreenNavigator(props): JSX.Element {
     headerTintColor: props.textColor,
     headerShadowVisible: false,
     drawerStyle: {
-      backgroundColor: Appearance.getColorScheme() == "dark" ? "#333333" : "#ffffff"
+      backgroundColor:
+        Appearance.getColorScheme() == 'dark' ? '#333333' : '#ffffff',
     },
   };
   return (
@@ -352,14 +361,45 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   circle: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+    width: 120,
+    height: 120,
+    borderRadius: 60,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    overflow: 'hidden',
   },
   label: {
     fontWeight: 'bold',
-    fontSize: 16
+    fontSize: 20,
+    color: colors.secondary,
+    marginBottom: 6,
+    marginTop: 6,
+  },
+  subscriptionBanner: {
+    backgroundColor: colors.primary,
+    padding: 6,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingLeft: 12,
+    width: 150,
+    marginBottom: 12,
+    borderBottomRightRadius: 24,
+  },
+  subscriptionBannerText: {
+    color: 'white',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  profile: {
+    backgroundColor: colors.quarternary,
+    marginTop: -5,
+    paddingBottom: 12,
+  },
+  drawerItemIcon: {
+      width: 30,
+      height: 30,
+      overflow: 'hidden',
+      borderRadius: 15,
+      backgroundColor: 'white'
   }
 });

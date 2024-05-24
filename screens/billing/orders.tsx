@@ -13,18 +13,24 @@ import { Money } from '../../components/text';
 const OrderItem = props => {
   const navigation = useNavigation();
   const colorScheme = getColors(navigation);
+  const colorMap = {
+    "Order": "#007bff",
+    "Paid": "#28a745",
+    "Cancelled": "#dc3545",
+    "Pending": "#ffc107"
+  }
 
   return (
     <Pressable
       onPress={() => {
         navigation.navigate('Order Detail', {order_id: props.name});
       }}
-      style={[styles.container, {borderColor: colorScheme.primary}]}>
+      style={[styles.container, {borderColor: colorMap[props.status]}]}>
       <SubTitle light>{props.name}</SubTitle>
       <Row styles={{alignItems: 'center'}}>
         <View style={{flex: 3}}>
           <Label>{props.supplier_name}</Label>
-          <Pill containerStyles={{alignSelf: 'flex-start'}}>
+          <Pill color={colorMap[props.status]} containerStyles={{alignSelf: 'flex-start'}}>
             {props.status}
           </Pill>
         </View>

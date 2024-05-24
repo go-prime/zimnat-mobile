@@ -10,6 +10,7 @@ import {SubmitButton} from '../../../components/button';
 import ImagePicker from '../../../components/image_picker';
 import axios from 'axios';
 import {getAbsoluteURL} from '../../../utils';
+import handleResourceRetrievalError from '../../../scripts/permissions';
 
 export default AddProduceScreen = props => {
   const [category, setCategory] = React.useState('');
@@ -18,6 +19,8 @@ export default AddProduceScreen = props => {
   const [img, setImg] = React.useState('');
   const [imgName, setImgName] = React.useState('');
   const [description, setDescription] = React.useState('');
+  const navigation = useNavigation();
+
   const submitProduce = () => {
     axios
       .post(
@@ -46,8 +49,7 @@ export default AddProduceScreen = props => {
       })
       .catch(err => {
         console.log(err.response.data);
-
-        Alert.alert('Error', 'Could not add produce to storefront');
+        handleResourceRetrievalError(err, navigation)
       });
   };
 

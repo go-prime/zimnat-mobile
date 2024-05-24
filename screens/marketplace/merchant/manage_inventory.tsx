@@ -12,12 +12,15 @@ import {useNavigation} from '@react-navigation/native';
 import getColors from '../../../hooks/colors';
 import {card, text} from '../../../styles/inputs';
 import Table from '../../../components/table';
-
+import handleResourceRetrievalError from '../../../scripts/permissions';
+import { useIsFocused } from '@react-navigation/native';
 
 export default ManageInventoryScreen = props => {
   const [data, setData] = React.useState(null);
   const navigation = useNavigation();
   const colorScheme = getColors(navigation);
+  const isFocused = useIsFocused();
+
   React.useEffect(() => {
     axios
       .get(
@@ -30,9 +33,9 @@ export default ManageInventoryScreen = props => {
       })
       .catch(err => {
         console.log(err);
-        Alert.alert('Error', 'Could not retrieve resources from the server');
+        handleResourceRetrievalError(err, navigation);
       });
-  }, []);
+  }, [isFocused]);
 
   if (!data) {
     return <Loading />;
