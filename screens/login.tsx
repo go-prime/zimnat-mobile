@@ -4,12 +4,11 @@ import {
   Text,
   Pressable,
   StyleSheet,
-  ImageBackground,
   Alert,
   Dimensions,
   ScrollView,
   TextInput,
-  PermissionsAndroid
+  PermissionsAndroid,
 } from 'react-native';
 import {card, shadow} from '../styles/inputs';
 import axios from 'axios';
@@ -24,11 +23,15 @@ import {
   faEyeSlash,
   faLock,
   faDoorOpen,
+  faUser,
 } from '@fortawesome/free-solid-svg-icons';
-
+import Carousel from 'react-native-reanimated-carousel';
+import ImageIcon from '../components/image';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
-import { getAbsoluteURL } from '../utils';
+import {getAbsoluteURL} from '../utils';
 import Geolocation from 'react-native-geolocation-service';
+import { AnimatedButton, LoadingButton } from '../components/button';
+import Loading from '../components/loading';
 
 const toCookieObj = (cookie: string) => {
   const arr = cookie.split(';').map(item => item.split('='));
@@ -39,68 +42,63 @@ const toCookieObj = (cookie: string) => {
   return resp;
 };
 
-const LoginCard = props => {
-  return (
-    <Pressable
-      onPress={() => {
-        props.handler();
-      }}>
-      <View style={[styles.container]}>
-        <Centered>
-          <Image
-            source={props.source}
-            style={{width: props.width, height: props.height, marginBottom: 18}}
-          />
-        </Centered>
-        <View style={styles.loginText}>
-          <Text style={styles.title}>{props.title}</Text>
-          <Text style={styles.subtitle}>{props.message}</Text>
-        </View>
-      </View>
-    </Pressable>
-  );
-};
 
-const login = (navigation, route) => {
-  //  TODO check if token exists and navigate else redirect to login
-
-  navigation.navigate(route || 'Home');
-};
+const animProps = {
+  animatedInitial: 1,
+  animatedStyle: 'opacity',
+  animatedTo: 0.2,
+  animationDuration: 500
+}
 
 const SignInView = props => {
   const navigator = useNavigation();
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [showPassword, setShowPassword] = React.useState(false);
+  const {width, height} = Dimensions.get('screen');
+  const [loggingIn, setLoggingIn] = React.useState(false)
 
   const onLogin = () => {
-    Geolocation.getCurrentPosition((position) => {
+    setLoggingIn(true)
+    Geolocation.getCurrentPosition(position => {
       axios
-      .post(`${constants.server_url}/api/method/login`, {
-        usr: username,
-        pwd: password,
-      }, {
-        headers: {
-          'fine-location': JSON.stringify(position.coords),
-        },
-      })
-      .then(res => {
-        const cookies = toCookieObj(res.headers['set-cookie'][0]);
-        AsyncStorage.setItem('expiry', new Date(cookies.Expires).toISOString());
-        AsyncStorage.setItem('user', username);
-        AsyncStorage.setItem('location', JSON.stringify(position.coords));
-        AsyncStorage.setItem('location-last-fetch', new Date().toISOString());
-        props.setUser(username)
-        props.toggleLogin(false);
-      })
-      .catch(err => {
-        Alert.alert('Error', 'Could not log in with provided credentials');
-      });
-    })
+        .post(
+          `${constants.server_url}/api/method/login`,
+          {
+            usr: username,
+            pwd: password,
+          },
+          {
+            headers: {
+              'fine-location': JSON.stringify(position.coords),
+            },
+          },
+        )
+        .then(res => {
+          const cookies = toCookieObj(res.headers['set-cookie'][0]);
+          AsyncStorage.setItem(
+            'expiry',
+            new Date(cookies.Expires).toISOString(),
+          );
+          AsyncStorage.setItem('user', username);
+          AsyncStorage.setItem('location', JSON.stringify(position.coords));
+          AsyncStorage.setItem('location-last-fetch', new Date().toISOString());
+          navigator.navigate("Dashboard")
+          setLoggingIn(false)
+        })
+        .catch(err => {
+          setLoggingIn(false)
+          Alert.alert('Error', 'Could not log in with provided credentials');
+        });
+    });
   };
 
   return (
     <View style={styles.signInCard}>
+      <Image
+        source={require('../assets/images/Logo-01.png')}
+        style={{width: width, height: height / 4}}
+      />
       <View style={styles.inputContainer}>
         <TextInput
           placeholder="Username"
@@ -128,32 +126,76 @@ const SignInView = props => {
         </Pressable>
       </View>
       <Row styles={styles.buttonRow}>
-        <Pressable style={styles.primaryButton} onPress={onLogin}>
+        <LoadingButton
+            loading={loggingIn}
+            indicatorColor={'white'}
+            style={styles.primaryButton} 
+            onPress={onLogin}
+            {...animProps}>
           <Text style={styles.buttonText}>Login</Text>
-        </Pressable>
-        <Pressable
+        </LoadingButton>
+        <AnimatedButton
+          {...animProps}
           style={styles.secondaryButton}
           onPress={() => navigator.navigate('Sign Up')}>
           <Text style={styles.buttonText}>Sign Up</Text>
-        </Pressable>
+        </AnimatedButton>
       </Row>
     </View>
   );
 };
 
+const HomeCarousel = () => {
+  const {width, height} = Dimensions.get('screen');
+  const data = {
+    carousel: [
+      {image: require('../assets/images/marketplace.png')},
+      {image: require('../assets/images/partner_store.png')},
+      {image: require('../assets/images/edutec.png')},
+      {image: require('../assets/images/books.png')},
+    ],
+  };
+
+  return (
+    <Carousel
+      loop
+      width={width - 24}
+      height={height * 0.7}
+      autoPlay={true}
+      data={data.carousel}
+      scrollAnimationDuration={3000}
+      renderItem={({index}) => {
+        const item = data.carousel[index];
+        console.log(item);
+        return (
+          <View style={styles.carouselItemContainer}>
+            <Image
+              source={item.image}
+              style={{
+                width: width - 24,
+                height: 0.6 * height,
+              }}
+            />
+          </View>
+        );
+      }}
+    />
+  );
+};
+
 export default function LoginScreen({navigation}) {
   const [showLogin, setShowLogin] = React.useState(false);
-  const {width, height} = Dimensions.get('screen');
-  const [username, setUsername] = React.useState(null);
   const isFocused = useIsFocused();
+  const {width, height} = Dimensions.get('screen');
+
   React.useEffect(() => {
     AsyncStorage.getItem('expiry').then(expiry => {
       if (expiry && new Date() < new Date(expiry)) {
         AsyncStorage.getItem('user').then(user => {
-          setUsername(user);
+          if(user) {
+            navigation.navigate("Dashboard")
+          }
         });
-      } else {
-        setUsername(null);
       }
     });
   }, [isFocused]);
@@ -182,134 +224,46 @@ export default function LoginScreen({navigation}) {
 
   React.useEffect(() => {
     requestLocationPermission();
-  }, [])
-
-  logOut = () => {
-    Geolocation.getCurrentPosition((position) => {
-      axios
-        .post(getAbsoluteURL('/api/method/logout'), {}, {
-          headers: {
-            'fine-location': JSON.stringify(position.coords),
-          },
-        })
-        .then(res => {
-          AsyncStorage.setItem('expiry', '');
-          AsyncStorage.setItem('user', '');
-          AsyncStorage.setItem('location', JSON.stringify(position.coords));
-          AsyncStorage.setItem('location-last-fetch', new Date().toISOString());
-          setUsername(null)
-          Alert.alert('Success', 'Signed out of your account successfully.');
-        })
-        .catch(err => {
-          Alert.alert('Error', 'Failed to sign out of your account.');
-          AsyncStorage.setItem('user', '');
-        });
-    })
-  };
+  }, []);
 
   return (
-    <ImageBackground
-      source={require('../assets/images/background_2.png')}
-      style={{width: '100%', height: '100%'}}>
-      {/* <NotPermitted visible /> */}
-      <ScrollView>
-        <Image
-          source={require('../assets/images/Logo-01.png')}
-          style={{width: width, height: height / 4}}
-        />
-        {showLogin ? (
-          <SignInView setUser={setUsername} toggleLogin={setShowLogin} />
-        ) : (
-          <View>
-            {username && (
-              <Row styles={{justifyContent: 'center'}}>
-                <Text style={styles.welcome}>Welcome {username}</Text>
+    <ScrollView>
+      {showLogin ? (
+        <SignInView />
+      ) : (
+        <>
+          <Image
+              source={require('../assets/images/Logo-01.png')}
+              style={{
+                width: width - 24,
+                height: 0.1 * height,
+              }}
+            />
+          <HomeCarousel />
+          <Row>
+            <AnimatedButton {...animProps} onPress={() => setShowLogin(!showLogin)}>
+              <Row styles={styles.signIn}>
+                <FontAwesomeIcon
+                  icon={faLock}
+                  color={colors.primary}
+                  size={24}
+                />
+                <Text style={styles.signInText}> Sign In</Text>
               </Row>
-            )}
-            <Row>
-              <LoginCard
-                title="Marketplace"
-                message="Shop with our hustlers."
-                source={require('../assets/images/marketplace.png')}
-                handler={() => login(navigation, 'Marketplace Home')}
-                width={width / 2 - 48}
-                height={height / 5 - 12}
-              />
-              <LoginCard
-                title="Partners"
-                message="Equip your next hustle."
-                source={require('../assets/images/partner_store.png')}
-                handler={() => login(navigation)}
-                width={width / 2 - 48}
-                height={height / 5 - 12}
-              />
-            </Row>
-            <Row>
-              <LoginCard
-                title="Edutec"
-                source={require('../assets/images/edutec.png')}
-                message="Get the skills needed for your next hustle."
-                handler={() => login(navigation, 'Courses Home')}
-                width={width / 2 - 48}
-                height={height / 5 - 12}
-              />
-              <LoginCard
-                title="Business Books"
-                source={require('../assets/images/books.png')}
-                message="Stay on top of your hustle."
-                handler={() => {
-                  AsyncStorage.getItem('user').then(user => {
-                    if (user) {
-                      login(navigation, 'Books');
-                    } else {
-                      Alert.alert(
-                        'Error',
-                        'You must be logged in to use business books.',
-                      );
-                    }
-                  });
-                }}
-                width={width / 2 - 48}
-                height={height / 5 - 12}
-              />
-            </Row>
-          </View>
-        )}
-        <Centered>
-          {!username && (
-            <Pressable onPress={() => setShowLogin(!showLogin)}>
-              <Row styles={styles.pill}>
-                {showLogin ? null : (
-                  <FontAwesomeIcon
-                    icon={faLock}
-                    color={colors.primary}
-                    size={24}
-                  />
-                )}
-                <Text style={styles.signIn}>
-                  {' '}
-                  {showLogin ? 'Dashboard' : 'Sign In'}
-                </Text>
+            </AnimatedButton>
+            <AnimatedButton 
+              {...animProps}
+              style={styles.signUp} 
+              onPress={() => navigation.navigate('Sign Up')}>
+              <Row >
+                <FontAwesomeIcon icon={faUser} color={'white'} size={24} />
+                <Text style={styles.signUpText}> Sign Up</Text>
               </Row>
-            </Pressable>
-          )}
-          {username && (
-            <Pressable onPress={logOut}>
-              <Row styles={styles.pill}>
-                {showLogin ? null : (
-                  <FontAwesomeIcon
-                    icon={faDoorOpen}
-                    color={colors.primary}
-                    size={24}
-                  />
-                )}
-                <Text style={styles.signIn}>{'  '} Log Out</Text>
-              </Row>
-            </Pressable>
-          )}
-        </Centered>
-      </ScrollView>
-    </ImageBackground>
+            </AnimatedButton>
+          </Row>
+        </>
+      )}
+    </ScrollView>
   );
 }
 
@@ -359,12 +313,17 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: 'white',
   },
-  signIn: {
+  signInText: {
     fontWeight: 'bold',
     color: colors.primary,
     fontSize: 18,
   },
-  pill: {
+  signUpText: {
+    fontWeight: 'bold',
+    color: 'white',
+    fontSize: 18,
+  },
+  signIn: {
     alignItems: 'center',
     backgroundColor: 'white',
     padding: 12,
@@ -374,6 +333,15 @@ const styles = StyleSheet.create({
     margin: 12,
     borderWidth: 1,
     borderColor: colors.primary,
+  },
+  signUp: {
+    alignItems: 'center',
+    backgroundColor: colors.secondary,
+    padding: 12,
+    borderRadius: 18,
+    paddingLeft: 40,
+    paddingRight: 40,
+    margin: 12,
   },
   primaryButton: {
     backgroundColor: colors.primary,
@@ -411,5 +379,8 @@ const styles = StyleSheet.create({
   inputText: {
     color: 'black',
     flex: 1,
+  },
+  carouselItemContainer: {
+    position: 'relative',
   },
 });

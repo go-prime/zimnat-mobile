@@ -11,7 +11,6 @@ import {
   StyleSheet,
   TextInput,
   Modal,
-  FlatList,
   Text,
   Pressable,
   ActivityIndicator,
@@ -92,6 +91,8 @@ const ChatModal = props => {
         if (err.response) {
           console.log(err.response);
         }
+        setIsSending(false);
+
       });
   };
 
@@ -129,8 +130,12 @@ const ChatModal = props => {
                 onBlur={() => setCustomMargin(12)}
               />
             </Row>
-            <Pressable onPress={sendMessage} style={[styles.sendButton, {backgroundColor: props.colorScheme.primary}]}>
+            <Pressable disabled={isSending} onPress={sendMessage} style={[styles.sendButton, {backgroundColor: props.colorScheme.primary}]}>
+              {isSending ? (
+                <ActivityIndicator size={24} color={'white'} />
+              ) : (
               <FontAwesomeIcon icon={faPaperPlane} size={20} color={'white'} />
+              )}
             </Pressable>
           </Row>
         </View>

@@ -16,13 +16,15 @@ import Loading from '../../components/loading';
 import {CourseButton} from '../../components/button';
 import {Heading, Paragraph, Title} from '../../components/text';
 import SubscriptionCard from '../../components/billing_engine/subscription_card';
-import {useIsFocused} from '@react-navigation/native';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
 import SubscriptionHistory from '../../components/billing_engine/subscription_history';
+import handleErr from '../../scripts/axios';
 
 export default function SubscriptionListScreen(props) {
   const [data, setData] = React.useState(null);
   const {width, height} = Dimensions.get('screen');
   const isFocused = useIsFocused();
+  const navigation = useNavigation();
   React.useEffect(() => {
     axios
       .get(
@@ -32,7 +34,7 @@ export default function SubscriptionListScreen(props) {
         setData(res.data.message);
       })
       .catch(err => {
-        console.log(err.response.data);
+        handleErr(err, navigation)
       });
   }, [isFocused]);
 

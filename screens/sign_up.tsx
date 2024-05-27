@@ -21,6 +21,7 @@ import {useNavigation} from '@react-navigation/native';
 import ImageIcon from '../components/image';
 import {Title} from '../components/text';
 import {getAbsoluteURL} from '../utils';
+import { LoadingButton } from '../components/button';
 
 const validatePassword = pwd => {
   let valid = true;
@@ -60,8 +61,10 @@ export default SignInUpScreen = props => {
   const [password, setPassword] = React.useState(false);
   const [repeat, setRepeat] = React.useState(false);
   const {width, height} = Dimensions.get('screen');
+  const [signingUp, setSigningUp] = React.useState(false);
 
   const signUp = () => {
+    setSigningUp(true)
     if (!password.length) {
       Alert.alert('Validation Error', 'A password is required');
       return;
@@ -100,17 +103,25 @@ export default SignInUpScreen = props => {
         },
       )
       .then(res => {
+        setSigningUp(false)
         if (res.data.errors) {
           Alert.alert(
             'Error',
             `Could not sign up because of an error: ${res.data.errors}`,
           );
         } else {
+          const cookies = toCookieObj(res.headers['set-cookie'][0]);
+          AsyncStorage.setItem(
+            'expiry',
+            new Date(cookies.Expires).toISOString(),
+          );
+          AsyncStorage.setItem('user', username);
           Alert.alert('Success', `Signed up as ${email} for Hustle Hub`);
-          navigator.navigate('Login');
+          navigator.navigate('Dashboard');
         }
       })
       .catch(err => {
+        setSigningUp(false)
         Alert.alert('Error', 'There was an error with your request.');
       });
   };
@@ -147,9 +158,10 @@ export default SignInUpScreen = props => {
         <Field light label="Password" password value={password} onTextChange={setPassword} />
         <Field light label="Repeat Password" password value={repeat} onTextChange={setRepeat} />
 
-        <Pressable onPress={signUp} style={styles.secondaryButton}>
+        <LoadingButton
+            loading={signingUp} onPress={signUp} style={styles.secondaryButton}>
           <Text style={styles.buttonText}>Sign Up</Text>
-        </Pressable>
+        </LoadingButton>
         <Row
           styles={{
             justifyContent: 'center',

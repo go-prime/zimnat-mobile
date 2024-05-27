@@ -1,16 +1,19 @@
-import {Alert} from 'react-native'
+import {Alert} from 'react-native';
 
 const handleResourceRetrievalError = (err, navigator) => {
   if (err.response && err.response.data) {
-    JSON.parse(err.response.data._server_messages).forEach(m => {
+    const messages = JSON.parse(err.response.data._server_messages);
+    for (let i = 0; i < messages.length; i++) {
+      const m = messages[i];
       const msg = JSON.parse(m);
+      console.log(msg)
       Alert.alert(msg.title, msg.message);
       if (err.response.data.exc_type == 'ValidationError' && navigator) {
-        navigator.goBack();
+        navigator.navigate('Subscriptions');
+        break;
       }
-    });
+    }
   }
 };
-
 
 export default handleResourceRetrievalError;

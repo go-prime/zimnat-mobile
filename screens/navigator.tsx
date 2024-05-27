@@ -75,6 +75,7 @@ import {Label, Pill} from '../components/text';
 import {Row} from '../components/layout';
 import useUserProfile from '../hooks/user';
 import ImageIcon from '../components/image';
+import DashboardScreen from './dashboard';
 
 const Drawer = createDrawerNavigator();
 
@@ -282,6 +283,11 @@ export default function HomeScreenNavigator(props): JSX.Element {
       <Drawer.Screen
         component={LoginScreen}
         name="Login"
+        options={{headerShown: false}}
+      />
+      <Drawer.Screen
+        component={DashboardScreen}
+        name="Dashboard"
         options={{headerShown: false}}
       />
       <Drawer.Screen

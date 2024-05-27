@@ -12,6 +12,7 @@ import axios from 'axios';
 import constants from '../../constants';
 import { useNavigation } from '@react-navigation/native';
 import getColors from '../../hooks/colors';
+import { LoadingButton } from '../button';
 
 const RoundedSquareButton = function (props) {
   return (
@@ -50,8 +51,9 @@ type CartButtonProps = {
 };
 
 const WishListButton = function (props: WishListButtonProps) {
-
+  const [loading, setLoading] = React.useState(false)
   const defaultHandler = () => {
+    setLoading(true)
     axios
       .post(
         `${constants.server_url}/api/method/billing_engine.billing_engine.api.add_to_wishlist`,
@@ -60,15 +62,18 @@ const WishListButton = function (props: WishListButtonProps) {
         },
       )
       .then(res => {
+        setLoading(false)
         Alert.alert('Success', `Added ${props.product_name} to wishlist`);
       })
       .catch(err => {
+        setLoading(false)
         Alert.alert('Error', err.message);
       });
   };
 
   return (
-    <Pressable
+    <LoadingButton
+        loading={loading}
         style={props.styles} 
         onPress={props.handler ? props.handler : defaultHandler}>
       <View style={[styles.wishlist, props.innerStyles, {
@@ -92,14 +97,17 @@ const WishListButton = function (props: WishListButtonProps) {
           </Text>
         )}
       </View>
-    </Pressable>
+    </LoadingButton>
   );
 };
 
 const AddToCartButton = function (props: CartButtonProps) {
   const navigation = useNavigation()
   const colorScheme = getColors(navigation)
+  const [loading, setLoading] = React.useState(false)
+  
   const defaultHandler = () => {
+    setLoading(true)
     axios
       .post(
         `${constants.server_url}/api/method/billing_engine.billing_engine.api.add_to_cart`,
@@ -109,12 +117,14 @@ const AddToCartButton = function (props: CartButtonProps) {
         },
       )
       .then(res => {
+        setLoading(false)
         Alert.alert('Success', `Added ${props.product_name} to shopping cart`);
         if (props.onSuccess) {
           onSuccess();
         }
       })
       .catch(err => {
+        setLoading(false)
         if(err.response) {
           console.log(err.response.data);
           Alert.alert('Error', err.response.data);
@@ -123,8 +133,7 @@ const AddToCartButton = function (props: CartButtonProps) {
       });
   };
   return (
-    <Pressable onPress={props.handler ? props.handler : defaultHandler}>
-      <View style={[styles.addToCart, {backgroundColor: colorScheme.secondary}, props.styles]}>
+    <LoadingButton style={{...styles.addToCart, backgroundColor: colorScheme.secondary, ...props.styles}} loading={loading} onPress={props.handler ? props.handler : defaultHandler}>
         <FontAwesomeIcon
           icon={faShoppingCart}
           size={props.size || 24}
@@ -135,8 +144,7 @@ const AddToCartButton = function (props: CartButtonProps) {
             Add To Cart
           </Text>
         )}
-      </View>
-    </Pressable>
+    </LoadingButton>
   );
 };
 

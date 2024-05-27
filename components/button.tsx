@@ -1,7 +1,14 @@
 import React from 'react';
 
-import {View, Text, Pressable, StyleSheet} from 'react-native';
-import {Circle, Row} from './layout';
+import {
+  ActivityIndicator,
+  View,
+  Text,
+  Pressable,
+  StyleSheet,
+  Animated,
+} from 'react-native';
+import Centered, {Circle, Row} from './layout';
 import ImageIcon from './image';
 import {card, text} from '../styles/inputs';
 import {Label, SmallLabel} from './text';
@@ -9,8 +16,9 @@ import {getAbsoluteURL} from '../utils';
 import ProgressBar from './edutec/progress';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faAngleRight, faSave} from '@fortawesome/free-solid-svg-icons';
-import { useNavigation } from '@react-navigation/native';
-import getColors from '../hooks/colors'
+import {useNavigation} from '@react-navigation/native';
+import getColors from '../hooks/colors';
+import colors from '../styles/colors';
 
 const CategoryButton = ({onPress, name, image_url}) => {
   return (
@@ -112,17 +120,80 @@ const ProfileButton = ({label, action}) => {
 };
 
 const SubmitButton = ({label, action}) => {
-  const navigation = useNavigation()
-  const colorScheme = getColors(navigation)
+  const navigation = useNavigation();
+  const colorScheme = getColors(navigation);
   return (
     <Pressable
       onPress={action}
-      style={[styles.submitButtonContainer, { backgroundColor: colorScheme.primary,}]}>
+      style={[
+        styles.submitButtonContainer,
+        {backgroundColor: colorScheme.primary},
+      ]}>
       <FontAwesomeIcon icon={faSave} size={24} color={'white'} />
-      <Text
-        style={styles.submitButtonText}>
-        {label || 'Submit'}
-      </Text>
+      <Text style={styles.submitButtonText}>{label || 'Submit'}</Text>
+    </Pressable>
+  );
+};
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
+const AnimatedButton = props => {
+  /**
+   * Props:
+   * animatedTo - value
+   * animationInitial - value
+   * animationDuration - double (ms)
+   * animatedStyle - string
+   * Style and onPress as usual
+   */
+  const styles = {...props.style};
+  const animated = new Animated.Value(props.animatedInitial);
+  styles[props.animatedStyle] = animated;
+  const onPressIn = () => {
+    Animated.timing(animated, {
+      toValue: props.animatedTo,
+      duration: props.animationDuration || 1000,
+      useNativeDriver: true,
+    });
+  };
+
+  const onPressOut = () => {
+    const duration = (props.animationDuration || 1000) / 3;
+    console.log(duration);
+    Animated.timing(animated, {
+      toValue: props.animatedInitial,
+      duration: duration,
+      useNativeDriver: true,
+    });
+  };
+
+  return (
+    <AnimatedPressable
+      style={styles}
+      onPress={props.onPress}
+      onPressIn={onPressIn}
+      onPressOut={onPressOut}>
+      {props.children}
+    </AnimatedPressable>
+  );
+};
+
+const LoadingButton = props => {
+  return (
+    <Pressable
+      style={{...props.style, opacity: props.loading ? 0.5 : 1}}
+      disabled={props.loading}
+      onPress={props.onPress}>
+      {props.loading ? (
+        <Centered>
+          <ActivityIndicator
+            size={props.indicatorSize || 24}
+            color={props.indicatorColor || colors.primary}
+          />
+        </Centered>
+      ) : (
+        props.children
+      )}
     </Pressable>
   );
 };
@@ -147,12 +218,13 @@ const styles = StyleSheet.create({
     margin: 12,
     alignItems: 'center',
     justifyContent: 'center',
-    flexDirection: 'row',padding: 12,
+    flexDirection: 'row',
+    padding: 12,
     borderRadius: 12,
     margin: 12,
     alignItems: 'center',
     justifyContent: 'center',
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
   submitButtonText: {
     marginLeft: 12,
@@ -210,4 +282,6 @@ export {
   CourseButton,
   BundleButton,
   ItemButton,
+  AnimatedButton,
+  LoadingButton,
 };

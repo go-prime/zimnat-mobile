@@ -229,7 +229,7 @@ export default function ShortcutScreen(props) {
       .then(user => {
         if(!user) {
           Alert.alert("You need to login first to access this page")
-          navigator.navigate("Login")
+          navigator.navigate("Dashboard")
         }
         axios.get(`${constants.server_url}/api/method/erp.public_api.setup`)
           .then(res => {
@@ -243,7 +243,7 @@ export default function ShortcutScreen(props) {
             console.log(err)
             if(err.response && err.response.status == 403) {
               console.log(err.response)
-              navigator.navigate("Login")
+              navigator.navigate("Dashboard")
             }
           })
       })

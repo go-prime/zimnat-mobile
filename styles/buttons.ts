@@ -11,4 +11,8 @@ const removeBtn = {
     zIndex: 10,
 }
 
+const buttonAnim = {
+    
+}
+
 export {removeBtn}

@@ -24,6 +24,7 @@ import axios from 'axios';
 import {card, shadow, text} from '../styles/inputs';
 import constants from '../constants';
 import {Row} from './layout';
+import { LoadingButton } from './button';
 
 const submitRating = (rating, description, item_type, item_name, onRating) => {
   axios
@@ -49,11 +50,13 @@ const submitRating = (rating, description, item_type, item_name, onRating) => {
 };
 
 const RatingModal = props => {
+  const [loading, setLoading] = React.useState(false)
   const [rating, setRating] = React.useState(props.rating);
   const [description, setDescription] = React.useState('');
   const height = Dimensions.get('screen').height;
   const [userRatings, setUserRatings] = React.useState([]);
   React.useEffect(() => {
+    setLoading(true)
     axios
       .get(
         `${constants.server_url}/api/method/billing_engine.billing_engine.api.get_ratings`,
@@ -66,9 +69,12 @@ const RatingModal = props => {
       )
       .then(res => {
         setUserRatings(res.data.message);
+        setLoading(false)
       })
       .catch(err => {
         console.log(err);
+        setLoading(false)
+        Alert("Error", "Error submitting your rating")
       });
   }, [props.item_name]);
 
@@ -102,7 +108,8 @@ const RatingModal = props => {
             onChangeText={setDescription}
           />
         </View>
-        <Pressable
+        <LoadingButton
+          loading={loading}
           onPress={() =>
             submitRating(
               rating,
@@ -114,7 +121,7 @@ const RatingModal = props => {
           }
           style={styles.button}>
           <Text style={styles.buttonText}>Submit</Text>
-        </Pressable>
+        </LoadingButton>
         <Heading heading="User Ratings" />
         <ScrollView style={{flex: 1}}>
           {userRatings.map((r, index) => (
