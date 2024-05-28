@@ -92,8 +92,7 @@ const DrawerItem = props => {
           <FontAwesomeIcon icon={props.icon} color={props.color} size={24} />
         )}
         {source && (
-          <Centered
-            styles={styles.drawerItemIcon}>
+          <Centered styles={styles.drawerItemIcon}>
             <Image source={source} style={{width: 80, height: 80}} />
           </Centered>
         )}
@@ -402,10 +401,10 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
   },
   drawerItemIcon: {
-      width: 30,
-      height: 30,
-      overflow: 'hidden',
-      borderRadius: 15,
-      backgroundColor: 'white'
-  }
+    width: 30,
+    height: 30,
+    overflow: 'hidden',
+    borderRadius: 15,
+    backgroundColor: 'white',
+  },
 });

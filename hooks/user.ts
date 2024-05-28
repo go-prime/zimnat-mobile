@@ -7,9 +7,15 @@ const useUserProfile = () => {
   const [username, setUserName] = React.useState(null);
   const [userDetails, setUserDetails] = React.useState({});
 
+
   React.useEffect(() => {
     AsyncStorage.getItem('user').then(user => {
-      setUserName(user);
+      if(user) {
+        setUserName(user);
+      } else {
+        // to do handle when no user is found.
+      }
+      
     });
   }, []);
 
@@ -20,7 +26,6 @@ const useUserProfile = () => {
         `${constants.server_url}api/method/billing_engine.billing_engine.api.client_detail`,
       )
       .then(res => {
-        console.log(res.data)
         setUserDetails(res.data.message);
       });
   }, [username]);
