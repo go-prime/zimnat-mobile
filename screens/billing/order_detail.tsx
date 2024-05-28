@@ -152,6 +152,7 @@ export default OrderDetailScreen = ({navigation, route}) => {
         <Centered>
           <Paragraph>{data.verification_id}</Paragraph>
         </Centered>
+        <View style={{height: 40}} />
       </ScrollView>
       {data.status == 'Order' && <CompleteOrderButton id={data.id} />}
     </View>

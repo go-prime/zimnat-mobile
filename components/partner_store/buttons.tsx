@@ -7,12 +7,13 @@ import {
   faImage,
   faHeart,
   faShoppingCart,
+  faCheck,
 } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import constants from '../../constants';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import getColors from '../../hooks/colors';
-import { LoadingButton } from '../button';
+import {LoadingButton} from '../button';
 
 const RoundedSquareButton = function (props) {
   return (
@@ -30,8 +31,6 @@ const RoundedSquareButton = function (props) {
     </Pressable>
   );
 };
-
-
 
 type WishListButtonProps = {
   product_id: string;
@@ -51,9 +50,11 @@ type CartButtonProps = {
 };
 
 const WishListButton = function (props: WishListButtonProps) {
-  const [loading, setLoading] = React.useState(false)
+  const [loading, setLoading] = React.useState(false);
+  const [isWishListed, setIsWishListed] = React.useState(false);
+
   const defaultHandler = () => {
-    setLoading(true)
+    setLoading(true);
     axios
       .post(
         `${constants.server_url}/api/method/billing_engine.billing_engine.api.add_to_wishlist`,
@@ -62,28 +63,50 @@ const WishListButton = function (props: WishListButtonProps) {
         },
       )
       .then(res => {
-        setLoading(false)
+        setLoading(false);
+        setIsWishListed(true);
         Alert.alert('Success', `Added ${props.product_name} to wishlist`);
       })
       .catch(err => {
-        setLoading(false)
+        setLoading(false);
         Alert.alert('Error', err.message);
       });
   };
 
+  React.useEffect(() => {
+    axios
+      .get(
+        `${constants.server_url}/api/method/billing_engine.billing_engine.api.get_wishlist`,
+      )
+      .then(res => {
+        const matches = res.data.message.items.filter(
+          item => props.product_id == item.id,
+        );
+        setIsWishListed(matches.length > 0);
+      });
+  }, [props.product_id]);
+
   return (
     <LoadingButton
-        loading={loading}
-        style={props.styles} 
-        onPress={props.handler ? props.handler : defaultHandler}>
-      <View style={[styles.wishlist, props.innerStyles, {
-        borderWidth: props.borderless ? 0 : styles.wishlist.borderWidth,
-        backgroundColor: props.borderless ? 'transparent' : styles.wishlist.backgroundColor
-      }]}>
+      loading={loading}
+      style={props.styles}
+      onPress={props.handler ? props.handler : defaultHandler}>
+      <View
+        style={[
+          styles.wishlist,
+          props.innerStyles,
+          {
+            borderWidth: props.borderless ? 0 : styles.wishlist.borderWidth,
+            backgroundColor: props.borderless
+              ? 'transparent'
+              : styles.wishlist.backgroundColor,
+            borderColor: isWishListed ? 'crimson' : '#999',
+          },
+        ]}>
         <FontAwesomeIcon
           icon={faHeart}
           size={props.size || 30}
-          color={'crimson'}
+          color={isWishListed ? 'crimson' : '#999'}
         />
         {props.label && (
           <Text
@@ -102,12 +125,13 @@ const WishListButton = function (props: WishListButtonProps) {
 };
 
 const AddToCartButton = function (props: CartButtonProps) {
-  const navigation = useNavigation()
-  const colorScheme = getColors(navigation)
-  const [loading, setLoading] = React.useState(false)
-  
+  const navigation = useNavigation();
+  const colorScheme = getColors(navigation);
+  const [loading, setLoading] = React.useState(false);
+  const [inCart, setInCart] = React.useState(false)
+
   const defaultHandler = () => {
-    setLoading(true)
+    setLoading(true);
     axios
       .post(
         `${constants.server_url}/api/method/billing_engine.billing_engine.api.add_to_cart`,
@@ -117,33 +141,52 @@ const AddToCartButton = function (props: CartButtonProps) {
         },
       )
       .then(res => {
-        setLoading(false)
+        setInCart(true)
+        setLoading(false);
         Alert.alert('Success', `Added ${props.product_name} to shopping cart`);
         if (props.onSuccess) {
           onSuccess();
         }
       })
       .catch(err => {
-        setLoading(false)
-        if(err.response) {
+        setLoading(false);
+        if (err.response) {
           console.log(err.response.data);
           Alert.alert('Error', err.response.data);
         }
         console.log(err);
       });
   };
+
+  React.useEffect(() => {
+    axios.get(`${constants.server_url}/api/method/billing_engine.billing_engine.api.get_cart`)
+      .then(res => {
+        const matches = res.data.message.items.filter(
+          item => props.product_id == item.id,
+        );
+        setInCart(matches.length > 0);
+      })
+  }, [props.product_id])
+
   return (
-    <LoadingButton style={{...styles.addToCart, backgroundColor: colorScheme.secondary, ...props.styles}} loading={loading} onPress={props.handler ? props.handler : defaultHandler}>
-        <FontAwesomeIcon
-          icon={faShoppingCart}
-          size={props.size || 24}
-          color={'white'}
-        />
-        {props.label && (
-          <Text style={{...text, fontSize: 16, marginLeft: 4, color: 'white'}}>
-            Add To Cart
-          </Text>
-        )}
+    <LoadingButton
+      style={{
+        ...styles.addToCart,
+        backgroundColor: colorScheme.secondary,
+        ...props.styles,
+      }}
+      loading={loading}
+      onPress={props.handler ? props.handler : defaultHandler}>
+      <FontAwesomeIcon
+        icon={inCart ? faCheck : faShoppingCart}
+        size={props.size || 24}
+        color={'white'}
+      />
+      {props.label && (
+        <Text style={{...text, fontSize: 16, marginLeft: 4, color: 'white'}}>
+          {inCart ? "In Cart" : "Add To Cart"}
+        </Text>
+      )}
     </LoadingButton>
   );
 };
@@ -200,7 +243,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     padding: 4,
     margin: 4,
-
   },
   text: {
     fontSize: 18,
@@ -226,8 +268,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export {
-  RoundedSquareButton,
-  WishListButton,
-  AddToCartButton,
-};
+export {RoundedSquareButton, WishListButton, AddToCartButton};

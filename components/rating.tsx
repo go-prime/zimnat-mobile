@@ -26,24 +26,25 @@ import constants from '../constants';
 import {Row} from './layout';
 import { LoadingButton } from './button';
 
-const submitRating = (rating, description, item_type, item_name, onRating) => {
+const submitRating = (rating, description, item_type, item_name, onRating, toggleButton) => {
+  toggleButton(true)
   axios
-    .get(
+    .post(
       `${constants.server_url}/api/method/billing_engine.billing_engine.api.make_rating`,
       {
-        params: {
-          item_type: item_type,
-          item_name: item_name,
-          description: description,
-          rating: rating,
-        },
+        item_type: item_type,
+        item_name: item_name,
+        description: description,
+        rating: rating,
       },
     )
     .then(res => {
-      Alert.alert('Submitted Rating Successfully');
-      onRating();
+      console.log(res.data.message)
+      Alert.alert("Message", res.data.message.message);
+      onRating(res);
     })
     .catch(err => {
+      toggleButton(false)
       console.log(err);
       console.log(err.response.data);
     });
@@ -55,8 +56,8 @@ const RatingModal = props => {
   const [description, setDescription] = React.useState('');
   const height = Dimensions.get('screen').height;
   const [userRatings, setUserRatings] = React.useState([]);
+
   React.useEffect(() => {
-    setLoading(true)
     axios
       .get(
         `${constants.server_url}/api/method/billing_engine.billing_engine.api.get_ratings`,
@@ -116,7 +117,13 @@ const RatingModal = props => {
               description,
               props.item_type,
               props.item_name,
-              props.onClose,
+              (res) => {
+                setDescription("")
+                setLoading(false)
+                setUserRatings(res.data.message.all_ratings)
+                setRating(res.data.message.average_rating)
+              },
+              setLoading
             )
           }
           style={styles.button}>
@@ -148,10 +155,17 @@ const RatingModal = props => {
 };
 
 export default function Rating(props) {
-  const fullStars = Math.floor(props.value);
-  const emptyStars = 5 - fullStars;
-  const halfStar = props.value - fullStars > 0;
+
   const [modalVisible, setModalVisible] = React.useState(false);
+  const [fullStars, setFullStars] = React.useState(Math.floor(props.value))
+  const [emptyStars, setEmptyStars] = React.useState(5 - fullStars)
+  const [halfStar, setHalfStar] = React.useState(props.value - fullStars > 0);
+  React.useEffect(() => {
+    setEmptyStars(5 - fullStars)
+    setHalfStar(props.value - fullStars > 0)
+
+  }, [fullStars])
+
   const containerWidth = ((props.size || 24) + 4) * 5 + 24;
 
   return (
