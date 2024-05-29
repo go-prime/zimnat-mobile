@@ -35,6 +35,8 @@ import {TextInput} from 'react-native-gesture-handler';
 import axios from 'axios';
 import constants from '../../constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Onboarding from '../../components/books/onboarding';
+import OnboardingCard from '../../components/books/onboarding';
 
 const ICON_MAP = {
   'fa-book': faBook,
@@ -272,6 +274,7 @@ export default function ShortcutScreen(props) {
             return (
               <React.Fragment key={m}>
                 <Heading>{m}</Heading>
+                <OnboardingCard />
                 <View style={styles.content}>
                   {filterdItems
                     .filter(i => i.module == m)
