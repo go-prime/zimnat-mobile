@@ -19,10 +19,10 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import {card, inputContainer, inputText, text} from '../../styles/inputs';
 import FieldContainer from './field';
-import axios from 'axios'
+import axios from 'axios';
 import constants from '../../constants';
-import { useNavigation } from '@react-navigation/native';
-import { Label } from '../text';
+import {useNavigation} from '@react-navigation/native';
+import {Label} from '../text';
 
 export default function LinkField(props) {
   const [optionsVisible, setOptionsVisible] = React.useState(false);
@@ -67,20 +67,22 @@ const OptionsModal = props => {
   const [options, setOptions] = React.useState([]);
   const [allOptions, setAllOptions] = React.useState([]);
   const [input, setInput] = React.useState(props.value);
-  const [quickEntry, setQuickEntry] = React.useState(false)
-  const navigator = useNavigation()
-
+  const [quickEntry, setQuickEntry] = React.useState(false);
+  const navigator = useNavigation();
 
   React.useEffect(() => {
-    axios.get(`${constants.server_url}/api/method/erp.public_api.list`, {
+    axios
+      .get(`${constants.server_url}/api/method/erp.public_api.list`, {
         params: {
-            doctype: props.options,
-        }
-    }).then(res => {
-      setAllOptions(res.data.message.data)
-      setQuickEntry(res.data.message.meta.quick_entry)
+          doctype: props.options,
+        },
+      })
+      .then(res => {
+        setAllOptions(res.data.message.data);
+        setQuickEntry(res.data.message.meta.quick_entry);
 
-        if(props.value) {
+
+        if (props.value) {
           setOptions(
             res.data.message.data.filter(opt => {
               if (
@@ -90,19 +92,17 @@ const OptionsModal = props => {
                 return true;
               }
               return false;
-            })
-          )
+            }),
+          );
         } else {
-          setOptions(res.data.message.data)
+          setOptions(res.data.message.data);
         }
-        
-    }).catch(err => {
-      console.log(err)
-      console.log("Could not retrieve the list")
-    })
+      })
+      .catch(err => {
+        console.log(err);
+        console.log('Could not retrieve the list');
+      });
   }, [props.options, props.value]);
-
-  
 
   React.useEffect(() => {
     if (input && input.length > 2) {
@@ -117,22 +117,22 @@ const OptionsModal = props => {
           return false;
         }),
       );
-    } else if(input && input.length > 0) {
-      setOptions(allOptions)
+    } else if (input && input.length > 0) {
+      setOptions(allOptions);
     }
   }, [input]);
 
   React.useEffect(() => {
-      setInput(props.value);
+    setInput(props.value);
   }, [props.value]);
 
   const clearInput = () => {
-    setInput("")
-    props.setValue("")
-    setOptions(allOptions)
-  }
+    setInput('');
+    props.setValue('');
+    setOptions(allOptions);
+  };
 
-  const iconColors = Appearance.getColorScheme() == "dark" ?  "white" : "black"
+  const iconColors = Appearance.getColorScheme() == 'dark' ? 'white' : 'black';
 
   return (
     <Modal
@@ -142,24 +142,29 @@ const OptionsModal = props => {
       <View style={styles.modalContainer}>
         <Label>Select an option</Label>
         <View style={styles.input}>
-        <FontAwesomeIcon icon={faSearch} />
+          <FontAwesomeIcon icon={faSearch} />
           <TextInput
             value={input}
             onChangeText={setInput}
             style={styles.inputText}
+            autoFocus
           />
           <Pressable onPress={clearInput}>
             <FontAwesomeIcon icon={faTimes} color={iconColors} />
           </Pressable>
         </View>
-        {quickEntry && <Pressable style={styles.createNewBtn} onPress={() => {
-          props.onClose()
-          navigator.navigate("List", {doctype: props.options})
-          navigator.navigate("Form", {doctype: props.options})
-        }}>
-          <FontAwesomeIcon size={28} color={'steelblue'} icon={faPlus} />
-          <Text style={styles.createNewText}>Create New</Text>
-        </Pressable>}
+        {Boolean(quickEntry) && (
+          <Pressable
+            style={styles.createNewBtn}
+            onPress={() => {
+              props.onClose();
+              navigator.navigate('List', {doctype: props.options});
+              navigator.navigate('Form', {doctype: props.options});
+            }}>
+            <FontAwesomeIcon size={28} color={'steelblue'} icon={faPlus} />
+            <Text style={styles.createNewText}>Create New</Text>
+          </Pressable>
+        )}
         <FlatList
           style={styles.optionList}
           data={options}
@@ -186,7 +191,7 @@ const OptionsModal = props => {
   );
 };
 
-export {OptionsModal}
+export {OptionsModal};
 
 const styles = StyleSheet.create({
   pressableStyle: {
@@ -194,7 +199,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     overflow: 'hidden',
-    height: 40
+    height: 40,
   },
   container: {
     padding: 8,
@@ -247,12 +252,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 12,
-    justifyContent: 'center', 
-    gap: 12
+    justifyContent: 'center',
+    gap: 12,
   },
   createNewText: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: 'steelblue'
-  }
+    color: 'steelblue',
+  },
 });

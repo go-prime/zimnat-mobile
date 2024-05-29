@@ -1,5 +1,5 @@
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {useNavigation} from '@react-navigation/native';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
 import React from 'react';
 import {View, Text, Pressable, StyleSheet, ScrollView, Alert} from 'react-native';
 import {
@@ -210,6 +210,7 @@ export default function ShortcutScreen(props) {
   const [filterdItems, setFilteredItems] = React.useState(SHORTCUT_LIST);
   const [company, setCompany] = React.useState(null) 
   const navigator = useNavigation()
+  const isFocused = useIsFocused()
 
   React.useEffect(() => {
     if (!input || input.length < 3) {
@@ -245,7 +246,7 @@ export default function ShortcutScreen(props) {
           })
       })
     
-  }, [])
+  }, [isFocused])
 
   return (
     <>
@@ -262,7 +263,7 @@ export default function ShortcutScreen(props) {
         </Pressable>)}
         <View style={styles.search}>
         <FontAwesomeIcon icon={faSearch} size={20} />
-        <TextInput placeholder="Search" value={input} onChangeText={setInput} />
+        <TextInput placeholder="Search" value={input} onChangeText={setInput} style={{flex: 1}} />
       </View>
       <ScrollView style={{backgroundColor: background.color}}>
         {Array.from(new Set(filterdItems.map(f => f.module)))

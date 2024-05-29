@@ -111,7 +111,6 @@ function DrawerContent(props): JSX.Element {
       .then(res => {
         AsyncStorage.setItem('expiry', '');
         AsyncStorage.setItem('user', '');
-        setUser('');
         Alert.alert('Success', 'Signed out of your account successfully.');
         props.navigation.navigate('Login');
       })

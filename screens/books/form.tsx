@@ -26,6 +26,7 @@ import {iconColor} from '../../styles/inputs';
 import frappe from '../../scripts/frappe';
 import { randomID } from '../../components/books/table';
 import handleResourceRetrievalError from '../../scripts/permissions';
+import { LoadingButton } from '../../components/button';
 
 const renderField = (field, data, setData, doctype) => {
   let renderedField;
@@ -83,7 +84,7 @@ const renderField = (field, data, setData, doctype) => {
 };
 
 
-const SaveSubmitButton = ({submittable, unsaved, handler, data}) => {
+const SaveSubmitButton = ({submittable, unsaved, handler, data, loading}) => {
   const [label, setLabel] = React.useState("Save")
   const [visible, setVisible] = React.useState(true)
 
@@ -110,10 +111,10 @@ const SaveSubmitButton = ({submittable, unsaved, handler, data}) => {
   }
 
   return (
-    <Pressable style={styles.button} onPress={handler}>
+    <LoadingButton indicatorColor={'white'} loading={loading} style={styles.button} onPress={handler}>
         <FontAwesomeIcon icon={faSave} size={24} color={'white'} />
         <Text style={{...text, color: 'white', fontSize: 24}}>{label}</Text>
-      </Pressable>
+      </LoadingButton>
   )
 }
 
@@ -121,6 +122,7 @@ class Form extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      saving: false,
       fields: [],
       data: {},
       meta: {},
@@ -164,9 +166,9 @@ class Form extends React.Component {
           res.data.message.meta.fields.forEach(f => {
             me.fields_dict[f.fieldname] = f
           })
-
+          //force hidden fields to be initialized programattically.
           res.data.message.meta.fields
-            .filter(f => f.fieldtype == "Table")
+            .filter(f => f.fieldtype == "Table" && f.hidden == 0)
             .forEach(f => {
               currData[f.fieldname] = [{
                 name: `New ${f.options} ${randomID()}`,
@@ -365,12 +367,24 @@ class Form extends React.Component {
 
   saveDocument = () => {
     // post form to remote server
+    this.setState(state => {
+      return {
+        ...state,
+        saving: true
+      }
+    })
     axios
       .post(`${constants.server_url}/api/method/erp.public_api.form`, {
         doctype: this.state.doctype,
         args: {...this.state.data, doctype: this.state.doctype}
       })
       .then(res => {
+        this.setState(state => {
+          return {
+            ...state,
+            saving: false
+          }
+        })
         if (res.data.message) {
           Alert.alert(
             'Success',
@@ -381,6 +395,12 @@ class Form extends React.Component {
       })
       .catch(err => {
         console.log(err);
+        this.setState(state => {
+          return {
+            ...state,
+            saving: false
+          }
+        })
         if (err.response) {
           JSON.parse(err.response.data._server_messages).forEach(m => {
             const msg = JSON.parse(m)
@@ -422,6 +442,7 @@ class Form extends React.Component {
             unsaved={this.state.data.__unsaved}
             handler={this.saveDocument}
             data={this.state.data}
+            loading={this.state.saving}
           />
         </View>
       </ScrollView>

@@ -20,7 +20,7 @@ export default function NumberField(props) {
         <Text style={styles.inputText}>{props.value}</Text>
       ) : (
         <TextInput
-          value={[null, undefined].includes(props.value) ? '' : props.value.toString() }
+          value={[null, undefined].includes(props.value) ? 0 : props.value.toString() }
           keyboardType="numeric"
           onChangeText={setValue}
           style={styles.inputText}
