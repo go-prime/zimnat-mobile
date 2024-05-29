@@ -2,11 +2,12 @@ import React from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import constants from '../constants';
+import { useNavigation } from '@react-navigation/native';
 
 const useUserProfile = () => {
   const [username, setUserName] = React.useState(null);
   const [userDetails, setUserDetails] = React.useState({});
-
+  const navigation = useNavigation()
 
   React.useEffect(() => {
     AsyncStorage.getItem('user').then(user => {
@@ -14,10 +15,12 @@ const useUserProfile = () => {
         setUserName(user);
       } else {
         // to do handle when no user is found.
+        Alert.alert("Session Start Failed", "Please Login again to continue")
+        navigation.navigate('Login')
       }
       
     });
-  }, []);
+  });
 
   React.useEffect(() => {
     if (!username) return;

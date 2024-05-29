@@ -1,7 +1,7 @@
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {useNavigation} from '@react-navigation/native';
 import React from 'react';
-import {View, Text, Pressable, StyleSheet, ScrollView} from 'react-native';
+import {View, Text, Pressable, StyleSheet, ScrollView, Alert} from 'react-native';
 import {
   faBook,
   faBoxes,
@@ -224,12 +224,11 @@ export default function ShortcutScreen(props) {
   }, [input]);
 
   React.useEffect(() => {
-    console.log('setup')
     AsyncStorage.getItem("user")
       .then(user => {
         if(!user) {
           Alert.alert("You need to login first to access this page")
-          navigator.navigate("Dashboard")
+          navigator.navigate("Login")
         }
         axios.get(`${constants.server_url}/api/method/erp.public_api.setup`)
           .then(res => {
@@ -239,11 +238,9 @@ export default function ShortcutScreen(props) {
               setCompany(res.data.message)
             }
           }).catch(err => {
-            console.log('err')
-            console.log(err)
             if(err.response && err.response.status == 403) {
               console.log(err.response)
-              navigator.navigate("Dashboard")
+              navigator.navigate("Login")
             }
           })
       })

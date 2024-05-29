@@ -62,6 +62,7 @@ export default Field = ({value, onTextChange, label, multiline, password, light}
         placeholder={label}
         secureTextEntry={password || false}
         numberOfLines={multiline ? 4 : 1}
+        multiline={multiline || false}
         placeholderTextColor={
           light ? 'black' : Appearance.getColorScheme() == 'dark' ? 'white' : 'black'
         }

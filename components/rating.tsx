@@ -158,10 +158,10 @@ export default function Rating(props) {
 
   const [modalVisible, setModalVisible] = React.useState(false);
   const [fullStars, setFullStars] = React.useState(Math.floor(props.value))
-  const [emptyStars, setEmptyStars] = React.useState(5 - fullStars)
   const [halfStar, setHalfStar] = React.useState(props.value - fullStars > 0);
+  const [emptyStars, setEmptyStars] = React.useState(5 - (fullStars + (halfStar ? 1 : 0)))
   React.useEffect(() => {
-    setEmptyStars(5 - fullStars)
+    setEmptyStars(5 - (fullStars + (halfStar ? 1 : 0)))
     setHalfStar(props.value - fullStars > 0)
 
   }, [fullStars])

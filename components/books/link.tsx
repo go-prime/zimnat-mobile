@@ -67,6 +67,7 @@ const OptionsModal = props => {
   const [options, setOptions] = React.useState([]);
   const [allOptions, setAllOptions] = React.useState([]);
   const [input, setInput] = React.useState(props.value);
+  const [quickEntry, setQuickEntry] = React.useState(false)
   const navigator = useNavigation()
 
 
@@ -76,7 +77,9 @@ const OptionsModal = props => {
             doctype: props.options,
         }
     }).then(res => {
-        setAllOptions(res.data.message.data)
+      setAllOptions(res.data.message.data)
+      setQuickEntry(res.data.message.meta.quick_entry)
+
         if(props.value) {
           setOptions(
             res.data.message.data.filter(opt => {
@@ -149,14 +152,14 @@ const OptionsModal = props => {
             <FontAwesomeIcon icon={faTimes} color={iconColors} />
           </Pressable>
         </View>
-        <Pressable style={styles.createNewBtn} onPress={() => {
+        {quickEntry && <Pressable style={styles.createNewBtn} onPress={() => {
           props.onClose()
           navigator.navigate("List", {doctype: props.options})
           navigator.navigate("Form", {doctype: props.options})
         }}>
           <FontAwesomeIcon size={28} color={'steelblue'} icon={faPlus} />
           <Text style={styles.createNewText}>Create New</Text>
-        </Pressable>
+        </Pressable>}
         <FlatList
           style={styles.optionList}
           data={options}

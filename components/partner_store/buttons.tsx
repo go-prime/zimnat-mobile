@@ -145,7 +145,7 @@ const AddToCartButton = function (props: CartButtonProps) {
         setLoading(false);
         Alert.alert('Success', `Added ${props.product_name} to shopping cart`);
         if (props.onSuccess) {
-          onSuccess();
+          props.onSuccess();
         }
       })
       .catch(err => {

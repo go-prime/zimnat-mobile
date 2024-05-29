@@ -31,6 +31,7 @@ import {
   View,
   Image,
   Appearance,
+  Alert
 } from 'react-native';
 import colors from '../styles/colors';
 import WishlistScreen from './billing/wishlist';
@@ -67,7 +68,6 @@ import SignUpScreen from './sign_up';
 import KYCForm from './kyc';
 import {getAbsoluteURL} from '../utils';
 import axios from 'axios';
-import {Alert} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Badge from '../components/badge';
 import {useCartCount, useWishlistCount} from '../hooks/counters';
@@ -103,8 +103,6 @@ const DrawerItem = props => {
 };
 
 function DrawerContent(props): JSX.Element {
-  const wishlistedItems = useWishlistCount();
-  const itemsInCart = useCartCount();
   const userDetails = useUserProfile();
 
   const logOut = () => {
@@ -158,7 +156,7 @@ function DrawerContent(props): JSX.Element {
             <Pressable onPress={() => props.navigation.navigate('Profile')}>
               <Pill>
                 <FontAwesomeIcon icon={faEdit} color="white" size={14} />
-                <Text> Edit</Text>
+                <Text> Edit Profile</Text>
               </Pill>
             </Pressable>
           </Row>
@@ -196,12 +194,12 @@ function DrawerContent(props): JSX.Element {
         icon={faHeart}
         color={props.iconColor}
         label="My Wishlist"
-        badgeText={`${wishlistedItems}`}
+        badgeText={`${props.wishlistedItems}`}
         handler={() => props.navigation.navigate('Wishlist')}
       />
       <DrawerItem
         icon={faShoppingCart}
-        badgeText={`${itemsInCart}`}
+        badgeText={`${props.itemsInCart}`}
         color={props.iconColor}
         label="My Shopping Cart"
         handler={() => props.navigation.navigate('Cart')}
@@ -222,8 +220,6 @@ function DrawerContent(props): JSX.Element {
 
 const NavOptions = props => {
   const navigation = useNavigation();
-  const wishlistedItems = useWishlistCount();
-  const itemsInCart = useCartCount();
 
   return (
     <View style={{flexDirection: 'row', alignItems: 'flex-end'}}>
@@ -235,7 +231,7 @@ const NavOptions = props => {
           style={{marginRight: 16}}
         />
       </Pressable>
-      <Badge text={`${wishlistedItems}`} textSize={12}>
+      <Badge text={`${props.wishlistedItems}`} textSize={12}>
         <Pressable onPress={() => navigation.navigate('Wishlist')}>
           <FontAwesomeIcon
             icon={faHeart}
@@ -245,7 +241,7 @@ const NavOptions = props => {
           />
         </Pressable>
       </Badge>
-      <Badge text={`${itemsInCart}`} textSize={12}>
+      <Badge text={`${props.itemsInCart}`} textSize={12}>
         <Pressable onPress={() => navigation.navigate('Cart')}>
           <FontAwesomeIcon
             icon={faShoppingCart}
@@ -261,8 +257,31 @@ const NavOptions = props => {
 
 export default function HomeScreenNavigator(props): JSX.Element {
   const {navigation} = props;
+  const wishlistedItems = useWishlistCount();
+  const itemsInCart = useCartCount();
+  const NavOptionsComponent = React.useCallback(() => {
+    return (
+      <NavOptions
+        itemsInCart={itemsInCart}
+        wishlistedItems={wishlistedItems}
+        color={props.textColor}
+      />
+    );
+  }, [itemsInCart, wishlistedItems])
+
+  const DrawerContentComponent = React.useCallback(r => {
+    return (
+      <DrawerContent
+        wishlistedItems={wishlistedItems}
+        itemsInCart={itemsInCart}
+        iconColor={props.iconColor}
+        {...r}
+      />
+    );
+  }, [itemsInCart, wishlistedItems])
+
   const defaultScreenOptions = {
-    headerRight: () => <NavOptions color={props.textColor} />,
+    headerRight: NavOptionsComponent,
     headerStyle: {
       backgroundColor: 'transparent',
     },
@@ -277,7 +296,7 @@ export default function HomeScreenNavigator(props): JSX.Element {
     <Drawer.Navigator
       backBehavior="history"
       screenOptions={defaultScreenOptions}
-      drawerContent={r => <DrawerContent iconColor={props.iconColor} {...r} />}>
+      drawerContent={DrawerContentComponent}>
       {/* Basic Screens */}
       <Drawer.Screen
         component={LoginScreen}

@@ -129,8 +129,8 @@ export default function ProfileScreen({navigation}) {
       <Field value={email} onTextChange={setEmail} label={"Email"} />
       <Field value={address} multiline onTextChange={setAddress} label={"Address"} />
 
-      <Heading heading="KYC Status" />
-        <Paragraph>All KYC Information is Correct.</Paragraph>
+      <Heading heading="KYC" />
+        <Paragraph>Manage your "Know your customer(KYC) to get even more out of Hustle Hub".</Paragraph>
         <Pressable
         onPress={() => navigation.navigate("KYC Information")}
         style={styles.kyc}>

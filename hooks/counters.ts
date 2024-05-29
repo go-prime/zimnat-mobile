@@ -12,7 +12,7 @@ const useWishlistCount = () => {
   const navigator = useNavigation();
 
   React.useEffect(() => {
-    if (lastUpdate && new Date() - lastUpdate < 1000 * 30) {
+    if (lastUpdate && new Date() - lastUpdate < 1000 * 10) {
       console.log(`last update ${lastUpdate} ${new Date() - lastUpdate}`)
       return;
     }
@@ -39,7 +39,7 @@ const useWishlistCount = () => {
         })
         .catch(err => handleErr(err, navigator));
     });
-  }, []);
+  });
 
   return wishlistCount;
 };
@@ -50,7 +50,7 @@ const useCartCount = () => {
   const navigator = useNavigation();
 
   React.useEffect(() => {
-    if (lastUpdate && new Date() - lastUpdate < 1000 * 30) {
+    if (lastUpdate && new Date() - lastUpdate < 1000 * 10) {
       return;
     }
     AsyncStorage.getItem('user').then(user => {
@@ -73,7 +73,7 @@ const useCartCount = () => {
         })
         .catch(err => handleErr(err, navigator));
     });
-  }, []);
+  });
 
   return cartCount;
 };

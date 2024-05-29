@@ -8,7 +8,7 @@ import {
   Image,
   ScrollView,
   Dimensions,
-  Alert
+  Alert,
 } from 'react-native';
 import {shadow, text} from '../../styles/inputs';
 import axios from 'axios';
@@ -20,10 +20,10 @@ import Centered from '../../components/layout';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
 import Loading from '../../components/loading';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {faShoppingBasket, faTimes} from '@fortawesome/free-solid-svg-icons';
+import {faHeart, faShoppingBasket, faTimes} from '@fortawesome/free-solid-svg-icons';
 import colors from '../../styles/colors';
 import {removeBtn} from '../../styles/buttons';
-import { SubTitle } from '../../components/text';
+import {SubTitle} from '../../components/text';
 
 const removeFromWishlist = (product_id, product_name, onSuccess) => {
   axios
@@ -50,14 +50,13 @@ const WishlistItem = props => {
   return (
     <View style={[styles.card, {flexDirection: 'row', padding: 8}]}>
       <Pressable
-          style={removeBtn}
-          onPress={() =>
-            removeFromWishlist(props.id, props.name, props.onChange)
-          }>
-          <FontAwesomeIcon icon={faTimes} size={24} color={'white'} />
-        </Pressable>
+        style={removeBtn}
+        onPress={() =>
+          removeFromWishlist(props.id, props.name, props.onChange)
+        }>
+        <FontAwesomeIcon icon={faTimes} size={24} color={'white'} />
+      </Pressable>
       <Centered styles={{flex: 1, position: 'relative'}}>
-        
         <ImageIcon
           width={100}
           height={100}
@@ -67,7 +66,7 @@ const WishlistItem = props => {
       <View style={{flex: 2}}>
         <Pressable
           onPress={() => {
-            navigator.navigate(props.doctype, props.name)
+            navigator.navigate(props.doctype, props.name);
           }}>
           <SubTitle>{props.label || props.description}</SubTitle>
         </Pressable>
@@ -112,12 +111,12 @@ export default function WishlistScreen(props) {
 
   if (items.length == 0) {
     return (
-      <Centered style={{flex: 1, flexDirection: 'column'}}>
+      <Centered styles={{flex: 1, flexDirection: 'column'}}>
         <Text style={styles.title}>
           Your wish list is empty, start shopping!
         </Text>
         <FontAwesomeIcon
-          icon={faShoppingBasket}
+          icon={faHeart}
           size={72}
           color={colors.primary}
         />

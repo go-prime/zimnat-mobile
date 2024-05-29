@@ -69,6 +69,10 @@ export default SignInUpScreen = props => {
       Alert.alert('Validation Error', 'A password is required');
       return;
     }
+    if (!email.length) {
+      Alert.alert('Validation Error', 'An email is required');
+      return;
+    }
     if (!(first.length && last.length)) {
       Alert.alert('Validation Error', 'A full name is required');
       return;
@@ -123,6 +127,7 @@ export default SignInUpScreen = props => {
       .catch(err => {
         setSigningUp(false)
         Alert.alert('Error', 'There was an error with your request.');
+        console.log(err.response.data);
       });
   };
 
@@ -151,7 +156,7 @@ export default SignInUpScreen = props => {
         <Field
           light
           label="Address"
-          multiline={4}
+          multiline
           value={address}
           onTextChange={setAddress}
         />
