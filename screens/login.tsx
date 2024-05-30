@@ -166,7 +166,6 @@ const HomeCarousel = () => {
       scrollAnimationDuration={3000}
       renderItem={({index}) => {
         const item = data.carousel[index];
-        console.log(item);
         return (
           <View style={styles.carouselItemContainer}>
             <Image
@@ -192,6 +191,7 @@ export default function LoginScreen({navigation}) {
     AsyncStorage.getItem('expiry').then(expiry => {
       if (expiry && new Date() < new Date(expiry)) {
         AsyncStorage.getItem('user').then(user => {
+          console.log(expiry)
           if(user) {
             navigation.navigate("Dashboard")
           }

@@ -13,7 +13,6 @@ const useWishlistCount = () => {
 
   React.useEffect(() => {
     if (lastUpdate && new Date() - lastUpdate < 1000 * 10) {
-      console.log(`last update ${lastUpdate} ${new Date() - lastUpdate}`)
       return;
     }
     AsyncStorage.getItem('user').then(user => {
@@ -21,7 +20,6 @@ const useWishlistCount = () => {
         console.log('no user')
         return;
       }
-      console.log('retrieving data')
       axios
         .get(
           getAbsoluteURL(
@@ -31,7 +29,6 @@ const useWishlistCount = () => {
         .then(res => {
           setLastUpdate(new Date());
           if (res.data.message && res.data.message.items) {
-            console.log('updating count')
             setWishlistCount(res.data.message.items.length);
           } else {
             setWishlistCount(0);

@@ -1,7 +1,14 @@
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
 import React from 'react';
-import {View, Text, Pressable, StyleSheet, ScrollView, Alert} from 'react-native';
+import {
+  View,
+  Text,
+  Pressable,
+  StyleSheet,
+  ScrollView,
+  Alert,
+} from 'react-native';
 import {
   faBook,
   faBoxes,
@@ -26,7 +33,10 @@ import {
   faWarehouse,
   faSearch,
   faBookOpen,
-  faCalculator
+  faCalculator,
+  faBriefcase,
+  faFileInvoice,
+  faMoneyCheck,
 } from '@fortawesome/free-solid-svg-icons';
 import {Heading} from '../../components/text';
 import {background, text} from '../../styles/text';
@@ -37,6 +47,7 @@ import constants from '../../constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Onboarding from '../../components/books/onboarding';
 import OnboardingCard from '../../components/books/onboarding';
+import {Row} from '../../components/layout';
 
 const ICON_MAP = {
   'fa-book': faBook,
@@ -60,6 +71,7 @@ const ICON_MAP = {
   'fa-user': faUser,
   'fa-user-alt': faUserAlt,
   'fa-warehouse': faWarehouse,
+  'fa-money-check': faMoneyCheck,
 };
 
 const SHORTCUT_LIST = [
@@ -150,7 +162,7 @@ const SHORTCUT_LIST = [
   {
     module: 'Accounts',
     text: 'Payment',
-    icon: 'fa-hand',
+    icon: 'fa-money-check',
     route: {name: 'List', options: {doctype: 'Payment'}},
   },
   {
@@ -191,6 +203,33 @@ const SHORTCUT_LIST = [
   },
 ];
 
+const QUICK_ACTION_LIST = [
+  {
+    module: 'Sales',
+    text: 'Sales Invoice',
+    icon: 'fa-file-alt',
+    route: {name: 'List', options: {doctype: 'Sales Invoice'}},
+  },
+  {
+    module: 'Sales',
+    text: 'Quotation',
+    icon: 'fa-pen-fancy',
+    route: {name: 'List', options: {doctype: 'Quotation'}},
+  },
+  {
+    module: 'Inventory',
+    text: 'Purchase Receipt',
+    icon: 'fa-truck',
+    route: {name: 'List', options: {doctype: 'Purchase Receipt'}},
+  },
+  {
+    module: 'Accounts',
+    text: 'Payment',
+    icon: 'fa-money-check',
+    route: {name: 'List', options: {doctype: 'Payment'}},
+  },
+];
+
 const Shortcut = ({icon, text, route}) => {
   const navigator = useNavigation();
   return (
@@ -210,9 +249,23 @@ const Shortcut = ({icon, text, route}) => {
 export default function ShortcutScreen(props) {
   const [input, setInput] = React.useState('');
   const [filterdItems, setFilteredItems] = React.useState(SHORTCUT_LIST);
-  const [company, setCompany] = React.useState(null) 
-  const navigator = useNavigation()
-  const isFocused = useIsFocused()
+  const [company, setCompany] = React.useState(null);
+  const [onboarding, setOnboarding] = React.useState([]);
+  const navigator = useNavigation();
+  const isFocused = useIsFocused();
+  const loadOnboarding = () => {
+    axios
+      .get(`${constants.server_url}/api/method/erp.public_api.get_onboarding`)
+      .then(res => {
+        setOnboarding(res.data.message.onboarding_items);
+      })
+      .catch(err => {
+        if (err.response && err.response.status == 403) {
+          console.log(err.response);
+          Alert.alert('Error', 'Could not load onboarding tasks');
+        }
+      });
+  };
 
   React.useEffect(() => {
     if (!input || input.length < 3) {
@@ -227,54 +280,89 @@ export default function ShortcutScreen(props) {
   }, [input]);
 
   React.useEffect(() => {
-    AsyncStorage.getItem("user")
-      .then(user => {
-        if(!user) {
-          Alert.alert("You need to login first to access this page")
-          navigator.navigate("Login")
-        }
-        axios.get(`${constants.server_url}/api/method/erp.public_api.setup`)
-          .then(res => {
-            if(!res.data.message) {
-              navigator.navigate("Form", {doctype: "Company"})
-            } else {
-              setCompany(res.data.message)
-            }
-          }).catch(err => {
-            if(err.response && err.response.status == 403) {
-              console.log(err.response)
-              navigator.navigate("Login")
-            }
-          })
-      })
-    
-  }, [isFocused])
+    AsyncStorage.getItem('user').then(user => {
+      if (!user) {
+        Alert.alert('You need to login first to access this page');
+        navigator.navigate('Login');
+      }
+      axios
+        .get(`${constants.server_url}/api/method/erp.public_api.setup`)
+        .then(res => {
+          if (!res.data.message) {
+            navigator.navigate('Form', {doctype: 'Company'});
+          } else {
+            setCompany(res.data.message);
+          }
+        })
+        .catch(err => {
+          if (err.response && err.response.status == 403) {
+            console.log(err.response);
+            navigator.navigate('Login');
+          }
+        });
+    });
+
+    // Loading onboarding
+    loadOnboarding();
+  }, [isFocused]);
 
   return (
     <>
-      
-      {company && (
-        <Pressable style={styles.company} onPress={() => {
-          navigator.navigate("Form", {doctype: "Company", id: company})
-        }}>
-          <FontAwesomeIcon icon={faBuilding} size={48} color='black' />
+      <View style={styles.search}>
+        <FontAwesomeIcon icon={faSearch} size={20} />
+        <TextInput
+          placeholder="Search"
+          value={input}
+          onChangeText={setInput}
+          style={{flex: 1}}
+        />
+      </View>
+      <ScrollView style={{backgroundColor: background.color}}>
+        {company && (
+          <Pressable
+            style={styles.company}
+            onPress={() => {
+              navigator.navigate('Form', {doctype: 'Company', id: company});
+            }}>
+            <FontAwesomeIcon icon={faBriefcase} size={48} color="steelblue" />
             <View>
               <Text style={styles.company_label}>MY COMPANY</Text>
               <Text style={styles.company_name}>{company}</Text>
             </View>
-        </Pressable>)}
-        <View style={styles.search}>
-        <FontAwesomeIcon icon={faSearch} size={20} />
-        <TextInput placeholder="Search" value={input} onChangeText={setInput} style={{flex: 1}} />
-      </View>
-      <ScrollView style={{backgroundColor: background.color}}>
+          </Pressable>
+        )}
+        {!(input && input.length > 3) && (
+          <>
+            {onboarding.length > 0 && <Heading>Getting Started</Heading>}
+            {onboarding.map(on => (
+              <OnboardingCard
+                loadOnboarding={loadOnboarding}
+                data={on}
+                key={on.target}
+              />
+            ))}
+            <Heading>Quick Actions</Heading>
+            <ScrollView horizontal>
+              <Row styles={{gap: 12, margin: 12}}>
+                {QUICK_ACTION_LIST.map((fi, idx) => (
+                  <Shortcut
+                    text={fi.text}
+                    icon={ICON_MAP[fi.icon]}
+                    route={fi.route}
+                    key={idx}
+                  />
+                ))}
+              </Row>
+            </ScrollView>
+          </>
+        )}
+
         {Array.from(new Set(filterdItems.map(f => f.module)))
           .sort()
           .map(m => {
             return (
               <React.Fragment key={m}>
                 <Heading>{m}</Heading>
-                <OnboardingCard />
                 <View style={styles.content}>
                   {filterdItems
                     .filter(i => i.module == m)
@@ -329,7 +417,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 12,
     borderWidth: 1,
-    borderColor: "#efefef"
+    borderColor: '#efefef',
   },
   company: {
     backgroundColor: 'white',
@@ -338,15 +426,15 @@ const styles = StyleSheet.create({
     padding: 16,
     flexDirection: 'row',
     gap: 16,
-    elevation: 3
+    elevation: 3,
   },
   company_label: {
     color: 'black',
     fontWeight: 'bold',
-    fontSize: 12
+    fontSize: 12,
   },
   company_name: {
     color: 'black',
-    fontSize: 24
-  }
+    fontSize: 24,
+  },
 });

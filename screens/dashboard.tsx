@@ -111,14 +111,14 @@ export default function DashboardScreen({navigation}) {
           setUsername(null);
           Alert.alert('Success', 'Signed out of your account successfully.');
           setLoggingOut(false)
-          navigation.navigate("Login")
+          // navigation.navigate("Login")
         })
         .catch(err => {
           Alert.alert('Error', 'Failed to sign out of your account.');
           AsyncStorage.setItem('user', '');
           AsyncStorage.setItem('expiry', '');
           setLoggingOut(false)
-          navigation.navigate("Login")
+          // navigation.navigate("Login")
         });
     });
   };

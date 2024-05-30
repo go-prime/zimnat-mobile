@@ -8,10 +8,11 @@ import { getAbsoluteURL } from '../utils';
 export default function ImageIcon(props) {
   return (
     <View style={props.styles}>
-      {props.url ? (
+      {props.url && props.url.indexOf("private/") == -1 ? (
         <Image
           source={{uri: getAbsoluteURL(props.url), width: props.width, height: props.height}}
           style={{resizeMode: 'cover',}}
+          alt={"No_image"}
         />
       ) : (
         <FontAwesomeIcon

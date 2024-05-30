@@ -19,7 +19,7 @@ import ImagePicker from '../components/image_picker';
 import Field from '../components/form';
 import {useNavigation} from '@react-navigation/native';
 import ImageIcon from '../components/image';
-import {Title} from '../components/text';
+import {Paragraph, Title} from '../components/text';
 import {getAbsoluteURL} from '../utils';
 import { LoadingButton } from '../components/button';
 
@@ -162,7 +162,14 @@ export default SignInUpScreen = props => {
         />
         <Field light label="Password" password value={password} onTextChange={setPassword} />
         <Field light label="Repeat Password" password value={repeat} onTextChange={setRepeat} />
-
+        <Centered>
+          <Paragraph>By Signing up you agree to Hustle Hub's</Paragraph>
+          <Pressable onPress={() => {
+            navigator.navigate("WebView", {"url": "https://hustle.gopri.me/terms-and-conditions"})
+          }}>
+            <Text style={styles.termsText}>Terms and conditions</Text>
+          </Pressable>
+        </Centered>
         <LoadingButton
             loading={signingUp} onPress={signUp} style={styles.secondaryButton}>
           <Text style={styles.buttonText}>Sign Up</Text>
@@ -226,4 +233,9 @@ const styles = StyleSheet.create({
     color: 'black',
     flex: 1,
   },
+  termsText: {
+    color: "#007bff",
+    fontSize: 18,
+    fontWeight: "700"
+  }
 });
