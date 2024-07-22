@@ -3,6 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import constants from '../constants';
 import { useNavigation } from '@react-navigation/native';
+import {Alert} from 'react-native'
 
 const useUserProfile = () => {
   const [username, setUserName] = React.useState(null);
@@ -20,7 +21,7 @@ const useUserProfile = () => {
       }
       
     });
-  });
+  }, []);
 
   React.useEffect(() => {
     if (!username) return;

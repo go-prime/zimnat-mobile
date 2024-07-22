@@ -127,7 +127,17 @@ export default SignInUpScreen = props => {
       .catch(err => {
         setSigningUp(false)
         Alert.alert('Error', 'There was an error with your request.');
-        console.log(err.response.data);
+        console.log(err);
+
+        if(err && err.response) {
+          console.log(err.response.data);
+          if(err.response.data._server_messages) {
+            JSON.parse(err.response.data._server_messages).forEach(m => {
+              const msg = JSON.parse(m)
+              Alert.alert(msg.title, msg.message)
+            })
+          }
+        }
       });
   };
 
