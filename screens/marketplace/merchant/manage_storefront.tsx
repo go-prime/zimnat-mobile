@@ -22,6 +22,7 @@ import Loading from '../../../components/loading';
 import {getAbsoluteURL} from '../../../utils';
 import {useNavigation} from '@react-navigation/native';
 import handleResourceRetrievalError from '../../../scripts/permissions';
+import { MapButton } from '../../../components/maps';
 
 export default ManageStorefrontScreen = props => {
   const [data, setData] = React.useState(null);
@@ -29,6 +30,7 @@ export default ManageStorefrontScreen = props => {
   const [phone, setPhone] = React.useState('');
   const [email, setEmail] = React.useState('');
   const [address, setAddress] = React.useState('');
+  const [location, setLocation] = React.useState(null);
   const [description, setDescription] = React.useState('');
   const [logo, setLogo] = React.useState('');
   const [tags, setTags] = React.useState([]);
@@ -49,6 +51,7 @@ export default ManageStorefrontScreen = props => {
         setEmail(res.data.message.email);
         setDescription(res.data.message.description);
         setStoreName(res.data.message.name);
+        setLocation(res.data.message.location)
       })
       .catch(err => {
         handleResourceRetrievalError(err, navigation);
@@ -56,6 +59,7 @@ export default ManageStorefrontScreen = props => {
   }, []);
 
   const updateStorefrontDetails = () => {
+    console.log(location)
     axios
       .post(
         getAbsoluteURL(
@@ -68,6 +72,7 @@ export default ManageStorefrontScreen = props => {
             phone: phone,
             address: address,
             description: description,
+            location: location
           },
         },
       )
@@ -126,6 +131,13 @@ export default ManageStorefrontScreen = props => {
         label={'Description'}
         value={description}
         onTextChange={setDescription}
+      />
+
+      <MapButton 
+        initialLocation={location} 
+        onSelectLocation={coords => {
+          setLocation(coords)
+        }}
       />
 
       <Pressable onPress={updateStorefrontDetails} style={styles.save}>

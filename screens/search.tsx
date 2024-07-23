@@ -4,6 +4,7 @@ import {
   faSearch,
   faTimes,
   faRectangleXmark,
+  faFilter,
 } from '@fortawesome/free-solid-svg-icons';
 import {
   Alert,
@@ -15,6 +16,8 @@ import {
   Text,
   Pressable,
   ActivityIndicator,
+  Switch,
+  Dimensions,
 } from 'react-native';
 import {card, shadow} from '../styles/inputs';
 import axios from 'axios';
@@ -25,7 +28,11 @@ import {subTitle, paragraph} from '../styles/text';
 import {useNavigation} from '@react-navigation/native';
 import colors from '../styles/colors';
 import Centered from '../components/layout';
-import {SubTitle} from '../components/text';
+import {SubTitle, Label, Heading} from '../components/text';
+import { MapButton } from '../components/maps';
+import NumberField from '../components/books/number';
+import DateField from '../components/books/date';
+import { ScrollView } from 'react-native-gesture-handler';
 
 const SearchItem = props => {
   const navigation = useNavigation();
@@ -58,6 +65,14 @@ export default SearchScreen = props => {
   const [search, setSearch] = React.useState('');
   const [results, setResults] = React.useState([]);
   const [searching, setSearching] = React.useState(false);
+  const [showFilters, setShowFilters] = React.useState(false);
+  const [filters, setFilters] = React.useState({})
+  const [priceFilters, setPriceFilters] = React.useState(false)
+  const [dateFilters, setDateFilters] = React.useState(false)
+  const [locationFilters, setLocationFilters] = React.useState(false)
+  const {height} = Dimensions.get('window')
+
+
   React.useEffect(() => {
     if (search.length < 3) {
       setResults([]);
@@ -69,11 +84,11 @@ export default SearchScreen = props => {
         `${constants.server_url}/api/method/billing_engine.billing_engine.api.search`,
         {
           params: {q: search},
+          data: filters
         },
       )
       .then(res => {
         setSearching(false);
-        console.log(res.data.message)
         setResults(res.data.message);
       })
       .catch(err => {
@@ -83,6 +98,61 @@ export default SearchScreen = props => {
   }, [search]);
   return (
     <View style={styles.root}>
+      {showFilters && (
+      <View style={{height: height / 3, ...styles.filterView}}>
+        <Heading>Filters</Heading>
+        <ScrollView>
+        <Row styles={styles.filterStyle}>
+          <SubTitle>Price Range</SubTitle>
+          <Switch 
+            value={priceFilters}
+            onValueChange={() => {
+              setPriceFilters(!priceFilters)
+              if(priceFilters) {
+                setFilters({...filters, min_price: null, max_price: null})
+              }
+            }}
+          />
+        </Row>
+        {priceFilters && (<View>
+          <NumberField label="Min" onChange={val => setFilters({...filters, min_price: val})} isInput />
+          <NumberField label="Max" onChange={val => setFilters({...filters, max_price: val})} isInput />
+        </View>)}
+        <Row styles={styles.filterStyle}>
+          <SubTitle>Date</SubTitle>
+          <Switch 
+            value={dateFilters}
+            onValueChange={() => {
+              setDateFilters(!dateFilters)
+              if(dateFilters) {
+                setFilters({...filters, from_date: null, to_date: null})
+              }
+            }}
+          />
+        </Row>
+        {dateFilters &&(<View>
+          <DateField label="Oldest Date" isInput onChange={val => setFilters({...filters, from_date: val})} />
+          <DateField label="Newest Date" isInput onChange={val => setFilters({...filters, to_date: val})} />
+        </View>)}
+        <Row styles={styles.filterStyle}>
+          <SubTitle>Location</SubTitle>
+          <Switch
+            value={locationFilters}
+            onValueChange={() => {
+              setLocationFilters(!locationFilters)
+              if(locationFilters) {
+                setFilters({...filters, radius: null, to_date: null})
+              }
+            }}
+          />
+        </Row>
+        {locationFilters && (<View>
+          <NumberField label="Radius (km)"  onChange={val => setFilters({...filters, radius: val})} isInput />
+          <MapButton initialLocation={filters.location} onSelectLocation={coords => setFilters({...filters, location: coords})} />
+        </View>)}
+        </ScrollView>
+      </View>
+    )}
       <View style={styles.modalSearchInput}>
         <FontAwesomeIcon
           color={colors.primary}
@@ -98,6 +168,14 @@ export default SearchScreen = props => {
           onChangeText={setSearch}
           autoFocus={true}
         />
+        <Pressable onPress={() => setShowFilters(!showFilters)}>
+        <FontAwesomeIcon
+            color={colors.primary}
+            style={{width: 50, marginRight: 12}}
+            size={28}
+            icon={faFilter}
+          />
+        </Pressable>
       </View>
       {searching ? (
         <Centered>
@@ -154,4 +232,14 @@ const styles = StyleSheet.create({
   resultTextContainer: {
     paddingLeft: 12,
   },
+  filterView: {
+    margin: 8,
+    backgroundColor: "#eee",
+    padding: 12,
+    borderRadius: 24
+  },
+  filterStyle: {
+    justifyContent: 'space-between',
+    marginBottom: 18
+  }
 });

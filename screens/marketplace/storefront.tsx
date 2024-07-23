@@ -12,6 +12,8 @@ import ProduceCard from '../../components/marketplace/produce';
 import {ItemButton} from '../../components/button';
 import { Paragraph } from '../../components/text';
 import handleResourceRetrievalError from '../../scripts/permissions';
+import { MapButton } from '../../components/maps';
+
 
 export default function StorefrontScreen(props) {
   const [data, setData] = React.useState(null);
@@ -57,6 +59,7 @@ export default function StorefrontScreen(props) {
         </View>
       </Row>
       <Paragraph>{data.description}</Paragraph>
+      {data.location && <MapButton initialLocation={data.location} readOnly />}
       <Heading heading="Tags" />
       {data.tags.map(t => (
         <Pressable

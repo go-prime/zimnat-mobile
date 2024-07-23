@@ -3,6 +3,9 @@ import {View, Text, StyleSheet, Appearance} from 'react-native';
 import {inputContainer, text} from '../../styles/inputs';
 import colors from '../../styles/colors';
 
+
+// Important! Make sure all fields are children of a scrollview otherwise they will not take their full height!
+
 export default function FieldContainer(props) {
   const styleArr = [styles.fullWidth];
 
@@ -30,6 +33,8 @@ export default function FieldContainer(props) {
   } else {
     styleArr.push({alignItems: 'center'})
   }
+  console.log(props.label)
+  console.log(styleArr)
   return props.hidden ? null : (
     <View style={props.input ? styles.container : styles.tableContainer}>
       {props.input && <Text style={styles.label}>{props.label}</Text>}
