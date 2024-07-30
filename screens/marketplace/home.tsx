@@ -12,7 +12,6 @@ import CategoryPill from '../../components/marketplace/category';
 import {Heading} from '../../components/text';
 import { CategoryButton, ItemButton } from '../../components/button';
 import { useIsFocused } from '@react-navigation/native';
-import {MapButton} from '../../components/maps'
 
 export default function MarketplaceHome({navigation}) {
   const [data, setData] = React.useState(null);
@@ -39,7 +38,6 @@ export default function MarketplaceHome({navigation}) {
 
   return (
     <ScrollView>
-      <MapButton readOnly />
       <SearchBar />
       <View>
         <Carousel

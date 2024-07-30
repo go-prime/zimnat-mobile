@@ -8,6 +8,8 @@ import { Row } from './layout'
 import { shadow } from '../styles/inputs'
 import { text } from '../styles/text'
 import Geolocation from 'react-native-geolocation-service';
+import constants from '../constants'
+import axios from 'axios'
 
 
 interface coordinate {
@@ -119,6 +121,8 @@ const MapPopUp = ({markerOnPress, toggleVisible, origin, visible, fences, marker
 const MapButton = ({onSelectLocation, initialLocation, readOnly}) => {
     const [visible, setVisible] = React.useState(false)
     const [marker, setMarker] = React.useState(null)
+    const [location, setLocation] = React.useState("")
+
     const handleMarkerPlacement = data => {
         setMarker(data)
         if(onSelectLocation) {
@@ -144,7 +148,7 @@ const MapButton = ({onSelectLocation, initialLocation, readOnly}) => {
         } catch (error) {
           Alert.alert(error.message);
         }
-      };
+    };
 
     React.useEffect(() => {
         if(initialLocation && !marker) {
@@ -163,6 +167,17 @@ const MapButton = ({onSelectLocation, initialLocation, readOnly}) => {
             })
         }
     }, [])
+
+    React.useEffect(() => {
+        if(!marker) { return }
+        axios.get(`${constants.server_url}/api/method/billing_engine.billing_engine.api.get_location_string`, {
+            params: {coordinates: `${marker.latitude},${marker.longitude}`}
+        }).then(res => {
+            setLocation(`${res.data.message.city}, ${res.data.message.country}`)
+        }).catch(err => {
+            setLocation(`Lat: ${`${marker.latitude}`.slice(0, 6)} Lng: ${`${marker.longitude}`.slice(0, 6)}`)
+        })
+    }, [marker])
 
     React.useEffect(() => {
         if(initialLocation && !marker) {
@@ -192,10 +207,9 @@ const MapButton = ({onSelectLocation, initialLocation, readOnly}) => {
                 {marker && (
                     <View>
                         <Text style={styles.buttonText}>{readOnly ? "" : "Selected"} Location:</Text>
-                        <Text style={styles.buttonText}>Lat: {`${marker.latitude}`.slice(0, 6)} Lng: {`${marker.longitude}`.slice(0, 6)} </Text>
+                        <Text style={styles.buttonText}>{location}</Text>
                     </View>
                 )}
-                
             </Row>
         </Pressable>
         {marker && readOnly && <Pressable onPress={onShare}>
