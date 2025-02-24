@@ -39,6 +39,8 @@ function App(): JSX.Element {
   const [theme, setTheme] = React.useState(LightTheme)
   const navContainerRef = useNavigationContainerRef();
 
+  const hustleEnabled = false;
+
   React.useEffect(() => {
     navContainerRef.addListener('state', e => {
       if (e.data.state.history.length) {
@@ -72,7 +74,12 @@ function App(): JSX.Element {
       ref={navContainerRef}
       theme={theme}>
       <IntlProvider locale={locale} messages={messages[locale]}>
-        <HomeScreenNavigator accent={theme.colors.card} textColor={theme.colors.text} iconColor={theme.colors.text} />
+        <HomeScreenNavigator 
+          accent={theme.colors.card}
+          textColor={theme.colors.text} 
+          iconColor={theme.colors.text}
+          hustleEnabled={hustleEnabled}
+        />
         <ChatButton visible={chatVisible} route={currentRoute} />
       </IntlProvider>
     </NavigationContainer>

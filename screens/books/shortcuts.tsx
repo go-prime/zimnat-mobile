@@ -309,9 +309,9 @@ export default function ShortcutScreen(props) {
   return (
     <>
       <View style={styles.search}>
-        <FontAwesomeIcon icon={faSearch} size={20} />
+        <FontAwesomeIcon icon={faSearch} size={40} />
         <TextInput
-          placeholder="Search"
+          placeholder=""
           value={input}
           onChangeText={setInput}
           style={{flex: 1}}
@@ -408,16 +408,16 @@ const styles = StyleSheet.create({
   },
   search: {
     backgroundColor: '#efefef',
-    borderRadius: 4,
+    borderRadius: 24,
     height: 48,
-    padding: 4,
+    padding: 6,
     paddingLeft: 12,
     margin: 12,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
-    borderWidth: 1,
-    borderColor: '#efefef',
+    borderColor: 'black',
+    borderWidth: 1.5,
   },
   company: {
     backgroundColor: 'white',

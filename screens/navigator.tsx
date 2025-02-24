@@ -76,6 +76,7 @@ import {Row} from '../components/layout';
 import useUserProfile from '../hooks/user';
 import ImageIcon from '../components/image';
 import DashboardScreen from './dashboard';
+import WalletScreen from './wallet';
 
 const Drawer = createDrawerNavigator();
 
@@ -104,6 +105,7 @@ const DrawerItem = props => {
 
 function DrawerContent(props): JSX.Element {
   const userDetails = useUserProfile();
+  const {hustleEnabled} = props;
 
   const logOut = () => {
     axios
@@ -161,27 +163,32 @@ function DrawerContent(props): JSX.Element {
           </Row>
         </View>
       )}
-      <DrawerItem
-        color={props.iconColor}
-        source={require('../assets/images/marketplace.png')}
-        dark_source={require('../assets/images/marketplace_dark.png')}
-        label="Marketplace"
-        handler={() => props.navigation.navigate('Marketplace Home')}
-      />
-      <DrawerItem
-        color={props.iconColor}
-        source={require('../assets/images/partner_store.png')}
-        dark_source={require('../assets/images/partner_store_dark.png')}
-        label="Partner Store"
-        handler={() => props.navigation.navigate('Home')}
-      />
-      <DrawerItem
-        color={props.iconColor}
-        source={require('../assets/images/edutec.png')}
-        dark_source={require('../assets/images/edutec_dark.png')}
-        label="Edutec"
-        handler={() => props.navigation.navigate('Courses Home')}
-      />
+      {hustleEnabled ? (
+        <>
+          <DrawerItem
+            color={props.iconColor}
+            source={require('../assets/images/marketplace.png')}
+            dark_source={require('../assets/images/marketplace_dark.png')}
+            label="Marketplace"
+            handler={() => props.navigation.navigate('Marketplace Home')}
+          />
+          <DrawerItem
+            color={props.iconColor}
+            source={require('../assets/images/partner_store.png')}
+            dark_source={require('../assets/images/partner_store_dark.png')}
+            label="Partner Store"
+            handler={() => props.navigation.navigate('Home')}
+          />
+          <DrawerItem
+            color={props.iconColor}
+            source={require('../assets/images/edutec.png')}
+            dark_source={require('../assets/images/edutec_dark.png')}
+            label="Edutec"
+            handler={() => props.navigation.navigate('Courses Home')}
+          />
+        </>
+      ) : null}
+
       <DrawerItem
         color={props.iconColor}
         source={require('../assets/images/books.png')}
@@ -255,7 +262,7 @@ const NavOptions = props => {
 };
 
 export default function HomeScreenNavigator(props): JSX.Element {
-  const {navigation} = props;
+  const {navigation, hustleEnabled} = props;
   const wishlistedItems = useWishlistCount();
   const itemsInCart = useCartCount();
   const NavOptionsComponent = React.useCallback(() => {
@@ -274,10 +281,11 @@ export default function HomeScreenNavigator(props): JSX.Element {
         wishlistedItems={wishlistedItems}
         itemsInCart={itemsInCart}
         iconColor={props.iconColor}
+        hustleEnabled={hustleEnabled} 
         {...r}
       />
     );
-  }, [itemsInCart, wishlistedItems])
+  }, [itemsInCart, wishlistedItems, hustleEnabled]);
 
   const defaultScreenOptions = {
     headerRight: NavOptionsComponent,
@@ -306,6 +314,7 @@ export default function HomeScreenNavigator(props): JSX.Element {
         component={DashboardScreen}
         name="Dashboard"
         options={{headerShown: false}}
+        initialParams={{ hustleEnabled }}
       />
       <Drawer.Screen
         component={SignUpScreen}
@@ -319,6 +328,7 @@ export default function HomeScreenNavigator(props): JSX.Element {
       <Drawer.Screen component={SubscriptionListScreen} name="Subscriptions" />
       <Drawer.Screen component={SubscriptionScreen} name="Subscription" />
       <Drawer.Screen component={KYCForm} name="KYC Information" />
+      <Drawer.Screen component={WalletScreen} name="Wallet" />
       <Drawer.Screen
         options={{headerShown: false}}
         component={InAppWebViewScreen}

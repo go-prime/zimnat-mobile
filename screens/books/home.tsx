@@ -31,7 +31,7 @@ export default function BooksHomeScreen({navigation}): JSX.Element {
       <Stack.Navigator
         screenOptions={{
           headerStyle: {
-            backgroundColor: '#007bff',
+            backgroundColor: '#00ae42',
           },
           headerShadowVisible: false,
           headerTintColor: 'white',

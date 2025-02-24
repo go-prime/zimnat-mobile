@@ -8,7 +8,8 @@ import {
   Alert,
   Dimensions,
   ScrollView,
-  Animated
+  Animated,
+  TouchableOpacity
 } from 'react-native';
 import {card, shadow} from '../styles/inputs';
 import axios from 'axios';
@@ -26,11 +27,15 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import Carousel from 'react-native-reanimated-carousel';
 
+
 import {useIsFocused, useNavigation} from '@react-navigation/native';
 import {getAbsoluteURL} from '../utils';
 import Geolocation from 'react-native-geolocation-service';
 import { LoadingButton } from '../components/button';
 import { FormattedMessage } from 'react-intl';
+import ScrollableCard from '../components/dashboard/scrollable_card';
+import SearchBar from '../components/search';
+import { Heading } from '../components/text';
 
 const DashboardCard = props => {
   const animated = new Animated.Value(1);
@@ -74,7 +79,7 @@ const DashboardCard = props => {
   );
 };
 
-export default function DashboardScreen({navigation}) {
+export default function DashboardScreen({navigation, hustleEnabled}) {
   const {width, height} = Dimensions.get('screen');
   const [username, setUsername] = React.useState(null);
   const isFocused = useIsFocused();
@@ -125,22 +130,115 @@ export default function DashboardScreen({navigation}) {
   };
 
   return (
-    <ImageBackground
-      source={require('../assets/images/background_2.png')}
-      style={{width: '100%', height: '100%'}}>
-      {/* <NotPermitted visible /> */}
-      <ScrollView>
-        <Image
-          source={require('../assets/images/Logo-01.png')}
-          style={{width: width, height: height / 4}}
-        />
-        <View>
-          {username && (
-            <>
-              <Row styles={{justifyContent: 'center'}}>
-                <Text style={styles.welcome}>Welcome {username}</Text>
-              </Row>
-              <Row>
+    <ScrollView>
+      <Heading heading="Zimnat App" />
+
+      <SearchBar />
+      <View>
+        {username && (
+          <>
+            <Row styles={{justifyContent: 'left'}}>
+              {/* Partner Carousel Here */}
+              <Carousel
+                loop
+                width={width /1.8 - 48}
+                height={height / 5 - 12}
+                autoPlay={true}
+                data={[
+                  { id: 1, image: require('../assets/images/partner1.png') },
+                  { id: 2, image: require('../assets/images/partner2.png') },
+                  { id: 3, image: require('../assets/images/partner3.png') },
+                ]}
+                scrollAnimationDuration={1000}
+                renderItem={({ item }) => (
+                  <View style={{ alignItems: 'left', padding: 20 }}>
+                    <Image
+                      source={item.image}
+                      style={{ width: 150, height: 100, resizeMode: 'contain', paddingTop: 10 }}
+                    />
+                  </View>
+                )}
+              />
+
+            <DashboardCard
+                title="Hero Service"
+                message="Hero Service."
+                source={require('../assets/images/wallet.png')}
+                handler={() => console.log('Hero Service')}
+                width={width / 2 - 60}
+                height={height / 8 - 12}
+              />
+            </Row>
+
+
+              
+            <ScrollableCard label="Popular Products">
+              <DashboardCard
+                title="Product 1"
+                message="Details"
+                source={require('../assets/images/box.png')}
+                handler={() => console.log('Product 1')}
+                width={width / 4 - 16}
+                height={height / 8 - 40}
+                style={{marginBottom: 10}}
+              />
+              
+              <DashboardCard
+                title="Product 2"
+                message="Details"
+                source={require('../assets/images/box.png')}
+                handler={() => console.log('Product 2')}
+                width={width / 4 - 16}
+                height={height / 8 - 40}
+                style={{marginBottom: 10}}
+              />
+              
+              <DashboardCard
+                title="Product 3"
+                message="Details"
+                source={require('../assets/images/box.png')}
+                handler={() => console.log('Product 3')}
+                width={width / 4 - 16}
+                height={height / 8 - 40}
+                style={{marginBottom: 10}}
+              />
+            </ScrollableCard>
+
+            {/* Services */}
+            <Row>
+              <DashboardCard
+                title="Wallet Services"
+                message="Wallet"
+                source={require('../assets/images/wallet.png')}
+                handler={() => navigation.navigate("Wallet")}
+                width={width / 2 - 48}
+                height={height / 8 - 12}
+              />
+              {/* Pill functions */}
+              <View style={{ flexDirection: 'column', alignItems: 'center', height:height / 8 - 12 }}>
+                {/* Transfer */}
+                <TouchableOpacity style={styles.stackedPill}>
+                  <Image source={require('../assets/icons/send.png')} style={styles.icon} />
+                  <Text style={styles.pillText}>Transfer</Text>
+                </TouchableOpacity>
+
+                {/* Pay Bills */}
+                <TouchableOpacity style={styles.stackedPill}>
+                  <Image source={require('../assets/icons/pay_bills.png')} style={styles.icon} />
+                  <Text style={styles.pillText}>Pay Bills</Text>
+                </TouchableOpacity>
+
+                {/* Savings */}
+                <TouchableOpacity style={styles.stackedPill}>
+                  <Image source={require('../assets/icons/savings.png')} style={styles.icon} />
+                  <Text style={styles.pillText}>Savings</Text>
+                </TouchableOpacity>
+              </View>
+            </Row>
+
+            
+            {hustleEnabled && (        
+              <Row>                
                 <DashboardCard
                   title="market"
                   message="shop"
@@ -158,45 +256,48 @@ export default function DashboardScreen({navigation}) {
                   height={height / 5 - 12}
                 />
               </Row>
-              <Row>
-                <DashboardCard
-                  title="edutec"
-                  source={require('../assets/images/edutec.png')}
-                  message="skills"
-                  handler={() => navigation.navigate("Courses Home")}
-                  width={width / 2 - 48}
-                  height={height / 5 - 12}
-                />
-                <DashboardCard
-                  title="business_books"
-                  source={require('../assets/images/books.png')}
-                  message="funds"
-                  handler={() => {
-                    navigation.navigate("Books")
-                  }}
-                  width={width / 2 - 48}
-                  height={height / 5 - 12}
-                />
-              </Row>
-            </>
-          )}
-        </View>
-        <Centered>
-          {username && (
-            <LoadingButton style={styles.pill} loading={loggingOut} onPress={logOut}>
-              <Row >
-                <FontAwesomeIcon
-                  icon={faDoorOpen}
-                  color={colors.primary}
-                  size={24}
-                />
-                <Text style={styles.signIn}>{'  '} Log Out</Text>
-              </Row>
-            </LoadingButton>
-          )}
-        </Centered>
-      </ScrollView>
-    </ImageBackground>
+            )}
+            {hustleEnabled && (     
+            <Row>
+              <DashboardCard
+                title="edutec"
+                source={require('../assets/images/edutec.png')}
+                message="skills"
+                handler={() => navigation.navigate("Courses Home")}
+                width={width / 2 - 48}
+                height={height / 5 - 12}
+              />
+              
+              <DashboardCard
+                title="business_books"
+                source={require('../assets/images/books.png')}
+                message="funds"
+                handler={() => {
+                  navigation.navigate("Books")
+                }}
+                width={width / 2 - 48}
+                height={height / 5 - 12}
+              />
+            </Row>
+            )}
+          </>
+        )}
+      </View>
+      {/* <Centered>
+        {username && (
+          <LoadingButton style={styles.pill} loading={loggingOut} onPress={logOut}>
+            <Row >
+              <FontAwesomeIcon
+                icon={faDoorOpen}
+                color={colors.primary}
+                size={24}
+              />
+              <Text style={styles.signIn}>{'  '} Log Out</Text>
+            </Row>
+          </LoadingButton>
+        )}
+      </Centered> */}
+    </ScrollView>
   );
 }
 
@@ -299,4 +400,25 @@ const styles = StyleSheet.create({
     color: 'black',
     flex: 1,
   },
+  stackedPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 20,
+    marginBottom: 8,
+    justifyContent: 'center'
+  },
+  icon: {
+    width: 20,
+    height: 20,
+    marginRight: 8,
+  },
+  pillText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 16,
+    paddingHorizontal: 8,
+  }
 });
